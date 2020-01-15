@@ -15,7 +15,9 @@ Fixpoint interp `{heapG Σ} (τ : ty) (ρ : list (sem_ty Σ)) : sem_ty Σ :=
   end.
 
 Instance: Params (@interp) 2 := {}.
-Notation interp_env Γ ρ := (flip interp ρ <$> Γ).
+
+Definition interp_env `{heapG Σ} (Γ : gmap string ty)
+  (ρ : list (sem_ty Σ)) : gmap string (sem_ty Σ) := flip interp ρ <$> Γ.
 
 Section fundamental.
   Context `{heapG Σ}.
@@ -27,10 +29,15 @@ Section fundamental.
   Global Instance interp_proper τ : Proper ((≡) ==> (≡)) (interp τ).
   Proof. apply ne_proper, _. Qed.
 
+  Lemma interp_env_empty ρ : interp_env (∅ : gmap string ty) ρ = ∅.
+  Proof. by rewrite /interp_env fmap_empty. Qed.
+  Lemma lookup_interp_env Γ x τ ρ :
+    Γ !! x = Some τ → interp_env Γ ρ !! x = Some (interp τ ρ).
+  Proof. intros Hx. by rewrite /interp_env lookup_fmap Hx. Qed.
   Lemma interp_env_binder_insert Γ x τ ρ :
     interp_env (binder_insert x τ Γ) ρ
     = binder_insert x (interp τ ρ) (interp_env Γ ρ).
-  Proof. destruct x as [|x]=> //=. by rewrite fmap_insert. Qed.
+  Proof. destruct x as [|x]=> //=. by rewrite /interp_env fmap_insert. Qed.
 
   Lemma interp_ty_lift n τ ρ :
     n ≤ length ρ →
@@ -49,7 +56,7 @@ Section fundamental.
     n ≤ length ρ →
     interp_env (ty_lift n <$> Γ) ρ ≡ interp_env Γ (delete n ρ).
   Proof.
-    intros. rewrite -map_fmap_compose.
+    intros. rewrite /interp_env -map_fmap_compose.
     apply map_fmap_equiv_ext=> x A _ /=. by rewrite interp_ty_lift.
   Qed.
 
@@ -86,7 +93,7 @@ Section fundamental.
     interp_env Γ ρ ⊨ e : interp τ ρ.
   Proof.
     intros Htyped. iInduction Htyped as [] "IH" forall (ρ); simpl in *.
-    - iApply sem_typed_var. rewrite lookup_fmap. by simplify_option_eq.
+    - iApply sem_typed_var. by apply lookup_interp_env.
     - iApply sem_typed_unit.
     - iApply sem_typed_bool.
     - iApply sem_typed_int.
