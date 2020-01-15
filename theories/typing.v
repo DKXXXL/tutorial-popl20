@@ -73,7 +73,7 @@ Inductive typed (Γ : gmap string ty) : expr → ty → Prop :=
      Γ ⊢ₜ (Λ: e) : TForall τ
   | TApp_typed e τ τ' :
      Γ ⊢ₜ e : TForall τ →
-     Γ ⊢ₜ e #() : ty_subst 0 τ' τ
+     Γ ⊢ₜ e ! : ty_subst 0 τ' τ
   | TPack e τ τ' :
      Γ ⊢ₜ e : ty_subst 0 τ' τ →
      Γ ⊢ₜ e : TExist τ

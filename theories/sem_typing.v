@@ -191,12 +191,12 @@ Section typed_properties.
       wp_apply (wp_wand with "(H2 [//])"); iIntros (v) "#HAB". by iApply "HAB".
   Qed.
 
-  Lemma sem_typed_tlam Γ e C : (∀ A, Γ ⊨ e : C A) -∗ Γ ⊨ (λ: <>, e) : ∀ A, C A.
+  Lemma sem_typed_tlam Γ e C : (∀ A, Γ ⊨ e : C A) -∗ Γ ⊨ (Λ: e) : ∀ A, C A.
   Proof.
     iIntros "#H" (vs) "!# #HΓ /=". wp_pures.
     iIntros "!#" (A) "/=". wp_pures. by iApply ("H" $! A).
   Qed.
-  Lemma sem_typed_tapp Γ e C A : (Γ ⊨ e : ∀ A, C A) -∗ Γ ⊨ e #() : C A.
+  Lemma sem_typed_tapp Γ e C A : (Γ ⊨ e : ∀ A, C A) -∗ Γ ⊨ e ! : C A.
   Proof.
     iIntros "#H" (vs) "!# #HΓ /=".
     wp_apply (wp_wand with "(H [//])"); iIntros (w) "#HB". by iApply ("HB" $! A).

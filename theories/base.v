@@ -3,9 +3,9 @@ From iris.heap_lang Require Export lang notation metatheory.
 
 (** We model type-level lambdas and applications as thunks since heap_lang does
 not have them. *)
-Notation "Λ: e" := (λ: <>, e)%E (at level 200, only parsing).
+Notation "Λ: e" := (λ: <>, e)%E (at level 200, only parsing) : expr_scope.
 Notation "Λ: e" := (λ: <>, e)%V (at level 200, only parsing) : val_scope.
-Notation "'TApp' e" := (App e%E #()) (at level 200, only parsing).
+Notation "e !" := (App e%E #()) (at level 10, only parsing) : expr_scope.
 
 (** We wrap unpack into an explicitly function so that we can have a nice
 notation for it. *)
