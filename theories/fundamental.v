@@ -1,30 +1,15 @@
-From tutorial_popl20 Require Export typing compatibility.
-
-Reserved Notation "⟦ τ ⟧".
-Fixpoint interp `{heapG Σ} (τ : ty) (ρ : list (sem_ty Σ)) : sem_ty Σ :=
-  match τ return _ with
-  | TVar x => default sem_ty_unit (ρ !! x) (* dummy in case [x ∉ ρ] *)
-  | TUnit => sem_ty_unit
-  | TBool => sem_ty_bool
-  | TInt => sem_ty_int
-  | TProd τ1 τ2 => ⟦ τ1 ⟧ ρ * ⟦ τ2 ⟧ ρ
-  | TSum τ1 τ2 => ⟦ τ1 ⟧ ρ + ⟦ τ2 ⟧ ρ
-  | TArr τ1 τ2 => ⟦ τ1 ⟧ ρ → ⟦ τ2 ⟧ ρ
-  | TForall τ => ∀ X, ⟦ τ ⟧ (X :: ρ)
-  | TExist τ => ∃ X, ⟦ τ ⟧ (X :: ρ)
-  | TRef τ => ref (⟦ τ ⟧ ρ)
-  end%sem_ty
-where "⟦ τ ⟧" := (interp τ).
-
-Instance: Params (@interp) 2 := {}.
+From tutorial_popl20 Require Export typing compatibility interp.
 
 Definition interp_env `{heapG Σ} (Γ : gmap string ty)
   (ρ : list (sem_ty Σ)) : gmap string (sem_ty Σ) := flip interp ρ <$> Γ.
+Instance: Params (@interp_env) 3 := {}.
 
 Section fundamental.
   Context `{heapG Σ}.
   Implicit Types Γ : gmap string ty.
+  Implicit Types τ : ty.
   Implicit Types ρ : list (sem_ty Σ).
+  Implicit Types i n j : nat.
 
   Global Instance interp_ne τ : NonExpansive ⟦ τ ⟧.
   Proof. induction τ; solve_proper. Qed.
