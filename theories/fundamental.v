@@ -84,10 +84,10 @@ Section fundamental.
   Instance ty_unboxed_sound τ ρ : ty_unboxed τ → SemTyUnboxed (⟦ τ ⟧ ρ).
   Proof. destruct 1; simpl; apply _. Qed.
   Instance ty_un_op_sound op τ σ ρ :
-   ty_un_op op τ σ → SemTyUnOp op (⟦ τ ⟧ ρ) (⟦ σ ⟧ ρ).
+    ty_un_op op τ σ → SemTyUnOp op (⟦ τ ⟧ ρ) (⟦ σ ⟧ ρ).
   Proof. destruct 1; simpl; apply _. Qed.
   Instance ty_bin_op_sound op τ1 τ2 σ ρ :
-   ty_bin_op op τ1 τ2 σ → SemTyBinOp op (⟦ τ1 ⟧ ρ) (⟦ τ2 ⟧ ρ) (⟦ σ ⟧ ρ).
+    ty_bin_op op τ1 τ2 σ → SemTyBinOp op (⟦ τ1 ⟧ ρ) (⟦ τ2 ⟧ ρ) (⟦ σ ⟧ ρ).
   Proof. destruct 1; simpl; apply _. Qed.
 
   Theorem fundamental Γ e τ ρ :
