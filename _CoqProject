@@ -21,3 +21,4 @@ theories/two_state_ghost.v
 theories/symbol_ghost.v
 theories/unsafe.v
 theories/parametricity.v
+theories/interp.v
