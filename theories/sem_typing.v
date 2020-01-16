@@ -59,6 +59,9 @@ Section typed_properties.
     iIntros "#HA #HΓ". by iApply (big_sepM2_insert_2 with "[] HΓ").
   Qed.
 
+  Lemma env_sem_typed_empty vs : env_sem_typed ∅ vs -∗ ⌜vs = ∅⌝.
+  Proof. by iIntros "?"; iApply big_sepM2_empty_r. Qed.
+
   (* Unboxed types *)
   Global Instance sem_ty_unit_unboxed : SemTyUnboxed ().
   Proof. by iIntros (v ->). Qed.

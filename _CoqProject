@@ -17,3 +17,4 @@ theories/fundamental.v
 theories/safety.v
 theories/symbol_ghost.v
 theories/unsafe.v
+theories/exercises_answers.v
