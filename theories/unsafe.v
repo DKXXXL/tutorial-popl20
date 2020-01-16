@@ -53,7 +53,7 @@ Section unsafe.
     wp_alloc l as "Hl".
     wp_let.
     pose (I := (∃ n : Z, ⌜#n ≠ #0⌝ ∗ l ↦ #n)%I).
-    iMod (inv_alloc (nroot .@ "exercise3") _ I with "[Hl]")%I as "#Hinv".
+    iMod (inv_alloc (nroot .@ "inv") _ I with "[Hl]")%I as "#Hinv".
     { by iNext; iExists 1; iFrame. }
     wp_pures.
     iExists _, _. iSplit; first done.
@@ -68,7 +68,7 @@ Section unsafe.
       + rewrite bool_decide_eq_false_2; last congruence.
         wp_op.
         wp_if.
-        iInv (nroot .@ "exercise3") as (m) ">[% Hl]".
+        iInv (nroot .@ "inv") as (m) ">[% Hl]".
         wp_store.
         iModIntro. iSplit.
         * iExists n; auto with congruence.
@@ -79,7 +79,7 @@ Section unsafe.
       iApply wp_assert.
       (* Need because of atomic expression *)
       wp_bind (! _)%E.
-      iInv (nroot .@ "exercise3") as (m) ">[% Hl]".
+      iInv (nroot .@ "inv") as (m) ">[% Hl]".
       wp_load.
       iModIntro. iSplitL "Hl".
       { iExists m; auto. }
@@ -102,20 +102,20 @@ Section unsafe.
     wp_alloc l as "Hl".
     iMod two_state_init as (γ) "Ho".
     pose (I := (∃ b, two_state_auth γ b ∗ l ↦ (if b then #true else #0))%I).
-    iMod (inv_alloc (nroot .@ "exercise4") _ I with "[Hl Ho]") as "#Hinv".
+    iMod (inv_alloc (nroot .@ "inv") _ I with "[Hl Ho]") as "#Hinv".
     { iNext. iExists false. iFrame. }
     wp_pures.
     iIntros "!#" (? ->).
     wp_lam.
     (* Need because of atomic expression *)
     wp_bind (_ <- _)%E.
-    iInv (nroot .@ "exercise4") as (o) ">[Ho Hl]".
+    iInv (nroot .@ "inv") as (o) ">[Ho Hl]".
     wp_store.
     iMod (two_state_update with "Ho") as "[Ho Hf]".
     iModIntro. iSplitL "Hl Ho".
     { iNext. iExists true. iFrame. }
     wp_pures.
-    iInv (nroot .@ "exercise4") as (o') ">[Ho Hl]".
+    iInv (nroot .@ "inv") as (o') ">[Ho Hl]".
     iDestruct (two_state_agree with "Ho Hf") as %->.
     wp_load.
     iModIntro. iSplitL "Hl Ho".
