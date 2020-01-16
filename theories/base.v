@@ -1,5 +1,6 @@
 From iris.algebra Require Export list gmap.
 From iris.heap_lang Require Export lang notation metatheory.
+From iris.heap_lang.lib Require Export assert.
 
 (** We model type-level lambdas and applications as thunks since heap_lang does
 not have them. *)

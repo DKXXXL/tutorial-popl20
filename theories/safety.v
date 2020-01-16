@@ -1,5 +1,5 @@
-From tutorial_popl20 Require Export fundamental.
 From iris.heap_lang Require Export adequacy.
+From tutorial_popl20 Require Export fundamental.
 
 Lemma sem_gen_type_safety `{heapPreG Σ} e σ φ :
   (∀ `{heapG Σ}, ∃ A : sem_ty Σ, (∀ v, A v -∗ ⌜φ v⌝) ∧ (∅ ⊨ e : A)) →

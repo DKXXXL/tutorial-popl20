@@ -1,4 +1,4 @@
-From tutorial_popl20 Require Export typing sem_typing.
+From tutorial_popl20 Require Export typing compatibility.
 
 Reserved Notation "⟦ τ ⟧".
 Fixpoint interp `{heapG Σ} (τ : ty) (ρ : list (sem_ty Σ)) : sem_ty Σ :=

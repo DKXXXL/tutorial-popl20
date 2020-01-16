@@ -9,7 +9,7 @@ Definition symbolΣ : gFunctors := #[GFunctor (authR mnatUR)].
 Instance subG_symbolΣ {Σ} : subG symbolΣ Σ → symbolG Σ.
 Proof. solve_inG. Qed.
 
-Section symbol_ghosts.
+Section symbol_ghost.
   Context `{!symbolG Σ}.
 
   Definition counter (γ : gname) (n : nat) : iProp Σ := own γ (● (n : mnat)).
@@ -46,6 +46,6 @@ Section symbol_ghosts.
     iDestruct (own_valid_2 with "Hc Hs") as %[?%mnat_included _]%auth_both_valid.
     iPureIntro. omega.
   Qed.
-End symbol_ghosts.
+End symbol_ghost.
 
 Typeclasses Opaque counter symbol.
