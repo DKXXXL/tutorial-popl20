@@ -221,7 +221,7 @@ Lemma exercise5 `{!heapPreG Σ} e v σ w es σ' :
   rtc erased_step ([exercise5_prog e v : expr], σ) (of_val w :: es, σ') → w = v.
 Proof.
   intros He.
-  apply sem_type_safety with (φ := λ u, u = v).
+  apply sem_gen_type_safety with (φ := λ u, u = v).
   intros ?.
   exists (exercise5_sem_ty Σ v).
   split.

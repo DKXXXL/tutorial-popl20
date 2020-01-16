@@ -1,8 +1,8 @@
 From tutorial_popl20 Require Export fundamental.
 From iris.heap_lang Require Export adequacy.
 
-Lemma sem_type_safety `{heapPreG Σ} e σ φ :
-  (∀ `{heapG Σ}, ∃ A : sem_ty Σ, (∀ x, A x -∗ ⌜φ x⌝) ∧ (∅ ⊨ e : A)) →
+Lemma sem_gen_type_safety `{heapPreG Σ} e σ φ :
+  (∀ `{heapG Σ}, ∃ A : sem_ty Σ, (∀ v, A v -∗ ⌜φ v⌝) ∧ (∅ ⊨ e : A)) →
   adequate NotStuck e σ (λ v σ, φ v).
 Proof.
   intros Hty. apply (heap_adequacy Σ NotStuck e σ)=> // ?.
@@ -13,15 +13,14 @@ Proof.
   by iIntros; iApply HA.
 Qed.
 
-Lemma sem_type_safety' `{heapPreG Σ} e σ es σ' e' :
+Lemma sem_type_safety `{heapPreG Σ} e σ es σ' e' :
   (∀ `{heapG Σ}, ∃ A, ∅ ⊨ e : A) →
   rtc erased_step ([e], σ) (es, σ') → e' ∈ es →
   is_Some (to_val e') ∨ reducible e' σ'.
 Proof.
   intros Hty.
-  apply sem_type_safety with (φ := λ _, True); last done.
-  intros ?; specialize (Hty _) as [A Hty].
-  eauto.
+  apply sem_gen_type_safety with (φ := λ _, True)=> // ?.
+  specialize (Hty _) as [A Hty]; eauto.
 Qed.
 
 Lemma type_safety e σ es σ' e' τ :
@@ -29,7 +28,7 @@ Lemma type_safety e σ es σ' e' τ :
   rtc erased_step ([e], σ) (es, σ') → e' ∈ es →
   is_Some (to_val e') ∨ reducible e' σ'.
 Proof.
-  intros Hty. apply (sem_type_safety' (Σ:=heapΣ))=> ?.
+  intros Hty. apply (sem_type_safety (Σ:=heapΣ))=> ?.
   exists (⟦ τ ⟧ []). rewrite -(interp_env_empty []).
   by apply fundamental.
 Qed.
