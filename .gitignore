@@ -31,3 +31,4 @@ Makefile.coq*
 .coqdeps.d
 build-dep
 _opam
+.lia.cache
