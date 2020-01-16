@@ -6,7 +6,7 @@ From iris.heap_lang.lib Require Export assert.
 not have them. *)
 Notation "Λ: e" := (λ: <>, e)%E (at level 200, only parsing) : expr_scope.
 Notation "Λ: e" := (λ: <>, e)%V (at level 200, only parsing) : val_scope.
-Notation "e !" := (App e%E #()) (at level 10, only parsing) : expr_scope.
+Notation "e '<_>'" := (App e%E #()) (at level 10, only parsing) : expr_scope.
 
 (** We wrap unpack into an explicitly function so that we can have a nice
 notation for it. *)
