@@ -3,29 +3,29 @@ From tutorial_popl20 Require Export safety.
 Section parametricity.
   Context `{heapG Σ}.
 
-  (* REMOVE *) Definition exercise5_sem_ty Σ (v : val) : sem_ty Σ :=
+  Definition parametricity_I_sem_ty Σ (v : val) : sem_ty Σ :=
     SemTy (λ w, ⌜w = v⌝)%I.
 
-  Lemma exercise5 `{!heapPreG Σ} e (v : val) σ w es σ' :
+  Lemma parametricity_I `{!heapPreG Σ} e (v : val) σ w es σ' :
     (∀ `{heapG Σ}, ∅ ⊨ e : ∀ A, A → A) →
     rtc erased_step ([e <_> v]%E, σ) (of_val w :: es, σ') → w = v.
-  (* REMOVE *) Proof.
+  Proof.
     intros He.
     apply sem_gen_type_safety with (φ := λ u, u = v)=> ?.
-    exists (exercise5_sem_ty Σ v). split.
+    exists (parametricity_I_sem_ty Σ v). split.
     { by iIntros (?) "?". }
     iIntros (vs) "!# #Hvs".
     iPoseProof (He with "Hvs") as "He /=".
     wp_apply (wp_wand with "He").
     iIntros (u) "#Hu".
-    iSpecialize ("Hu" $! (exercise5_sem_ty Σ v)).
     wp_apply (wp_wand with "Hu"). iIntros (w') "Hw'". by iApply "Hw'".
   Qed.
 
-  (* REMOVE *) Definition exercise6_sem_ty Σ : sem_ty Σ :=
+  (** * Exercise (easy) *)
+  (* REMOVE *) Definition parametricity_empty_sem_ty Σ : sem_ty Σ :=
     SemTy (λ w, False)%I.
 
-  Lemma exercise6 `{!heapPreG Σ} e (v : val) σ w es σ' :
+  Lemma parametricity_empty `{!heapPreG Σ} e (v : val) σ w es σ' :
     (∀ `{heapG Σ}, ∅ ⊨ e : ∀ A, A) →
     rtc erased_step ([e <_>]%E, σ) (of_val w :: es, σ') →
     False.
@@ -33,12 +33,12 @@ Section parametricity.
     intros He.
     change False with ((λ _, False) w).
     apply sem_gen_type_safety with (φ := λ _, False)=> ?.
-    exists (exercise6_sem_ty Σ). split.
+    exists (parametricity_empty_sem_ty Σ). split.
     { by iIntros (?) "?". }
     iIntros (vs) "!# #Hvs".
     iPoseProof (He with "Hvs") as "He /=".
     wp_apply (wp_wand with "He").
     iIntros (u) "#Hu".
-    iApply ("Hu" $! (exercise6_sem_ty Σ)).
+    iApply ("Hu" $! (parametricity_empty_sem_ty Σ)).
   Qed.
 End parametricity.
