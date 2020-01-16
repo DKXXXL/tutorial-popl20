@@ -1,18 +1,20 @@
 From tutorial_popl20 Require Export typing sem_typing.
 
+Reserved Notation "⟦ τ ⟧".
 Fixpoint interp `{heapG Σ} (τ : ty) (ρ : list (sem_ty Σ)) : sem_ty Σ :=
   match τ return _ with
   | TVar x => default sem_ty_unit (ρ !! x) (* dummy in case [x ∉ ρ] *)
   | TUnit => sem_ty_unit
   | TBool => sem_ty_bool
   | TInt => sem_ty_int
-  | TArr τ1 τ2 => sem_ty_arr (interp τ1 ρ) (interp τ2 ρ)
-  | TProd τ1 τ2 => sem_ty_prod (interp τ1 ρ) (interp τ2 ρ)
-  | TSum τ1 τ2 => sem_ty_sum (interp τ1 ρ) (interp τ2 ρ)
-  | TForall τ => sem_ty_forall (interp τ ∘ (.:: ρ))
-  | TExist τ => sem_ty_exist (interp τ ∘ (.:: ρ))
-  | TRef τ => sem_ty_ref (interp τ ρ)
-  end.
+  | TArr τ1 τ2 => ⟦ τ1 ⟧ ρ → ⟦ τ2 ⟧ ρ
+  | TProd τ1 τ2 => ⟦ τ1 ⟧ ρ * ⟦ τ2 ⟧ ρ
+  | TSum τ1 τ2 => ⟦ τ1 ⟧ ρ + ⟦ τ2 ⟧ ρ
+  | TForall τ => ∀ X, ⟦ τ ⟧ (X :: ρ)
+  | TExist τ => ∃ X, ⟦ τ ⟧ (X :: ρ)
+  | TRef τ => ref (⟦ τ ⟧ ρ)
+  end%sem_ty
+where "⟦ τ ⟧" := (interp τ).
 
 Instance: Params (@interp) 2 := {}.
 
@@ -24,24 +26,24 @@ Section fundamental.
   Implicit Types Γ : gmap string ty.
   Implicit Types ρ : list (sem_ty Σ).
 
-  Global Instance interp_ne τ : NonExpansive (interp τ).
+  Global Instance interp_ne τ : NonExpansive ⟦ τ ⟧.
   Proof. induction τ; solve_proper. Qed.
-  Global Instance interp_proper τ : Proper ((≡) ==> (≡)) (interp τ).
+  Global Instance interp_proper τ : Proper ((≡) ==> (≡)) ⟦ τ ⟧.
   Proof. apply ne_proper, _. Qed.
 
   Lemma interp_env_empty ρ : interp_env (∅ : gmap string ty) ρ = ∅.
   Proof. by rewrite /interp_env fmap_empty. Qed.
   Lemma lookup_interp_env Γ x τ ρ :
-    Γ !! x = Some τ → interp_env Γ ρ !! x = Some (interp τ ρ).
+    Γ !! x = Some τ → interp_env Γ ρ !! x = Some (⟦ τ ⟧ ρ).
   Proof. intros Hx. by rewrite /interp_env lookup_fmap Hx. Qed.
   Lemma interp_env_binder_insert Γ x τ ρ :
     interp_env (binder_insert x τ Γ) ρ
-    = binder_insert x (interp τ ρ) (interp_env Γ ρ).
+    = binder_insert x (⟦ τ ⟧ ρ) (interp_env Γ ρ).
   Proof. destruct x as [|x]=> //=. by rewrite /interp_env fmap_insert. Qed.
 
   Lemma interp_ty_lift n τ ρ :
     n ≤ length ρ →
-    interp (ty_lift n τ) ρ ≡ interp τ (delete n ρ).
+    ⟦ ty_lift n τ ⟧ ρ ≡ ⟦ τ ⟧ (delete n ρ).
   Proof.
     (* Use [elim:] instead of [induction] so we can properly name hyps *)
     revert n ρ. elim: τ; simpl; try (intros; done || f_equiv/=; by auto).
@@ -62,7 +64,7 @@ Section fundamental.
 
   Lemma interp_ty_subst i τ τ' ρ :
     i ≤ length ρ →
-    interp (ty_subst i τ' τ) ρ ≡ interp τ (take i ρ ++ interp τ' ρ :: drop i ρ).
+    ⟦ ty_subst i τ' τ ⟧ ρ ≡ ⟦ τ ⟧ (take i ρ ++ ⟦ τ' ⟧ ρ :: drop i ρ).
   Proof.
     (* Use [elim:] instead of [induction] so we can properly name hyps *)
     revert i τ' ρ. elim: τ; simpl; try (intros; done || f_equiv/=; by auto).
@@ -79,18 +81,18 @@ Section fundamental.
       by rewrite interp_ty_lift; last lia.
   Qed.
 
-  Instance ty_unboxed_sound τ ρ : ty_unboxed τ → SemTyUnboxed (interp τ ρ).
+  Instance ty_unboxed_sound τ ρ : ty_unboxed τ → SemTyUnboxed (⟦ τ ⟧ ρ).
   Proof. destruct 1; simpl; apply _. Qed.
   Instance ty_un_op_sound op τ σ ρ :
-   ty_un_op op τ σ → SemTyUnOp op (interp τ ρ) (interp σ ρ).
+    ty_un_op op τ σ → SemTyUnOp op (⟦ τ ⟧ ρ) (⟦ σ ⟧ ρ).
   Proof. destruct 1; simpl; apply _. Qed.
   Instance ty_bin_op_sound op τ1 τ2 σ ρ :
-   ty_bin_op op τ1 τ2 σ → SemTyBinOp op (interp τ1 ρ) (interp τ2 ρ) (interp σ ρ).
+    ty_bin_op op τ1 τ2 σ → SemTyBinOp op (⟦ τ1 ⟧ ρ) (⟦ τ2 ⟧ ρ) (⟦ σ ⟧ ρ).
   Proof. destruct 1; simpl; apply _. Qed.
 
   Theorem fundamental Γ e τ ρ :
     (Γ ⊢ₜ e : τ) →
-    interp_env Γ ρ ⊨ e : interp τ ρ.
+    interp_env Γ ρ ⊨ e : ⟦ τ ⟧ ρ.
   Proof.
     intros Htyped. iInduction Htyped as [] "IH" forall (ρ); simpl in *.
     - iApply sem_typed_var. by apply lookup_interp_env.
