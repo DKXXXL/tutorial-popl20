@@ -1,4 +1,4 @@
-From tutorial_popl20 Require Export sem_typed.
+From tutorial_popl20 Require Export sem_typed sem_operators.
 
 Section compatibility.
   Context `{heapG Σ}.
