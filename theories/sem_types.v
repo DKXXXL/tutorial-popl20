@@ -49,13 +49,13 @@ Section types.
   Definition sem_ty_bool : sem_ty Σ := SemTy (λ w, ∃ b : bool, ⌜ w = #b ⌝)%I.
   Definition sem_ty_int : sem_ty Σ := SemTy (λ w, ∃ n : Z, ⌜ w = #n ⌝)%I.
 
-  Definition sem_ty_arr (A1 A2 : sem_ty Σ) : sem_ty Σ := SemTy (λ w,
-    □ ∀ v, A1 v -∗ WP App w v {{ A2 }})%I.
-
   Definition sem_ty_prod (A1 A2 : sem_ty Σ) : sem_ty Σ := SemTy (λ w,
     ∃ w1 w2, ⌜w = PairV w1 w2⌝ ∧ A1 w1 ∧ A2 w2)%I.
   Definition sem_ty_sum (A1 A2 : sem_ty Σ) : sem_ty Σ := SemTy (λ w,
     (∃ w1, ⌜w = InjLV w1⌝ ∧ A1 w1) ∨ (∃ w2, ⌜w = InjRV w2⌝ ∧ A2 w2))%I.
+
+  Definition sem_ty_arr (A1 A2 : sem_ty Σ) : sem_ty Σ := SemTy (λ w,
+    □ ∀ v, A1 v -∗ WP App w v {{ A2 }})%I.
 
   Definition sem_ty_forall (C : sem_ty Σ → sem_ty Σ) : sem_ty Σ := SemTy (λ w,
     □ ∀ A : sem_ty Σ, WP w #() {{ w, C A w }})%I.
@@ -76,9 +76,9 @@ Instance: Params (@sem_ty_ref) 2 := {}.
 
 (* Nice notations *)
 Notation "()" := sem_ty_unit : sem_ty_scope.
-Infix "→" := sem_ty_arr : sem_ty_scope.
 Infix "*" := sem_ty_prod : sem_ty_scope.
 Infix "+" := sem_ty_sum : sem_ty_scope.
+Infix "→" := sem_ty_arr : sem_ty_scope.
 Notation "∀ A1 .. An , C" :=
   (sem_ty_forall (λ A1, .. (sem_ty_forall (λ An, C%sem_ty)) ..)) : sem_ty_scope.
 Notation "∃ A1 .. An , C" :=

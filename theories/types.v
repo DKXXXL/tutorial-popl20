@@ -5,9 +5,9 @@ Inductive ty :=
   | TUnit : ty
   | TBool : ty
   | TInt : ty
-  | TArr : ty → ty → ty
   | TProd : ty → ty → ty
   | TSum : ty → ty → ty
+  | TArr : ty → ty → ty
   | TForall : ty → ty
   | TExist : ty → ty
   | TRef : ty → ty.
@@ -29,9 +29,9 @@ Fixpoint ty_lift (n : nat) (τ : ty) : ty :=
   | TUnit => TUnit
   | TBool => TBool
   | TInt => TInt
-  | TArr τ1 τ2 => TArr (ty_lift n τ1) (ty_lift n τ2)
   | TProd τ1 τ2 => TProd (ty_lift n τ1) (ty_lift n τ2)
   | TSum τ1 τ2 => TSum (ty_lift n τ1) (ty_lift n τ2)
+  | TArr τ1 τ2 => TArr (ty_lift n τ1) (ty_lift n τ2)
   | TForall τ => TForall (ty_lift (S n) τ)
   | TExist τ => TExist (ty_lift (S n) τ)
   | TRef τ => TRef (ty_lift n τ)
@@ -44,9 +44,9 @@ Fixpoint ty_subst (x : nat) (σ : ty) (τ : ty) : ty :=
   | TUnit => TUnit
   | TBool => TBool
   | TInt => TInt
-  | TArr τ1 τ2 => TArr (ty_subst x σ τ1) (ty_subst x σ τ2)
   | TProd τ1 τ2 => TProd (ty_subst x σ τ1) (ty_subst x σ τ2)
   | TSum τ1 τ2 => TSum (ty_subst x σ τ1) (ty_subst x σ τ2)
+  | TArr τ1 τ2 => TArr (ty_subst x σ τ1) (ty_subst x σ τ2)
   | TForall τ => TForall (ty_subst (S x) (ty_lift 0 σ) τ)
   | TExist τ => TExist (ty_subst (S x) (ty_lift 0 σ) τ)
   | TRef τ => TRef (ty_subst x σ τ)

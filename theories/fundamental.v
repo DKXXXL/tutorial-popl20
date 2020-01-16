@@ -7,9 +7,9 @@ Fixpoint interp `{heapG Σ} (τ : ty) (ρ : list (sem_ty Σ)) : sem_ty Σ :=
   | TUnit => sem_ty_unit
   | TBool => sem_ty_bool
   | TInt => sem_ty_int
-  | TArr τ1 τ2 => ⟦ τ1 ⟧ ρ → ⟦ τ2 ⟧ ρ
   | TProd τ1 τ2 => ⟦ τ1 ⟧ ρ * ⟦ τ2 ⟧ ρ
   | TSum τ1 τ2 => ⟦ τ1 ⟧ ρ + ⟦ τ2 ⟧ ρ
+  | TArr τ1 τ2 => ⟦ τ1 ⟧ ρ → ⟦ τ2 ⟧ ρ
   | TForall τ => ∀ X, ⟦ τ ⟧ (X :: ρ)
   | TExist τ => ∃ X, ⟦ τ ⟧ (X :: ρ)
   | TRef τ => ref (⟦ τ ⟧ ρ)
@@ -99,15 +99,15 @@ Section fundamental.
     - iApply sem_typed_unit.
     - iApply sem_typed_bool.
     - iApply sem_typed_int.
-    - iApply sem_typed_rec. iSpecialize ("IH" $! ρ).
-      by rewrite !interp_env_binder_insert.
-    - by iApply sem_typed_app.
     - by iApply sem_typed_pair.
     - by iApply sem_typed_fst.
     - by iApply sem_typed_snd.
     - by iApply sem_typed_injl.
     - by iApply sem_typed_injr.
     - by iApply sem_typed_case.
+    - iApply sem_typed_rec. iSpecialize ("IH" $! ρ).
+      by rewrite !interp_env_binder_insert.
+    - by iApply sem_typed_app.
     - iApply sem_typed_tlam; iIntros (A). iSpecialize ("IH" $! (A :: ρ)).
       by rewrite interp_env_ty_lift /=; last lia.
     - rewrite interp_ty_subst /=; last lia.

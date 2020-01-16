@@ -41,13 +41,6 @@ Inductive typed (Γ : gmap string ty) : expr → ty → Prop :=
      Γ ⊢ₜ # b : TBool
   | Int_typed (i : Z) :
      Γ ⊢ₜ # i : TInt
-  (** Functions *)
-  | Rec_typed f x e τ1 τ2 :
-     binder_insert f (TArr τ1 τ2) (binder_insert x τ1 Γ) ⊢ₜ e : τ2 →
-     Γ ⊢ₜ Rec f x e : TArr τ1 τ2
-  | App_typed e1 e2 τ1 τ2 :
-     Γ ⊢ₜ e1 : TArr τ1 τ2 → Γ ⊢ₜ e2 : τ1 →
-     Γ ⊢ₜ App e1 e2 : τ2
   (** Products and sums *)
   | Pair_typed e1 e2 τ1 τ2 :
      Γ ⊢ₜ e1 : τ1 → Γ ⊢ₜ e2 : τ2 →
@@ -67,6 +60,13 @@ Inductive typed (Γ : gmap string ty) : expr → ty → Prop :=
   | Case_typed e0 e1 e2 τ1 τ2 τ3 :
      Γ ⊢ₜ e0 : TSum τ1 τ2 → Γ ⊢ₜ e1 : TArr τ1 τ3 → Γ ⊢ₜ e2 : TArr τ2 τ3 →
      Γ ⊢ₜ Case e0 e1 e2 : τ3
+  (** Functions *)
+  | Rec_typed f x e τ1 τ2 :
+     binder_insert f (TArr τ1 τ2) (binder_insert x τ1 Γ) ⊢ₜ e : τ2 →
+     Γ ⊢ₜ Rec f x e : TArr τ1 τ2
+  | App_typed e1 e2 τ1 τ2 :
+     Γ ⊢ₜ e1 : TArr τ1 τ2 → Γ ⊢ₜ e2 : τ1 →
+     Γ ⊢ₜ App e1 e2 : τ2
   (** Polymorphic functions and existentials *)
   | TLam_typed e τ :
      ty_lift 0 <$> Γ ⊢ₜ e : τ →

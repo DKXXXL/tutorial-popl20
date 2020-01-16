@@ -1,4 +1,4 @@
-From tutorial_popl20 Require Export sem_types.
+From tutorial_popl20 Require Export sem_type_formers.
 
 (* Typing for operators *)
 Class SemTyUnboxed `{heapG Σ} (A : sem_ty Σ) :=
@@ -126,29 +126,6 @@ Section typed_properties.
   Lemma sem_typed_int Γ (n : Z) : Γ ⊨ #n : sem_ty_int.
   Proof. iIntros (vs) "!# _ /=". iApply wp_value. rewrite /sem_ty_car /=. eauto. Qed.
 
-  Lemma sem_typed_rec Γ f x e A1 A2 :
-    (binder_insert f (A1 → A2)%sem_ty (binder_insert x A1 Γ) ⊨ e : A2) -∗
-    Γ ⊨ (rec: f x := e) : A1 → A2.
-  Proof.
-    iIntros "#H" (vs) "!# #HΓ /=". wp_pures. iLöb as "IH".
-    iIntros "!#" (v) "#HA1". wp_pures. set (r := RecV f x _).
-    iSpecialize ("H" $! (binder_insert f r (binder_insert x v vs)) with "[#]").
-    { iApply (env_sem_typed_insert with "IH"). by iApply env_sem_typed_insert. }
-    destruct x as [|x], f as [|f]; rewrite /= -?subst_map_insert //.
-    destruct (decide (x = f)) as [->|].
-    - by rewrite subst_subst delete_idemp insert_insert -subst_map_insert.
-    - rewrite subst_subst_ne // -subst_map_insert.
-      by rewrite -delete_insert_ne // -subst_map_insert.
-  Qed.
-
-  Lemma sem_typed_app Γ e1 e2 A1 A2 :
-    (Γ ⊨ e1 : A1 → A2) -∗ (Γ ⊨ e2 : A1) -∗ Γ ⊨ e1 e2 : A2.
-  Proof.
-    iIntros "#H1 #H2" (vs) "!# #HΓ /=".
-    wp_apply (wp_wand with "(H2 [//])"); iIntros (w) "#HA1".
-    wp_apply (wp_wand with "(H1 [//])"); iIntros (v) "#HA". by iApply "HA".
-  Qed.
-
   Lemma sem_typed_pair Γ e1 e2 A1 A2 :
     (Γ ⊨ e1 : A1) -∗ (Γ ⊨ e2 : A2) -∗ Γ ⊨ (e1,e2) : A1 * A2.
   Proof.
@@ -192,6 +169,29 @@ Section typed_properties.
       wp_apply (wp_wand with "(H1 [//])"); iIntros (v) "#HAB". by iApply "HAB".
     - iDestruct "HA" as (w2 ->) "HA". wp_pures.
       wp_apply (wp_wand with "(H2 [//])"); iIntros (v) "#HAB". by iApply "HAB".
+  Qed.
+
+  Lemma sem_typed_rec Γ f x e A1 A2 :
+    (binder_insert f (A1 → A2)%sem_ty (binder_insert x A1 Γ) ⊨ e : A2) -∗
+    Γ ⊨ (rec: f x := e) : A1 → A2.
+  Proof.
+    iIntros "#H" (vs) "!# #HΓ /=". wp_pures. iLöb as "IH".
+    iIntros "!#" (v) "#HA1". wp_pures. set (r := RecV f x _).
+    iSpecialize ("H" $! (binder_insert f r (binder_insert x v vs)) with "[#]").
+    { iApply (env_sem_typed_insert with "IH"). by iApply env_sem_typed_insert. }
+    destruct x as [|x], f as [|f]; rewrite /= -?subst_map_insert //.
+    destruct (decide (x = f)) as [->|].
+    - by rewrite subst_subst delete_idemp insert_insert -subst_map_insert.
+    - rewrite subst_subst_ne // -subst_map_insert.
+      by rewrite -delete_insert_ne // -subst_map_insert.
+  Qed.
+
+  Lemma sem_typed_app Γ e1 e2 A1 A2 :
+    (Γ ⊨ e1 : A1 → A2) -∗ (Γ ⊨ e2 : A1) -∗ Γ ⊨ e1 e2 : A2.
+  Proof.
+    iIntros "#H1 #H2" (vs) "!# #HΓ /=".
+    wp_apply (wp_wand with "(H2 [//])"); iIntros (w) "#HA1".
+    wp_apply (wp_wand with "(H1 [//])"); iIntros (v) "#HA". by iApply "HA".
   Qed.
 
   Lemma sem_typed_tlam Γ e C : (∀ A, Γ ⊨ e : C A) -∗ Γ ⊨ (Λ: e) : ∀ A, C A.
