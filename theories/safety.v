@@ -18,6 +18,6 @@ Lemma type_safety e σ es σ' e' τ :
   is_Some (to_val e') ∨ reducible e' σ'.
 Proof.
   intros Hty. apply (sem_type_safety (Σ:=heapΣ))=> ?.
-  exists (interp τ []). rewrite -(interp_env_empty []).
+  exists (⟦ τ ⟧ []). rewrite -(interp_env_empty []).
   by apply fundamental.
 Qed.
