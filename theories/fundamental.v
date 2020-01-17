@@ -1,4 +1,4 @@
-From tutorial_popl20 Require Export typing compatibility interp.
+From tutorial_popl20 Require Export typed compatibility interp.
 
 Definition interp_env `{heapG Σ} (Γ : gmap string ty)
   (ρ : list (sem_ty Σ)) : gmap string (sem_ty Σ) := flip interp ρ <$> Γ.

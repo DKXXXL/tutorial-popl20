@@ -3,13 +3,13 @@ From tutorial_popl20 Require Export safety.
 Section parametricity.
   Context `{heapG Σ}.
 
-  (* REMOVE *) Definition identity_param_sem_ty Σ (v : val) : sem_ty Σ :=
+  Definition identity_param_sem_ty Σ (v : val) : sem_ty Σ :=
     SemTy (λ w, ⌜w = v⌝)%I.
 
   Lemma identity_param `{!heapPreG Σ} e (v : val) σ w es σ' :
     (∀ `{heapG Σ}, ∅ ⊨ e : ∀ A, A → A) →
     rtc erased_step ([e <_> v]%E, σ) (of_val w :: es, σ') → w = v.
-  (* REMOVE *) Proof.
+  Proof.
     intros He.
     apply sem_gen_type_safety with (φ := λ u, u = v)=> ?.
     exists (identity_param_sem_ty Σ v). split.

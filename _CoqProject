@@ -10,10 +10,11 @@
 
 theories/base.v
 theories/types.v
-theories/typing.v
+theories/typed.v
 theories/sem_types.v
 theories/sem_type_formers.v
-theories/sem_typing.v
+theories/sem_typed.v
+theories/sem_operators.v
 theories/compatibility.v
 theories/fundamental.v
 theories/safety.v
