@@ -1,10 +1,23 @@
+EXTRA_DIR:=coqdocjs/extra
+COQDOCFLAGS:= \
+  --toc --toc-depth 2 --html --interpolate \
+  --index indexpage --no-lib-name --parse-comments \
+  --with-header $(EXTRA_DIR)/header.html --with-footer $(EXTRA_DIR)/footer.html
+export COQDOCFLAGS
+
 # Forward most targets to Coq makefile (with some trick to make this phony)
 %: Makefile.coq phony
 	+@make -f Makefile.coq $@
 
 all: Makefile.coq
 	+@make -f Makefile.coq all
-.PHONY: all
+
+html: Makefile.coq phony
+	rm -fr html
+	@$(MAKE) -f Makefile.coq html
+	cp $(EXTRA_DIR)/resources/* html
+
+.PHONY: all html
 
 clean: Makefile.coq
 	+@make -f Makefile.coq clean
