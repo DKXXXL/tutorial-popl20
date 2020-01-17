@@ -71,7 +71,7 @@ Section parametricity.
   Lemma nat_param `{!heapPreG Σ} e σ w es σ' :
     (∀ `{heapG Σ}, ∅ ⊨ e : ∀ A, (A → A) → A → A) →
     rtc erased_step ([e <_> (λ: "n", "n" + #1)%V #0]%E, σ)
-        (of_val w :: es, σ') → ∃ n : nat, w = #n.
+      (of_val w :: es, σ') → ∃ n : nat, w = #n.
   (* REMOVE *) Proof.
     intros He.
     apply sem_gen_type_safety with (φ := λ w, ∃ n : nat, w = #n)=> ?.
@@ -95,50 +95,43 @@ Section parametricity.
     by iExists 0%nat.
   Qed.
 
-  (* REMOVE *) Definition strong_nat_param_sem_ty Σ (ψ : nat → val → Prop) : sem_ty Σ :=
-    SemTy (λ w, ∃ n : nat, ⌜ψ n w⌝)%I.
+  (* REMOVE *) Definition strong_nat_param_sem_ty {A Σ} (Ψ : A → sem_ty Σ) : sem_ty Σ :=
+    SemTy (λ w, ∃ x : A, Ψ x w)%I.
 
-  Definition strong_nat_param_semtyp_family
-             {A Σ} (Ψ : A → sem_ty Σ) : sem_ty Σ :=
-    SemTy (λ w, ∃ n, Ψ n w)%I.
-
-  Lemma strong_nat_param `{!heapPreG Σ} e σ w es σ' (f z : val) ψ:
-    (∀ `{heapG Σ}, ∅ ⊨ e : ∀ A, (A → A) → A → A) →
-    (∀ `{heapG Σ},
-        ∃ (Ψ : nat → sem_ty Σ),
-          (∀ n w, Ψ n w -∗ ⌜ψ n w⌝) ∧
-          (∀ n w, {{{Ψ n w}}} f w {{{w', RET w'; Ψ (S n) w'}}}) ∧
-          (Ψ 0%nat z)%I) →
-    rtc erased_step ([e <_> f z]%E, σ) (of_val w :: es, σ') → ∃ n : nat, ψ n w.
+  Lemma strong_nat_param `{!heapPreG Σ} e σ w es σ' (vf vz : val) ψ:
+    (∀ `{heapG Σ}, ∃ (Ψ : nat → sem_ty Σ),
+      (∅ ⊨ e : ∀ A, (A → A) → A → A) ∧
+      (∀ n w, {{{ Ψ n w }}} vf w {{{ w', RET w'; Ψ (S n) w' }}}) ∧
+      (Ψ 0%nat vz) ∧
+      (∀ n w, Ψ n w -∗ ⌜ψ n w⌝)) →
+    rtc erased_step ([e <_> vf vz]%E, σ) (of_val w :: es, σ') → ∃ n : nat, ψ n w.
   (* REMOVE *) Proof.
-    intros He Hfz.
+    intros He.
     apply sem_gen_type_safety with (φ := λ w, ∃ n, ψ n w)=> ?.
-    exists (strong_nat_param_sem_ty Σ ψ). split.
-    { iIntros (?). iDestruct 1 as (?) "%". eauto. }
-    specialize (Hfz _) as (Ψ & HΨ & Hf & Hz).
+    exists (strong_nat_param_sem_ty (λ n : nat, SemTy (λ w, ⌜ψ n w⌝)%I)). split.
+    { iIntros (v [n ?]); eauto. }
+    specialize (He _) as (Ψ & He & Hvf & Hvz & Hψ).
     iIntros (vs) "!# #Hvs".
     iPoseProof (He with "Hvs") as "He /=".
     wp_apply (wp_wand with "He").
     iIntros (u) "#Hu".
-    iSpecialize ("Hu" $! (strong_nat_param_semtyp_family Ψ)).
+    iSpecialize ("Hu" $! (strong_nat_param_sem_ty Ψ)).
     wp_apply (wp_wand with "Hu"). iIntros (w') "#Hw'".
-    iSpecialize ("Hw'" $! f with "[]").
+    iSpecialize ("Hw'" $! vf with "[]").
     { iIntros "!#" (u') "Hu'".
       iDestruct "Hu'"as (k) "Hu'".
-      iApply (Hf with "Hu'").
-      iNext.
-      iIntros (u'') "Hu''".
+      iApply (Hvf with "Hu'").
+      iIntros "!>" (u'') "Hu''".
       by iExists _. }
     wp_apply (wp_wand with "Hw'").
     iIntros (w'') "#Hw''".
     iApply wp_wand.
-    { iApply ("Hw''" $! z with "[]"); eauto.
+    { iApply ("Hw''" $! vz with "[]"); eauto.
       iExists 0%nat.
-      iApply Hz. }
+      iApply Hvz. }
     iIntros (v).
     iDestruct 1 as (k) "Hv".
     iExists k.
-    by iApply HΨ.
+    by iApply Hψ.
   Qed.
-
 End parametricity.

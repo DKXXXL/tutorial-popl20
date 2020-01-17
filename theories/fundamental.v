@@ -19,8 +19,6 @@ Section fundamental.
   Implicit Types τ : ty.
   Implicit Types ρ : list (sem_ty Σ).
 
-  (* I'm not sure where I should move the following but they don't
-  seem to belong here! *)
   Instance ty_unboxed_sound τ ρ : ty_unboxed τ → SemTyUnboxed (⟦ τ ⟧ ρ).
   Proof. destruct 1; simpl; apply _. Qed.
   Instance ty_un_op_sound op τ σ ρ :

@@ -43,10 +43,15 @@ Section sem_typed.
 
   Global Instance env_sem_typed_ne n :
     Proper (dist n ==> (=) ==> dist n) (@env_sem_typed Σ _).
-  Proof. Admitted.
+  Proof.
+    intros Γ1 Γ2 HΓ ρ ? <-.
+    apply big_sepM2_ne_2=> // k A1 v1 A2 v2 _ _ HA _ _ /discrete_iff / leibniz_equiv_iff ->.
+    by apply HA.
+  Qed.
   Global Instance env_sem_typed_proper :
     Proper ((≡) ==> (=) ==> (≡)) (@env_sem_typed Σ _).
-  Proof. intros ??????. subst. rewrite /env_sem_typed. Admitted.
+  Proof. intros Γ1 Γ2 HΓ ρ ? <-. apply equiv_dist=> n. f_equiv. by rewrite HΓ. Qed.
+
   Global Instance sem_typed_ne n :
     Proper (dist n ==> (=) ==> dist n ==> dist n) (@sem_typed Σ _).
   Proof. solve_proper. Qed.

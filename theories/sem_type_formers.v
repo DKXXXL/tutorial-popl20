@@ -99,8 +99,8 @@ Section types.
    types. However, for the sake of simplicity we did not consider
    recursive types for this tutorial. In particular, to give the
    semantics of recursive types one needs to use Iris's guarded
-   fixpoints which in turn requires us to enforce that semantics types,
-   in addition to being persistent, are also non-expansive. *)
+   fixpoints, which require some additional bookkeeping related to
+   contractiveness. *)
 End types.
 
 (** We introduce nicely looking notations for our semantic types. This allows

@@ -3,22 +3,25 @@ From iris.heap_lang Require Export proofmode.
 From iris.base_logic.lib Require Export invariants.
 
 (** * The domain of semantics types. *)
-(** Here we define the domain of semantics types as persistent iris
+(** Here we define the domain of semantics types as persistent Iris
     predicates over values. That is, to capture the semantics of a
-    type [τ], we need to define what programs are belong to the
+    type [τ], we need to define what expressions belong to the
     semantics of [τ]. We do this in two steps:
 
-      - We define what values semantically belong to type [τ]
+      - We define what values semantically belong to type [τ]. We do
+        this in the file [sem_type_formers].
       - We define the expressions that semantically belong to [τ]. An
         expression [e] semantically belongs to type [τ] if [e] is
         _safe_, and whenever it evaluates to a value [v], [v]
-        semantically belongs to [τ].
+        semantically belongs to [τ]. We do this in the file [sem_typed].
 
-    Here we use iris predicates as value semantics of types. The power
-    iris's logic then allows us to define many semantic types
+    Here we use Iris predicates as value semantics of types. The power
+    of Iris's logic then allows us to define many semantic types
     including those that we need to interpret syntactic types for
     heap_lang, e.g., higher-order references, parametric polymorphism,
-    etc. It is crucial for value semantics of types to be persistent
+    etc.
+
+    It is crucial for value semantics of types to be persistent
     predicates. This is due to the fact that our type system (as
     opposed to substructural type systems, e.g., affine type systems)
     allows values to be used multiple times. Hence, the fact that a
