@@ -2,6 +2,33 @@ From tutorial_popl20 Require Export base.
 From iris.heap_lang Require Export proofmode.
 From iris.base_logic.lib Require Export invariants.
 
+(**
+ * The domain of semantics types.
+*)
+
+(** Here we define the domain of semantics types as persistent iris
+    predicates over values. That is, to capture the semantics of a
+    type [τ], we need to define what programs are belong to the
+    semantics of [τ]. We do this in two steps:
+
+    (1) We define what values semantically belong to type [τ]
+    (2) We define the expressions that semantically belong to [τ]. An
+        expression [e] semantically belongs to type [τ] if [e] is
+        _safe_, and whenever it evaluates to a value [v], [v]
+        semantically belongs to [τ].
+
+    Here we use iris predicates as value semantics of types. The power
+    iris's logic then allows us to define many semantic types
+    including those that we need to interpret syntactic types for
+    heap_lang, e.g., higher-order references, parametric polymorphism,
+    etc. It is crucial for value semantics of types to be persistent
+    predicates. This is due to the fact that our type system (as
+    opposed to substructural type systems, e.g., affine type systems)
+    allows values to be used multiple times. Hence, the fact that a
+    value belongs to the semantics of a type must be duplicable which
+    is guaranteed by persistence.
+ *)
+
 (* The domain of semantic types: persistent Iris predicates over values *)
 Record sem_ty Σ := SemTy {
   sem_ty_car :> val → iProp Σ;
@@ -12,6 +39,12 @@ Arguments sem_ty_car {_} _ _ : simpl never.
 Bind Scope sem_ty_scope with sem_ty.
 Delimit Scope sem_ty_scope with sem_ty.
 Existing Instance sem_ty_persistent.
+
+(** We show that the domain of semantic types forms a Complete Ordered
+    Family of Equivalences (COFE). This is necessary mostly for
+    enabling rewriting equivalent semantic types through Coq's setoid
+    rewrite system. This part is mostly boilerplate.
+ *)
 
 (* The COFE structure on semantic types *)
 Section sem_ty_cofe.
