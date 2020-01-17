@@ -1,5 +1,9 @@
 From tutorial_popl20 Require Export sem_type_formers types.
 
+(** * Here we use semantic type formers to define semantics of syntactic types.
+
+    This is done by a straightforward induction on the syntactic type.  *)
+
 Reserved Notation "⟦ τ ⟧".
 Fixpoint interp `{heapG Σ} (τ : ty) (ρ : list (sem_ty Σ)) : sem_ty Σ :=
   match τ return _ with
