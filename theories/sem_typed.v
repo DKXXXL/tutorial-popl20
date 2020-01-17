@@ -1,10 +1,31 @@
 From tutorial_popl20 Require Export sem_type_formers.
 
-(* The semantic typing judgment *)
+(** * Here we define the semantic typing judgment. *)
+
+(** We define the judgment [Γ ⊨ e : A] for semantic typing of the
+    expression [e] at semantic type [A], assuming that free variables
+    in [e] belong to the semantic types described by [Γ]. This notion
+    is defined as follows:
+
+    - We define the semantic typing relation [env_sem_typed] for
+      typing contexts: An environments (mappings from free variables
+      to values) [vs] is in the semantic type for a typing context
+      [Γ], [env_sem_typed Γ vs], if for any free variable [x], [vs(x)]
+      is in the semantic type [Γ(x)].
+
+    - The semantic typing judgment [Γ ⊨ e : A] holds if for any
+      environment [vs] such that [env_sem_typed Γ vs] we have that
+      [subst_map vs e] is an expression in the semantics of type [A],
+      i.e., [WP subst_map vs e {{ A }}] holds. *)
+
+
+(** The semantic type for the typing context (environment). *)
 Definition env_sem_typed `{heapG Σ} (Γ : gmap string (sem_ty Σ))
     (vs : gmap string val) : iProp Σ :=
   ([∗ map] i ↦ A;v ∈ Γ; vs, sem_ty_car A v)%I.
 Instance: Params (@env_sem_typed) 2 := {}.
+
+(** The semantics typing judgment. *)
 Definition sem_typed `{heapG Σ}
     (Γ : gmap string (sem_ty Σ)) (e : expr) (A : sem_ty Σ) : iProp Σ :=
   tc_opaque (□ ∀ vs, env_sem_typed Γ vs -∗ WP subst_map vs e {{ A }})%I.
@@ -12,6 +33,9 @@ Instance: Params (@sem_typed) 2 := {}.
 Notation "Γ ⊨ e : A" := (sem_typed Γ e A)
   (at level 100, e at next level, A at level 200).
 
+(** A few useful lemmas about the semantic typing judgment. The first
+few lemmas involving [Proper]ness are boilerplate required for supporting setoid
+rewriting. *)
 Section sem_typed.
   Context `{heapG Σ}.
   Implicit Types A B : sem_ty Σ.

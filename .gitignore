@@ -32,3 +32,4 @@ Makefile.coq*
 build-dep
 _opam
 .lia.cache
+/html

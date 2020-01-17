@@ -2,17 +2,14 @@ From tutorial_popl20 Require Export base.
 From iris.heap_lang Require Export proofmode.
 From iris.base_logic.lib Require Export invariants.
 
-(**
- * The domain of semantics types.
-*)
-
+(** * The domain of semantics types. *)
 (** Here we define the domain of semantics types as persistent iris
     predicates over values. That is, to capture the semantics of a
     type [τ], we need to define what programs are belong to the
     semantics of [τ]. We do this in two steps:
 
-    (1) We define what values semantically belong to type [τ]
-    (2) We define the expressions that semantically belong to [τ]. An
+      - We define what values semantically belong to type [τ]
+      - We define the expressions that semantically belong to [τ]. An
         expression [e] semantically belongs to type [τ] if [e] is
         _safe_, and whenever it evaluates to a value [v], [v]
         semantically belongs to [τ].
@@ -26,8 +23,7 @@ From iris.base_logic.lib Require Export invariants.
     opposed to substructural type systems, e.g., affine type systems)
     allows values to be used multiple times. Hence, the fact that a
     value belongs to the semantics of a type must be duplicable which
-    is guaranteed by persistence.
- *)
+    is guaranteed by persistence. *)
 
 (* The domain of semantic types: persistent Iris predicates over values *)
 Record sem_ty Σ := SemTy {
