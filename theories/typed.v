@@ -8,6 +8,12 @@ Inductive ty_unboxed : ty → Prop :=
 Existing Class ty_unboxed.
 Existing Instances TUnit_unboxed TBool_unboxed TInt_unboxed TRef_unboxed.
 
+Inductive ty_un_op : un_op → ty → ty → Prop :=
+  | Ty_un_op_int op : ty_un_op op TInt TInt
+  | Ty_un_op_bool : ty_un_op NegOp TBool TBool.
+Existing Class ty_un_op.
+Existing Instances Ty_un_op_int Ty_un_op_bool.
+
 Inductive ty_bin_op : bin_op → ty → ty → ty → Prop :=
   | Ty_bin_op_eq τ :
      ty_unboxed τ → ty_bin_op EqOp τ τ TBool
@@ -21,12 +27,6 @@ Inductive ty_bin_op : bin_op → ty → ty → ty → Prop :=
      TCElemOf op [AndOp; OrOp; XorOp] → ty_bin_op op TBool TBool TBool.
 Existing Class ty_bin_op.
 Existing Instances Ty_bin_op_eq Ty_bin_op_arith Ty_bin_op_compare Ty_bin_op_bool.
-
-Inductive ty_un_op : un_op → ty → ty → Prop :=
-  | Ty_un_op_int op : ty_un_op op TInt TInt
-  | Ty_un_op_bool : ty_un_op NegOp TBool TBool.
-Existing Class ty_un_op.
-Existing Instances Ty_un_op_int Ty_un_op_bool.
 
 Reserved Notation "Γ ⊢ₜ e : τ" (at level 74, e, τ at next level).
 Inductive typed (Γ : gmap string ty) : expr → ty → Prop :=
