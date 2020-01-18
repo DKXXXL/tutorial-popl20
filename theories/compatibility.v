@@ -35,12 +35,11 @@ Section compatibility.
     by iApply wp_value.
   Qed.
 
-  Lemma Unit_sem_typed Γ : Γ ⊨ #() : ().
-  Proof. iIntros (vs) "!# _ /=". by iApply wp_value. Qed.
-  Lemma Bool_sem_typed Γ (b : bool) : Γ ⊨ #b : sem_ty_bool.
-  Proof. iIntros (vs) "!# _ /=". iApply wp_value. rewrite /sem_ty_car /=. eauto. Qed.
-  Lemma Int_sem_typed Γ (n : Z) : Γ ⊨ #n : sem_ty_int.
-  Proof. iIntros (vs) "!# _ /=". iApply wp_value. rewrite /sem_ty_car /=. eauto. Qed.
+  Lemma Val_sem_typed Γ v A : (⊨ᵥ v : A) -∗ Γ ⊨ v : A.
+  Proof.
+    iIntros "#Hv" (vs) "!# #HΓ /=".
+    iApply wp_value. iApply "Hv".
+  Qed.
 
   Lemma Pair_sem_typed Γ e1 e2 A1 A2 :
     (Γ ⊨ e1 : A1) -∗ (Γ ⊨ e2 : A2) -∗ Γ ⊨ (e1,e2) : A1 * A2.
@@ -208,5 +207,36 @@ Section compatibility.
   Proof.
     iIntros "#H" (vs) "!# #HΓ /=".
     wp_apply wp_fork; last done. by iApply (wp_wand with "(H [//])").
+  Qed.
+
+  Lemma UnitV_sem_typed : ⊨ᵥ #() : ().
+  Proof. by iPureIntro. Qed.
+  Lemma BoolV_sem_typed (b : bool) : ⊨ᵥ #b : sem_ty_bool.
+  Proof. by iExists b. Qed.
+  Lemma IntV_sem_typed (n : Z) : ⊨ᵥ #n : sem_ty_int.
+  Proof. by iExists n. Qed.
+
+  Lemma PairV_sem_typed v1 v2 τ1 τ2 :
+    (⊨ᵥ v1 : τ1) -∗ (⊨ᵥ v2 : τ2) -∗
+    ⊨ᵥ PairV v1 v2 : (τ1 * τ2).
+  Proof. iIntros "#H1 #H2". iExists v1, v2. auto. Qed.
+  Lemma InjLV_sem_typed v τ1 τ2 :
+    (⊨ᵥ v : τ1) -∗
+    ⊨ᵥ InjLV v : (τ1 + τ2).
+  Proof. iIntros "H". iLeft. auto. Qed.
+  Lemma InjRV_sem_typed v τ1 τ2 :
+    (⊨ᵥ v : τ2) -∗
+    ⊨ᵥ InjRV v : (τ1 + τ2).
+  Proof. iIntros "H". iRight. auto. Qed.
+
+  Lemma RecV_sem_typed f x e A B :
+    (binder_insert f (A → B)%sem_ty (binder_insert x A ∅) ⊨ e : B) -∗
+    ⊨ᵥ RecV f x e : (A → B).
+  Proof.
+    iIntros "#H". iLöb as "IH".
+    iIntros "!#" (v) "#HA1". wp_pures. set (r := RecV f x _).
+    rewrite -subst_map_binder_insert_2_empty. iApply "H".
+    iApply (env_sem_typed_insert with "IH").
+    iApply (env_sem_typed_insert with "[$]"). iApply env_sem_typed_empty.
   Qed.
 End compatibility.

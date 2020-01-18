@@ -70,6 +70,8 @@ Section interp_properties.
     - intros τ IH n ρ ?. f_equiv=> A /=. naive_solver auto with lia.
     - intros τ IH n ρ ?. f_equiv=> A /=. naive_solver auto with lia.
   Qed.
+  Lemma interp_ty_lift_0 τ A ρ : ⟦ ty_lift 0 τ ⟧ (A :: ρ) ≡ ⟦ τ ⟧ ρ.
+  Proof. apply interp_ty_lift; simpl; lia. Qed.
 
   Lemma interp_env_ty_lift n Γ ρ :
     n ≤ length ρ →
@@ -78,6 +80,9 @@ Section interp_properties.
     intros. rewrite /interp_env -map_fmap_compose.
     apply map_fmap_equiv_ext=> x A _ /=. by rewrite interp_ty_lift.
   Qed.
+  Lemma interp_env_ty_lift_0 Γ A ρ :
+    interp_env (ty_lift 0 <$> Γ) (A :: ρ) ≡ interp_env Γ ρ.
+  Proof. apply interp_env_ty_lift; simpl; lia. Qed.
 
   Lemma interp_ty_subst i τ τ' ρ :
     i ≤ length ρ →
@@ -97,5 +102,7 @@ Section interp_properties.
     - intros τ IH i τ' ρ ?. f_equiv=> A /=. rewrite IH /=; last lia.
       by rewrite interp_ty_lift; last lia.
   Qed.
-
+  Lemma interp_ty_subst_0 τ τ' ρ :
+    ⟦ ty_subst 0 τ' τ ⟧ ρ ≡ ⟦ τ ⟧ (⟦ τ' ⟧ ρ :: ρ).
+  Proof. apply interp_ty_subst; simpl; lia. Qed.
 End interp_properties.

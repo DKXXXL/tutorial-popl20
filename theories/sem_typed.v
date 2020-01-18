@@ -33,6 +33,13 @@ Instance: Params (@sem_typed) 2 := {}.
 Notation "Γ ⊨ e : A" := (sem_typed Γ e A)
   (at level 100, e at next level, A at level 200).
 
+Definition sem_val_typed `{heapG Σ} (v : val) (A : sem_ty Σ) : iProp Σ :=
+  tc_opaque (A v).
+Instance: Params (@sem_val_typed) 3 := {}.
+Notation "⊨ᵥ v : A" := (sem_val_typed v A)
+  (at level 20, v at next level, A at level 200).
+Arguments sem_val_typed : simpl never.
+
 (** A few useful lemmas about the semantic typing judgment. The first
 few lemmas involving [Proper]ness are boilerplate required for supporting setoid
 rewriting. *)
@@ -62,6 +69,16 @@ Section sem_typed.
   Global Instance sem_typed_persistent Γ e A : Persistent (Γ ⊨ e : A).
   Proof. rewrite /sem_typed /=. apply _. Qed.
 
+  Global Instance sem_val_typed_ne n v :
+    Proper (dist n ==> dist n) (@sem_val_typed Σ _ v).
+  Proof. solve_proper. Qed.
+  Global Instance sem_val_typed_proper v :
+    Proper ((≡) ==> (≡)) (@sem_val_typed Σ _ v).
+  Proof. solve_proper. Qed.
+
+  Global Instance sem_val_typed_persistent v A : Persistent (⊨ᵥ v : A).
+  Proof. rewrite /sem_val_typed /=. apply _. Qed.
+
   (* Environments *)
   Lemma env_sem_typed_lookup Γ vs x A :
     Γ !! x = Some A →
@@ -78,6 +95,8 @@ Section sem_typed.
     iIntros "#HA #HΓ". by iApply (big_sepM2_insert_2 with "[] HΓ").
   Qed.
 
-  Lemma env_sem_typed_empty vs : env_sem_typed ∅ vs -∗ ⌜vs = ∅⌝.
+  Lemma env_sem_typed_empty : env_sem_typed ∅ ∅.
+  Proof. iIntros "". by rewrite /env_sem_typed. Qed.
+  Lemma env_sem_typed_empty_l_inv vs : env_sem_typed ∅ vs -∗ ⌜vs = ∅⌝.
   Proof. by iIntros "?"; iApply big_sepM2_empty_r. Qed.
 End sem_typed.
