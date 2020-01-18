@@ -134,7 +134,7 @@ Section unsafe.
     (() → ∃ A, (() → A) * (A → ())).
 
   Section sem_typed_symbol_adt.
-    Context `{heapG Σ, symbolG Σ}.
+    Context `{symbolG Σ}.
 
     Definition symbol_adtN := nroot .@ "symbol_adt".
 
