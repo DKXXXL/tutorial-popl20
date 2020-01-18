@@ -33,38 +33,38 @@ Section fundamental.
     interp_env Γ ρ ⊨ e : ⟦ τ ⟧ ρ.
   Proof.
     intros Htyped. iInduction Htyped as [] "IH" forall (ρ); simpl in *.
-    - iApply sem_typed_var. by apply lookup_interp_env.
-    - iApply sem_typed_unit.
-    - iApply sem_typed_bool.
-    - iApply sem_typed_int.
-    - by iApply sem_typed_pair.
-    - by iApply sem_typed_fst.
-    - by iApply sem_typed_snd.
-    - by iApply sem_typed_injl.
-    - by iApply sem_typed_injr.
-    - by iApply sem_typed_case.
-    - iApply sem_typed_rec. iSpecialize ("IH" $! ρ).
+    - iApply Var_sem_typed. by apply lookup_interp_env.
+    - iApply Unit_sem_typed.
+    - iApply Bool_sem_typed.
+    - iApply Int_sem_typed.
+    - by iApply Pair_sem_typed.
+    - by iApply Fst_sem_typed.
+    - by iApply Snd_sem_typed.
+    - by iApply InjL_sem_typed.
+    - by iApply InjR_sem_typed.
+    - by iApply Case_sem_typed.
+    - iApply Rec_sem_typed. iSpecialize ("IH" $! ρ).
       by rewrite !interp_env_binder_insert.
-    - by iApply sem_typed_app.
-    - iApply sem_typed_tlam; iIntros (A). iSpecialize ("IH" $! (A :: ρ)).
+    - by iApply App_sem_typed.
+    - iApply TLam_sem_typed; iIntros (A). iSpecialize ("IH" $! (A :: ρ)).
       by rewrite interp_env_ty_lift /=; last lia.
     - rewrite interp_ty_subst /=; last lia.
-      iApply (sem_typed_tapp with "IH").
-    - iApply sem_typed_pack. iSpecialize ("IH" $! ρ).
+      iApply (TApp_sem_typed with "IH").
+    - iApply Pack_sem_typed. iSpecialize ("IH" $! ρ).
       by rewrite interp_ty_subst; last lia.
-    - iApply (sem_typed_unpack with "IH"); iIntros (A).
+    - iApply (Unpack_sem_typed with "IH"); iIntros (A).
       iSpecialize ("IH1" $! (A :: ρ)).
       rewrite interp_env_binder_insert.
       rewrite interp_env_ty_lift /=; last lia.
       by rewrite interp_ty_lift /=; last lia.
-    - by iApply sem_typed_alloc.
-    - by iApply sem_typed_load.
-    - by iApply sem_typed_store.
-    - by iApply sem_typed_faa.
-    - by iApply sem_typed_cmpxchg.
-    - by iApply sem_typed_un_op.
-    - by iApply sem_typed_bin_op.
-    - by iApply sem_typed_if.
-    - by iApply sem_typed_fork.
+    - by iApply Alloc_sem_typed.
+    - by iApply Load_sem_typed.
+    - by iApply Store_sem_typed.
+    - by iApply FAA_sem_typed.
+    - by iApply CmpXchg_sem_typed.
+    - by iApply UnOp_sem_typed.
+    - by iApply BinOp_sem_typed.
+    - by iApply If_sem_typed.
+    - by iApply Fork_sem_typed.
   Qed.
 End fundamental.
