@@ -8,7 +8,7 @@
 # We have ambiguous paths and so far it is not even clear what they are (https://gitlab.mpi-sws.org/iris/iris/issues/240).
 -arg -w -arg -ambiguous-paths
 
-theories/base.v
+theories/language.v
 theories/types.v
 theories/typed.v
 theories/sem_types.v

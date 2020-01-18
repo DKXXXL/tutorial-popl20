@@ -1,4 +1,4 @@
-From tutorial_popl20 Require Export base.
+From tutorial_popl20 Require Export language.
 
 Inductive ty :=
   | TVar : nat → ty
