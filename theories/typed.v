@@ -139,7 +139,7 @@ where "Γ ⊢ₜ e : τ" := (typed Γ e τ)
 and "⊢ᵥ v : τ" := (val_typed v τ).
 
 Lemma Lam_typed Γ x e τ1 τ2 :
-  (binder_insert x τ1 Γ ⊢ₜ e : τ2) →
+  binder_insert x τ1 Γ ⊢ₜ e : τ2 →
   Γ ⊢ₜ (λ: x, e) : TArr τ1 τ2.
 Proof.
   intros He.
@@ -149,7 +149,7 @@ Proof.
 Qed.
 
 Lemma LamV_typed x e τ1 τ2 :
-  (binder_insert x τ1 ∅ ⊢ₜ e : τ2) →
+  binder_insert x τ1 ∅ ⊢ₜ e : τ2 →
   ⊢ᵥ (λ: x, e) : TArr τ1 τ2.
 Proof.
   intros He.
@@ -159,8 +159,8 @@ Proof.
 Qed.
 
 Lemma Let_typed Γ x e1 e2 τ1 τ2 :
-  (Γ ⊢ₜ e1 : τ1) →
-  (binder_insert x τ1 Γ ⊢ₜ e2 : τ2) →
+  Γ ⊢ₜ e1 : τ1 →
+  binder_insert x τ1 Γ ⊢ₜ e2 : τ2 →
   Γ ⊢ₜ (let: x := e1 in e2) : τ2.
 Proof.
   intros He1 He2.
@@ -170,8 +170,8 @@ Proof.
 Qed.
 
 Lemma Seq_typed Γ e1 e2 τ1 τ2 :
-  (Γ ⊢ₜ e1 : τ1) →
-  (Γ ⊢ₜ e2 : τ2) →
+  Γ ⊢ₜ e1 : τ1 →
+  Γ ⊢ₜ e2 : τ2 →
   Γ ⊢ₜ (e1;; e2) : τ2.
 Proof.
   intros He1 He2.

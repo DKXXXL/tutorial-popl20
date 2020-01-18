@@ -31,13 +31,13 @@ Definition sem_typed `{heapG Σ}
   tc_opaque (□ ∀ vs, env_sem_typed Γ vs -∗ WP subst_map vs e {{ A }})%I.
 Instance: Params (@sem_typed) 2 := {}.
 Notation "Γ ⊨ e : A" := (sem_typed Γ e A)
-  (at level 100, e at next level, A at level 200).
+  (at level 74, e, A at next level).
 
 Definition sem_val_typed `{heapG Σ} (v : val) (A : sem_ty Σ) : iProp Σ :=
   tc_opaque (A v).
 Instance: Params (@sem_val_typed) 3 := {}.
 Notation "⊨ᵥ v : A" := (sem_val_typed v A)
-  (at level 20, v at next level, A at level 200).
+  (at level 20, v, A at next level).
 Arguments sem_val_typed : simpl never.
 
 (** A few useful lemmas about the semantic typing judgment. The first

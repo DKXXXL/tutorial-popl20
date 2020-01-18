@@ -8,7 +8,7 @@ Section unsafe.
   Definition unsafe_pure : val := λ: <>,
     if: #true then #13 else #13 #37.
 
-  Lemma sem_typed_unsafe_pure : ∅ ⊨ unsafe_pure : () → sem_ty_int.
+  Lemma sem_typed_unsafe_pure : ∅ ⊨ unsafe_pure : (() → sem_ty_int).
   Proof.
     iIntros (vs) "!# HΓ"; simpl.
     iApply wp_value.
@@ -23,7 +23,7 @@ Section unsafe.
   Definition unsafe_ref : val := λ: <>,
     let: "l" := ref #0 in "l" <- #true;; !"l".
 
-  Lemma sem_typed_unsafe_ref : ∅ ⊨ unsafe_ref : () → sem_ty_bool.
+  Lemma sem_typed_unsafe_ref : ∅ ⊨ unsafe_ref : (() → sem_ty_bool).
   Proof.
     iIntros (vs) "!# HΓ"; simpl.
     iApply wp_value.
@@ -44,7 +44,7 @@ Section unsafe.
      (λ: <>, assert: !"l" ≠ #0)).
 
   Lemma sem_typed_unsafe_ref_ne_0 :
-    ∅ ⊨ unsafe_ref_ne_0 : () → (sem_ty_int → ()) * (() → ()).
+    ∅ ⊨ unsafe_ref_ne_0 : (() → (sem_ty_int → ()) * (() → ())).
   Proof.
     iIntros (vs) "!# HΓ"; simpl.
     iApply wp_value.
@@ -93,7 +93,7 @@ Section unsafe.
     λ: <>, let: "l" := ref #0 in λ: <>, "l" <- #true;; !"l".
 
   Lemma sem_typed_unsafe_ref_reuse `{two_stateG Σ}:
-    ∅ ⊨ unsafe_ref_reuse : () → (() → sem_ty_bool).
+    ∅ ⊨ unsafe_ref_reuse : (() → (() → sem_ty_bool)).
   Proof.
     iIntros (vs) "!# HΓ"; simpl.
     iApply wp_value.
