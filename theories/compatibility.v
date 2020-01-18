@@ -93,13 +93,8 @@ Section compatibility.
   Proof.
     iIntros "#H" (vs) "!# #HΓ /=". wp_pures. iLöb as "IH".
     iIntros "!#" (v) "#HA1". wp_pures. set (r := RecV f x _).
-    iSpecialize ("H" $! (binder_insert f r (binder_insert x v vs)) with "[#]").
-    { iApply (env_sem_typed_insert with "IH"). by iApply env_sem_typed_insert. }
-    destruct x as [|x], f as [|f]; rewrite /= -?subst_map_insert //.
-    destruct (decide (x = f)) as [->|].
-    - by rewrite subst_subst delete_idemp insert_insert -subst_map_insert.
-    - rewrite subst_subst_ne // -subst_map_insert.
-      by rewrite -delete_insert_ne // -subst_map_insert.
+    rewrite -subst_map_binder_insert_2. iApply "H".
+    iApply (env_sem_typed_insert with "IH"). by iApply env_sem_typed_insert.
   Qed.
 
   Lemma App_sem_typed Γ e1 e2 A1 A2 :
