@@ -74,36 +74,36 @@ Inductive typed (Γ : gmap string ty) : expr → ty → Prop :=
   | TApp_typed e τ τ' :
      Γ ⊢ₜ e : TForall τ →
      Γ ⊢ₜ e <_> : ty_subst 0 τ' τ
-  | TPack e τ τ' :
+  | Pack_typed e τ τ' :
      Γ ⊢ₜ e : ty_subst 0 τ' τ →
      Γ ⊢ₜ e : TExist τ
-  | TUnpack e1 x e2 τ τ2 :
+  | Unpack_typed e1 x e2 τ τ2 :
      Γ ⊢ₜ e1 : TExist τ →
      binder_insert x τ (ty_lift 0 <$> Γ) ⊢ₜ e2 : ty_lift 0 τ2 →
      Γ ⊢ₜ (unpack: x := e1 in e2) : τ2
   (** Heap operations *)
-  | TAlloc e τ :
+  | Alloc_typed e τ :
      Γ ⊢ₜ e : τ →
      Γ ⊢ₜ Alloc e : TRef τ
-  | TLoad e τ :
+  | Load_typed e τ :
      Γ ⊢ₜ e : TRef τ →
      Γ ⊢ₜ Load e : τ
-  | TStore e1 e2 τ :
+  | Store_typed e1 e2 τ :
      Γ ⊢ₜ e1 : TRef τ → Γ ⊢ₜ e2 : τ →
      Γ ⊢ₜ Store e1 e2 : TUnit
-  | TFAA e1 e2 :
+  | FAA_typed e1 e2 :
      Γ ⊢ₜ e1 : TRef TInt → Γ ⊢ₜ e2 : TInt →
      Γ ⊢ₜ FAA e1 e2 : TInt
-  | TCmpXchg e1 e2 e3 τ :
+  | CmpXchg_typed e1 e2 e3 τ :
      ty_unboxed τ →
      Γ ⊢ₜ e1 : TRef τ → Γ ⊢ₜ e2 : τ → Γ ⊢ₜ e3 : τ →
      Γ ⊢ₜ CmpXchg e1 e2 e3 : TProd τ TBool
   (** Operators *)
-  | UnOp_typed_nat op e τ σ :
+  | UnOp_typed op e τ σ :
      Γ ⊢ₜ e : τ →
      ty_un_op op τ σ →
      Γ ⊢ₜ UnOp op e : σ
-  | BinOp_typed_nat op e1 e2 τ1 τ2 σ :
+  | BinOp_typed op e1 e2 τ1 τ2 σ :
      Γ ⊢ₜ e1 : τ1 → Γ ⊢ₜ e2 : τ2 →
      ty_bin_op op τ1 τ2 σ →
      Γ ⊢ₜ BinOp op e1 e2 : σ
@@ -111,7 +111,7 @@ Inductive typed (Γ : gmap string ty) : expr → ty → Prop :=
      Γ ⊢ₜ e0 : TBool → Γ ⊢ₜ e1 : τ → Γ ⊢ₜ e2 : τ →
      Γ ⊢ₜ If e0 e1 e2 : τ
   (** Fork *)
-  | TFork e :
+  | Fork_typed e :
      Γ ⊢ₜ e : TUnit →
      Γ ⊢ₜ Fork e : TUnit
 where "Γ ⊢ₜ e : τ" := (typed Γ e τ).
