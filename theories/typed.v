@@ -137,3 +137,72 @@ with val_typed : val → ty → Prop :=
      ⊢ᵥ RecV f x e : TArr τ1 τ2
 where "Γ ⊢ₜ e : τ" := (typed Γ e τ)
 and "⊢ᵥ v : τ" := (val_typed v τ).
+
+Lemma Lam_typed Γ x e τ1 τ2 :
+  (binder_insert x τ1 Γ ⊢ₜ e : τ2) →
+  Γ ⊢ₜ (λ: x, e) : TArr τ1 τ2.
+Proof.
+  intros He.
+  apply Rec_typed.
+  simpl.
+  done.
+Qed.
+
+Lemma LamV_typed x e τ1 τ2 :
+  (binder_insert x τ1 ∅ ⊢ₜ e : τ2) →
+  ⊢ᵥ (λ: x, e) : TArr τ1 τ2.
+Proof.
+  intros He.
+  apply RecV_typed.
+  simpl.
+  done.
+Qed.
+
+Lemma Let_typed Γ x e1 e2 τ1 τ2 :
+  (Γ ⊢ₜ e1 : τ1) →
+  (binder_insert x τ1 Γ ⊢ₜ e2 : τ2) →
+  Γ ⊢ₜ (let: x := e1 in e2) : τ2.
+Proof.
+  intros He1 He2.
+  apply App_typed with τ1.
+  - by apply Lam_typed.
+  - done.
+Qed.
+
+Lemma Seq_typed Γ e1 e2 τ1 τ2 :
+  (Γ ⊢ₜ e1 : τ1) →
+  (Γ ⊢ₜ e2 : τ2) →
+  Γ ⊢ₜ (e1;; e2) : τ2.
+Proof.
+  intros He1 He2.
+  by apply Let_typed with τ1.
+Qed.
+
+Lemma Skip_typed Γ :
+  Γ ⊢ₜ Skip : ().
+Proof.
+  apply App_typed with ()%ty.
+  - apply Val_typed, RecV_typed. apply Val_typed, UnitV_typed.
+  - apply Val_typed, UnitV_typed.
+Qed.
+
+Definition swap : val := λ: "l1" "l2",
+  let: "x" := !"l1" in
+  "l1" <- !"l2";;
+  "l2" <- "x".
+
+Lemma swap_typed τ : ⊢ᵥ swap : (ref τ → ref τ → ()).
+Proof.
+  unfold swap.
+  apply LamV_typed.
+  apply Lam_typed.
+  apply Let_typed with τ.
+  { apply Load_typed. by apply Var_typed. }
+  apply Seq_typed with ()%ty.
+  { apply Store_typed with τ.
+    - by apply Var_typed.
+    - apply Load_typed. by apply Var_typed. }
+  apply Store_typed with τ.
+  - by apply Var_typed.
+  - by apply Var_typed.
+Qed.
