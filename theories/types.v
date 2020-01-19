@@ -14,6 +14,7 @@ Inductive ty :=
 
 Delimit Scope ty_scope with ty.
 Bind Scope ty_scope with ty.
+Notation "# x" := (TVar x) : ty_scope.
 Notation "()" := TUnit : ty_scope.
 Infix "*" := TProd : ty_scope.
 Infix "+" := TSum : ty_scope.
