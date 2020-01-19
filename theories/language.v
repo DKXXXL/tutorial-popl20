@@ -423,7 +423,16 @@ Lemma wp_add_two_fancy `{!heapG Σ} (x : Z) :
   auto with f_equal lia.
 Qed.
 
-(** * Reasoning about unsafe functions *)
+(** * Reasoning about "unsafe" functions *)
+(** Since HeapLang is an untyped language, we can write down arbitrary
+programs, i.e. that are not typeable by any reasonable type system, and prove
+logical specifications of them. We will show this on two small examples that
+will use at other places in this tutorial. *)
+
+(** The program below containts the expression [#13 #37] in the else-branch
+of the conditional. The expression [#13 #37], which will get stuck in the
+operational semantics, i.e. it is unsafe. However, the else-branch is never
+executed, so we can still prove a specification of this function. *)
 Definition unsafe_pure : val := λ: <>,
   if: #true then #13 else #13 #37.
 
@@ -436,6 +445,7 @@ Proof.
 Qed.
 
 (** Exercise (unsafe_ref, easy) *)
+(** The function below reuses a reference using values of different types. *)
 Definition unsafe_ref : val := λ: <>,
   let: "l" := ref #0 in "l" <- #true;; !"l".
 
