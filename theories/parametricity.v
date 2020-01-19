@@ -1,10 +1,10 @@
 From tutorial_popl20 Require Export safety.
 
 Section parametricity.
-  Context `{heapG Σ}.
+  Context `{!heapG Σ}.
 
   Lemma identity_param `{!heapPreG Σ} e (v : val) σ w es σ' :
-    (∀ `{heapG Σ}, ∅ ⊨ e : ∀ A, A → A) →
+    (∀ `{!heapG Σ}, (∅ ⊨ e : ∀ A, A → A)%I) →
     rtc erased_step ([e <_> v]%E, σ) (of_val w :: es, σ') → w = v.
   Proof.
     intros He.
@@ -21,7 +21,7 @@ Section parametricity.
   Qed.
 
   Lemma empty_type_param `{!heapPreG Σ} e (v : val) σ w es σ' :
-    (∀ `{heapG Σ}, ∅ ⊨ e : ∀ A, A) →
+    (∀ `{!heapG Σ}, (∅ ⊨ e : ∀ A, A)%I) →
     rtc erased_step ([e <_>]%E, σ) (of_val w :: es, σ') →
     False.
   (* REMOVE *) Proof.
@@ -39,7 +39,7 @@ Section parametricity.
   Qed.
 
   Lemma boolean_param `{!heapPreG Σ} e (v1 v2 : val) σ w es σ' :
-    (∀ `{heapG Σ}, ∅ ⊨ e : ∀ A, A → A → A) →
+    (∀ `{!heapG Σ}, (∅ ⊨ e : ∀ A, A → A → A)%I) →
     rtc erased_step ([e <_> v1 v2]%E, σ) (of_val w :: es, σ') → w = v1 ∨ w = v2.
   (* REMOVE *) Proof.
     intros He.
@@ -60,7 +60,7 @@ Section parametricity.
   Qed.
 
   Lemma nat_param `{!heapPreG Σ} e σ w es σ' :
-    (∀ `{heapG Σ}, ∅ ⊨ e : ∀ A, (A → A) → A → A) →
+    (∀ `{!heapG Σ}, (∅ ⊨ e : ∀ A, (A → A) → A → A)%I) →
     rtc erased_step ([e <_> (λ: "n", "n" + #1)%V #0]%E, σ)
       (of_val w :: es, σ') → ∃ n : nat, w = #n.
   (* REMOVE *) Proof.
@@ -86,11 +86,11 @@ Section parametricity.
   Qed.
 
   Lemma strong_nat_param `{!heapPreG Σ} e σ w es σ' (vf vz : val) φ :
-    (∀ `{heapG Σ}, ∃ Φ : sem_ty Σ,
-      (∅ ⊨ e : ∀ A, (A → A) → A → A) ∧
-      (∀ w, {{{ Φ w }}} vf w {{{ w', RET w'; Φ w' }}}) ∧
-      (Φ vz) ∧
-      (∀ w, Φ w -∗ ⌜φ w⌝)) →
+    (∀ `{!heapG Σ}, ∃ Φ : sem_ty Σ,
+      (∅ ⊨ e : ∀ A, (A → A) → A → A)%I ∧
+      (∀ w, {{{ Φ w }}} vf w {{{ w', RET w'; Φ w' }}})%I ∧
+      (Φ vz)%I ∧
+      (∀ w, Φ w -∗ ⌜φ w⌝)%I) →
     rtc erased_step ([e <_> vf vz]%E, σ) (of_val w :: es, σ') → φ w.
   (* REMOVE *) Proof.
     intros He.

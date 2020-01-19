@@ -2,37 +2,34 @@ From tutorial_popl20 Require Export sem_typed.
 From tutorial_popl20 Require Import symbol_ghost two_state_ghost.
 
 Section unsafe.
-  Context `{heapG Σ}.
+  Context `{!heapG Σ}.
 
-  (** * Exercise (easy) *)
+  (** Recall the following function we defined in the file [language.v]:
+  <<
   Definition unsafe_pure : val := λ: <>,
     if: #true then #13 else #13 #37.
-
-  Lemma sem_typed_unsafe_pure : ∅ ⊨ unsafe_pure : (() → sem_ty_int).
+  >>
+  *)
+  Lemma sem_typed_unsafe_pure : (∅ ⊨ unsafe_pure : (() → sem_ty_int))%I.
   Proof.
-    iIntros (vs) "!# HΓ"; simpl.
-    iApply wp_value.
-    iIntros "!#" (? ->).
-    wp_lam.
-    wp_if.
+    iIntros (vs) "!# HΓ /=". iApply wp_value.
+    iIntros "!#" (? ->). wp_lam. wp_if.
     rewrite /sem_ty_car /=.
     by iExists 13.
   Qed.
 
   (** * Exercise (easy) *)
+  (** Recall the following function we defined in the file [language.v]:
+  <<
   Definition unsafe_ref : val := λ: <>,
     let: "l" := ref #0 in "l" <- #true;; !"l".
-
-  Lemma sem_typed_unsafe_ref : ∅ ⊨ unsafe_ref : (() → sem_ty_bool).
+  >> *)
+  Lemma sem_typed_unsafe_ref : (∅ ⊨ unsafe_ref : (() → sem_ty_bool))%I.
   Proof.
-    iIntros (vs) "!# HΓ"; simpl.
-    iApply wp_value.
-    iIntros "!#" (? ->).
-    wp_lam.
+    iIntros (vs) "!# HΓ /=". iApply wp_value.
+    iIntros "!#" (? ->). wp_lam.
     wp_alloc l as "Hl".
-    wp_let.
-    wp_store.
-    wp_load.
+    wp_store. wp_load.
     rewrite /sem_ty_car /=.
     by iExists true.
   Qed.
@@ -44,14 +41,11 @@ Section unsafe.
      (λ: <>, assert: !"l" ≠ #0)).
 
   Lemma sem_typed_unsafe_ref_ne_0 :
-    ∅ ⊨ unsafe_ref_ne_0 : (() → (sem_ty_int → ()) * (() → ())).
+    (∅ ⊨ unsafe_ref_ne_0 : (() → (sem_ty_int → ()) * (() → ())))%I.
   Proof.
-    iIntros (vs) "!# HΓ"; simpl.
-    iApply wp_value.
+    iIntros (vs) "!# HΓ /=". iApply wp_value.
     iIntros "!#" (? ->).
-    wp_lam.
-    wp_alloc l as "Hl".
-    wp_let.
+    wp_lam. wp_alloc l as "Hl". wp_let.
     pose (I := (∃ n : Z, ⌜#n ≠ #0⌝ ∗ l ↦ #n)%I).
     iMod (inv_alloc (nroot .@ "inv") _ I with "[Hl]")%I as "#Hinv".
     { by iNext; iExists 1; iFrame. }
@@ -92,13 +86,11 @@ Section unsafe.
   Definition unsafe_ref_reuse : val :=
     λ: <>, let: "l" := ref #0 in λ: <>, "l" <- #true;; !"l".
 
-  Lemma sem_typed_unsafe_ref_reuse `{two_stateG Σ}:
-    ∅ ⊨ unsafe_ref_reuse : (() → (() → sem_ty_bool)).
+  Lemma sem_typed_unsafe_ref_reuse `{!two_stateG Σ}:
+    (∅ ⊨ unsafe_ref_reuse : (() → (() → sem_ty_bool)))%I.
   Proof.
-    iIntros (vs) "!# HΓ"; simpl.
-    iApply wp_value.
-    iIntros "!#" (? ->).
-    wp_lam.
+    iIntros (vs) "!# HΓ /=". iApply wp_value.
+    iIntros "!#" (? ->). wp_lam.
     wp_alloc l as "Hl".
     iMod two_state_init as (γ) "Ho".
     pose (I := (∃ b, two_state_auth γ b ∗ l ↦ (if b then #true else #0))%I).
@@ -128,13 +120,14 @@ Section unsafe.
   Definition symbol_adt_inc : val := λ: "x" <>, FAA "x" #1.
   Definition symbol_adt_check : val := λ: "x" "y", assert: "y" < !"x".
   Definition symbol_adt : val := λ: <>,
-    let: "x" := Alloc #0 in pack: (symbol_adt_inc "x", symbol_adt_check "x").
+    let: "x" := Alloc #0 in
+    pack: (symbol_adt_inc "x", symbol_adt_check "x").
 
-  Definition symbol_adt_ty `{heapG Σ} : sem_ty Σ :=
+  Definition symbol_adt_ty : sem_ty Σ :=
     (() → ∃ A, (() → A) * (A → ())).
 
   Section sem_typed_symbol_adt.
-    Context `{symbolG Σ}.
+    Context `{!symbolG Σ}.
 
     Definition symbol_adtN := nroot .@ "symbol_adt".
 
@@ -144,7 +137,7 @@ Section unsafe.
     Definition sem_ty_symbol (γ : gname) : sem_ty Σ := SemTy (λ w,
       ∃ n : nat, ⌜w = #n⌝ ∧ symbol γ n)%I.
 
-    Lemma sem_typed_symbol_adt Γ : Γ ⊨ symbol_adt : symbol_adt_ty.
+    Lemma sem_typed_symbol_adt Γ : (Γ ⊨ symbol_adt : symbol_adt_ty)%I.
     Proof.
       iIntros (vs) "!# _ /=". iApply wp_value.
       iIntros "!#" (v ->). wp_lam. wp_alloc l as "Hl"; wp_pures.

@@ -5,7 +5,7 @@ From tutorial_popl20 Require Export sem_typed sem_type_formers types.
     This is done by a straightforward induction on the syntactic type.  *)
 
 Reserved Notation "⟦ τ ⟧".
-Fixpoint interp `{heapG Σ} (τ : ty) (ρ : list (sem_ty Σ)) : sem_ty Σ :=
+Fixpoint interp `{!heapG Σ} (τ : ty) (ρ : list (sem_ty Σ)) : sem_ty Σ :=
   match τ return _ with
   | TVar x => default () (ρ !! x) (* dummy in case [x ∉ ρ] *)
   | TUnit => ()
@@ -27,7 +27,7 @@ Instance: Params (@interp) 2 := {}.
 from type variables (that appear freely in [Γ]) to their corresponding
 semantic types, we define a semantic typing context, i.e., a mapping
 from  variables (strings) to semantic types. *)
-Definition interp_env `{heapG Σ} (Γ : gmap string ty)
+Definition interp_env `{!heapG Σ} (Γ : gmap string ty)
   (ρ : list (sem_ty Σ)) : gmap string (sem_ty Σ) := flip interp ρ <$> Γ.
 Instance: Params (@interp_env) 3 := {}.
 
@@ -37,7 +37,7 @@ Instance: Params (@interp_env) 3 := {}.
     variables have on the interpretation of syntactic types and typing
     contexts. *)
 Section interp_properties.
-  Context `{heapG Σ}.
+  Context `{!heapG Σ}.
   Implicit Types Γ : gmap string ty.
   Implicit Types τ : ty.
   Implicit Types ρ : list (sem_ty Σ).

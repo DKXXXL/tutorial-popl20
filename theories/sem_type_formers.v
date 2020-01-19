@@ -8,7 +8,7 @@ From tutorial_popl20 Require Export sem_types.
     pairs where the first component belongs to [A] and the second
     component to [B]. *)
 Section types.
-  Context `{heapG Σ}.
+  Context `{!heapG Σ}.
 
   (** Let us start with the simplest types of our language: unit and Boolean.
   The value interpretations of these types are as follows: *)
@@ -128,7 +128,7 @@ Instance: Params (@sem_ty_ref) 2 := {}.
 (** We prove that all type formers are non-expansive and respect setoid
 equality. This code is mostly boilerplate. *)
 Section types_properties.
-  Context `{heapG Σ}.
+  Context `{!heapG Σ}.
 
   Global Instance sem_ty_prod_ne : NonExpansive2 (@sem_ty_prod Σ).
   Proof. solve_proper. Qed.

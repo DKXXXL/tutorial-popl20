@@ -38,7 +38,7 @@ Inductive typed : gmap string ty → expr → ty → Prop :=
      Γ ⊢ₜ Var x : τ
   (** Values *)
   | Val_typed Γ v τ :
-     val_typed v τ →
+     ⊢ᵥ v : τ →
      Γ ⊢ₜ v : τ
   (** Products and sums *)
   | Pair_typed Γ e1 e2 τ1 τ2 :

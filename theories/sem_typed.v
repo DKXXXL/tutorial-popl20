@@ -20,31 +20,32 @@ From tutorial_popl20 Require Export sem_type_formers.
 
 
 (** The semantic type for the typing context (environment). *)
-Definition env_sem_typed `{heapG Σ} (Γ : gmap string (sem_ty Σ))
+Definition env_sem_typed `{!heapG Σ} (Γ : gmap string (sem_ty Σ))
     (vs : gmap string val) : iProp Σ :=
   ([∗ map] i ↦ A;v ∈ Γ; vs, sem_ty_car A v)%I.
 Instance: Params (@env_sem_typed) 2 := {}.
 
 (** The semantics typing judgment. *)
-Definition sem_typed `{heapG Σ}
+Definition sem_typed `{!heapG Σ}
     (Γ : gmap string (sem_ty Σ)) (e : expr) (A : sem_ty Σ) : iProp Σ :=
-  tc_opaque (□ ∀ vs, env_sem_typed Γ vs -∗ WP subst_map vs e {{ A }})%I.
+  tc_opaque (□ ∀ vs,
+    env_sem_typed Γ vs -∗ WP subst_map vs e {{ A }})%I.
 Instance: Params (@sem_typed) 2 := {}.
 Notation "Γ ⊨ e : A" := (sem_typed Γ e A)
-  (at level 74, e, A at next level).
+  (at level 74, e, A at next level) : bi_scope.
 
-Definition sem_val_typed `{heapG Σ} (v : val) (A : sem_ty Σ) : iProp Σ :=
+Definition sem_val_typed `{!heapG Σ} (v : val) (A : sem_ty Σ) : iProp Σ :=
   tc_opaque (A v).
 Instance: Params (@sem_val_typed) 3 := {}.
 Notation "⊨ᵥ v : A" := (sem_val_typed v A)
-  (at level 20, v, A at next level).
+  (at level 20, v, A at next level) : bi_scope.
 Arguments sem_val_typed : simpl never.
 
 (** A few useful lemmas about the semantic typing judgment. The first
 few lemmas involving [Proper]ness are boilerplate required for supporting setoid
 rewriting. *)
 Section sem_typed.
-  Context `{heapG Σ}.
+  Context `{!heapG Σ}.
   Implicit Types A B : sem_ty Σ.
   Implicit Types C : sem_ty Σ → sem_ty Σ.
 
@@ -69,8 +70,7 @@ Section sem_typed.
   Global Instance sem_typed_persistent Γ e A : Persistent (Γ ⊨ e : A).
   Proof. rewrite /sem_typed /=. apply _. Qed.
 
-  Global Instance sem_val_typed_ne n v :
-    Proper (dist n ==> dist n) (@sem_val_typed Σ _ v).
+  Global Instance sem_val_typed_ne v : NonExpansive (@sem_val_typed Σ _ v).
   Proof. solve_proper. Qed.
   Global Instance sem_val_typed_proper v :
     Proper ((≡) ==> (≡)) (@sem_val_typed Σ _ v).

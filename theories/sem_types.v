@@ -47,7 +47,7 @@ Existing Instance sem_ty_persistent.
 
 (* The COFE structure on semantic types *)
 Section sem_ty_cofe.
-  Context `{Σ : gFunctors}.
+  Context {Σ : gFunctors}.
 
   Instance sem_ty_equiv : Equiv (sem_ty Σ) := λ A B, ∀ w, A w ≡ B w.
   Instance sem_ty_dist : Dist (sem_ty Σ) := λ n A B, ∀ w, A w ≡{n}≡ B w.

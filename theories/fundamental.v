@@ -14,7 +14,7 @@ From tutorial_popl20 Require Export typed compatibility interp.
     a straightforward induction on the typing derivation.  *)
 
 Section fundamental.
-  Context `{heapG Σ}.
+  Context `{!heapG Σ}.
   Implicit Types Γ : gmap string ty.
   Implicit Types τ : ty.
   Implicit Types ρ : list (sem_ty Σ).
@@ -28,8 +28,10 @@ Section fundamental.
     ty_bin_op op τ1 τ2 σ → SemTyBinOp op (⟦ τ1 ⟧ ρ) (⟦ τ2 ⟧ ρ) (⟦ σ ⟧ ρ).
   Proof. destruct 1; simpl; apply _. Qed.
 
-  Fixpoint fundamental Γ e τ ρ (Hty : Γ ⊢ₜ e : τ) : interp_env Γ ρ ⊨ e : ⟦ τ ⟧ ρ
-  with fundamental_val v τ ρ (Hty : ⊢ᵥ v : τ) : ⊨ᵥ v : ⟦ τ ⟧ ρ.
+  Lemma fundamental Γ e τ ρ
+    (Hty : Γ ⊢ₜ e : τ) : (interp_env Γ ρ ⊨ e : ⟦ τ ⟧ ρ)%I
+  with fundamental_val v τ ρ
+    (Hty : ⊢ᵥ v : τ) : (⊨ᵥ v : ⟦ τ ⟧ ρ)%I.
   Proof.
     - destruct Hty; simpl.
       + iApply Var_sem_typed. by apply lookup_interp_env.

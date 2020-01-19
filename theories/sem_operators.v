@@ -1,17 +1,17 @@
 From tutorial_popl20 Require Export sem_typed.
 
 (* Typing for operators *)
-Class SemTyUnboxed `{heapG Σ} (A : sem_ty Σ) :=
+Class SemTyUnboxed `{!heapG Σ} (A : sem_ty Σ) :=
   sem_ty_unboxed v : A v -∗ ⌜ val_is_unboxed v ⌝.
 
-Class SemTyUnOp `{heapG Σ} (op : un_op) (A B : sem_ty Σ) :=
+Class SemTyUnOp `{!heapG Σ} (op : un_op) (A B : sem_ty Σ) :=
   sem_ty_un_op v : A v -∗ ∃ w, ⌜ un_op_eval op v = Some w ⌝ ∧ B w.
 
-Class SemTyBinOp `{heapG Σ} (op : bin_op) (A1 A2 B : sem_ty Σ) :=
+Class SemTyBinOp `{!heapG Σ} (op : bin_op) (A1 A2 B : sem_ty Σ) :=
   sem_ty_bin_op v1 v2 : A1 v1 -∗ A2 v2 -∗ ∃ w, ⌜ bin_op_eval op v1 v2 = Some w ⌝ ∧ B w.
 
 Section sem_operators.
-  Context `{heapG Σ}.
+  Context `{!heapG Σ}.
   Implicit Types A B : sem_ty Σ.
 
   (* Unboxed types *)

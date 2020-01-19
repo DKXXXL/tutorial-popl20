@@ -19,8 +19,8 @@ From tutorial_popl20 Require Export fundamental.
     v)]. The proposition [adequate NotStuck e σ (λ v σ, φ v)] means
     that [e], starting in heap [σ] does not get stuck, and if [e]
     reduces to a value [v], we have [φ v]. *)
-Lemma sem_gen_type_safety `{heapPreG Σ} e σ φ :
-  (∀ `{heapG Σ}, ∃ A : sem_ty Σ, (∀ v, A v -∗ ⌜φ v⌝) ∧ (∅ ⊨ e : A)) →
+Lemma sem_gen_type_safety `{!heapPreG Σ} e σ φ :
+  (∀ `{!heapG Σ}, ∃ A : sem_ty Σ, (∀ v, A v -∗ ⌜φ v⌝) ∧ (∅ ⊨ e : A)%I) →
   adequate NotStuck e σ (λ v σ, φ v).
 Proof.
   intros Hty. apply (heap_adequacy Σ NotStuck e σ)=> // ?.
@@ -34,8 +34,8 @@ Qed.
 (** This lemma states that semantically typed closed programs do not
 get stuck. It is a simple consequence of the lemma
 [sem_gen_type_safety] above. *)
-Lemma sem_type_safety `{heapPreG Σ} e σ es σ' e' :
-  (∀ `{heapG Σ}, ∃ A, ∅ ⊨ e : A) →
+Lemma sem_type_safety `{!heapPreG Σ} e σ es σ' e' :
+  (∀ `{!heapG Σ}, ∃ A, (∅ ⊨ e : A)%I) →
   rtc erased_step ([e], σ) (es, σ') → e' ∈ es →
   is_Some (to_val e') ∨ reducible e' σ'.
 Proof.

@@ -7,11 +7,11 @@ From iris.heap_lang.lib Require Export assert.
 that one wishes to reason about, so as to make it possible that the same logic
 can be used for a wide variety of languages. For the purpose of this lecture
 material, we consider the concurrent ML-style language *HeapLang*, the default
-language shipped with the Iris Coq development. We use [HeapLang] instead of
+language shipped with the Iris Coq development. We use HeapLang instead of
 defining our own language since the Iris development has support for nice
 syntax for HeapLang programs, contains a number of useful tactics to enable
 reasoning about HeapLang programs, and contains a number of results about
-[HeapLang]'s metatheory (e.g. related to substitution).
+HeapLang's metatheory (e.g. related to substitution).
 
 While HeapLang itself is an untyped language, the purpose of this tutorial is
 to define a type system for HeapLang and to use semantic typing via logical
@@ -109,7 +109,7 @@ i.e. substitution will not go into them. *)
 
 (** Now that we have defined our first HeapLang program, let us write a
 specification for it in separation logic: *)
-Lemma wp_swap `{heapG Σ} l1 l2 v1 v2 :
+Lemma wp_swap `{!heapG Σ} l1 l2 v1 v2 :
   l1 ↦ v1 -∗
   l2 ↦ v2 -∗
   WP swap #l1 #l2 {{ v, ⌜ v = #() ⌝ ∗ l1 ↦ v2 ∗ l2 ↦ v1 }}.
@@ -121,7 +121,7 @@ This specification already points out a number of interesting features of
 both separation logic and the Iris framework:
 
 - First, a very technical one: each Iris lemma that involves HeapLang programs,
-  should have the parameter [`{heapG Σ}]. This has to do with Iris's generic
+  should have the parameter [`{!heapG Σ}]. This has to do with Iris's generic
   infrastructure for handling ghost state. For now, this can be mostly ignored,
   but more information can be found at:
   https://gitlab.mpi-sws.org/iris/iris/blob/master/docs/proof_guide.md#resource-algebra-management
@@ -214,7 +214,7 @@ Definition swap_and_add : val := λ: "l1" "l2",
   "l2" <- "x".
 
 (** The specification is as follows: *)
-Lemma wp_swap_and_add `{heapG Σ} l1 l2 (x1 x2 : Z) :
+Lemma wp_swap_and_add `{!heapG Σ} l1 l2 (x1 x2 : Z) :
   l1 ↦ #x1 -∗
   l2 ↦ #x2 -∗
   WP swap_and_add #l1 #l2 {{ v, ⌜ v = #() ⌝ ∗ l1 ↦ #(x1 + x2) ∗ l2 ↦ #x1 }}.
@@ -241,7 +241,7 @@ Definition twice : val := λ: "f" "x",
 only use them in the conclusions of a lemma, but als in the premises, and in
 arbitrarily nested ways. This is crucial to reason about higher-order functions.
 Let us see that in action for the [twice] function. *)
-Lemma wp_twice `{heapG Σ} (Ψ : val → iProp Σ) (vf vx : val) :
+Lemma wp_twice `{!heapG Σ} (Ψ : val → iProp Σ) (vf vx : val) :
   WP vf vx {{ w, WP vf w {{ Ψ }} }} -∗
   WP twice vf vx {{ Ψ }}.
 
@@ -284,7 +284,7 @@ Definition add_two : val := λ: "x",
 
 (** While this function is rather convoluted, the specification is precisely
 what you would expect---it adds [2]. *)
-Lemma wp_add_two `{heapG Σ} (x : Z) :
+Lemma wp_add_two `{!heapG Σ} (x : Z) :
   WP add_two #x {{ w, ⌜ w = #(2 + x) ⌝ }}%I.
 (** Note that this weakest precondition does not have a premise (i.e. the
 lemma does not involve a magic wand [-∗] at the top-level, as we have seen in
@@ -315,13 +315,14 @@ Qed.
 
 (** ** Exercise (add_two_ref, moderate) *)
 (** Instead of using [twice] to add [2] to an integer value, we now use it to
-add [2] to the value of a reference to an integer. *)
+add [2] to the value of a reference to an integer. That is, we use [twice]
+with a function that reads the reference and adds [1] to it. *)
 Definition add_two_ref : val := λ: "l",
   twice (λ: <>, "l" <- #1 + !"l") #().
 
 (** The specification is as expected (it follows the pattern we have seen in
 e.g. [swap_and_add]---we make use of the points-to connective [l ↦ #x]. *)
-Lemma wp_add_two_ref `{heapG Σ} l (x : Z) :
+Lemma wp_add_two_ref `{!heapG Σ} l (x : Z) :
   l ↦ #x -∗
   WP add_two_ref #l {{ w, ⌜ w = #() ⌝ ∗ l ↦ #(2 + x) }}%I.
 
@@ -352,7 +353,7 @@ Definition twice_ref : val := λ: "lf" "lx",
 (** The specification of [twice_ref] follows that of [twice], but it quantifies
 both over locations [lf] and [lx], and the HeapLang function [vf] and value [vx]
 that they contain, respectively. *)
-Lemma wp_twice_ref `{heapG Σ} (Ψ : val → iProp Σ) lf lx (vf vx : val) :
+Lemma wp_twice_ref `{!heapG Σ} (Ψ : val → iProp Σ) lf lx (vf vx : val) :
   lf ↦ vf -∗
   lx ↦ vx -∗
   WP vf vx {{ w, WP vf w {{ w', lf ↦ vf -∗ lx ↦ w' -∗ Ψ #() }} }} -∗
@@ -407,7 +408,7 @@ Definition add_two_fancy : val := λ: "x",
   twice_ref "lf" "lx";;
   !"lx".
 
-Lemma wp_add_two_fancy `{heapG Σ} (x : Z) :
+Lemma wp_add_two_fancy `{!heapG Σ} (x : Z) :
   WP add_two_fancy #x {{ w, ⌜ w = #(2 + x) ⌝ }}%I.
 (* REMOVE *) Proof.
   rewrite /add_two_fancy. wp_pures.
@@ -426,7 +427,7 @@ Qed.
 Definition unsafe_pure : val := λ: <>,
   if: #true then #13 else #13 #37.
 
-Lemma wp_unsafe_pure `{heapG Σ} :
+Lemma wp_unsafe_pure `{!heapG Σ} :
   WP unsafe_pure #() {{ v, ⌜ v = #13 ⌝ }}%I.
 Proof.
   rewrite /unsafe_pure.
@@ -438,7 +439,7 @@ Qed.
 Definition unsafe_ref : val := λ: <>,
   let: "l" := ref #0 in "l" <- #true;; !"l".
 
-Lemma wp_unsafe_ref `{heapG Σ} :
+Lemma wp_unsafe_ref `{!heapG Σ} :
   WP unsafe_ref #() {{ v, ⌜ v = #true ⌝ }}%I.
 (* REMOVE *) Proof.
   rewrite /unsafe_ref. wp_pures.
@@ -476,7 +477,7 @@ Definition swap_poly : val := Λ: λ: "l1" "l2",
   "l1" <- !"l2";;
   "l2" <- "x".
 
-Lemma wp_swap_poly `{heapG Σ} l1 l2 v1 v2 :
+Lemma wp_swap_poly `{!heapG Σ} l1 l2 v1 v2 :
   l1 ↦ v1 -∗
   l2 ↦ v2 -∗
   WP swap_poly <_> #l1 #l2 {{ v, ⌜ v = #() ⌝ ∗ l1 ↦ v2 ∗ l2 ↦ v1 }}.

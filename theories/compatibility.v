@@ -24,11 +24,11 @@ From tutorial_popl20 Require Export sem_typed sem_operators.
  *)
 
 Section compatibility.
-  Context `{heapG Σ}.
+  Context `{!heapG Σ}.
   Implicit Types A B : sem_ty Σ.
   Implicit Types C : sem_ty Σ → sem_ty Σ.
 
-  Lemma Var_sem_typed Γ (x : string) A : Γ !! x = Some A → Γ ⊨ x : A.
+  Lemma Var_sem_typed Γ (x : string) A : Γ !! x = Some A → (Γ ⊨ x : A)%I.
   Proof.
     iIntros (HΓx vs) "!# #HΓ /=".
     iDestruct (env_sem_typed_lookup with "HΓ") as (v ->) "HA"; first done.
@@ -211,11 +211,11 @@ Section compatibility.
     wp_apply wp_fork; last done. by iApply (wp_wand with "(H [//])").
   Qed.
 
-  Lemma UnitV_sem_typed : ⊨ᵥ #() : ().
+  Lemma UnitV_sem_typed : (⊨ᵥ #() : ())%I.
   Proof. by iPureIntro. Qed.
-  Lemma BoolV_sem_typed (b : bool) : ⊨ᵥ #b : sem_ty_bool.
+  Lemma BoolV_sem_typed (b : bool) : (⊨ᵥ #b : sem_ty_bool)%I.
   Proof. by iExists b. Qed.
-  Lemma IntV_sem_typed (n : Z) : ⊨ᵥ #n : sem_ty_int.
+  Lemma IntV_sem_typed (n : Z) : (⊨ᵥ #n : sem_ty_int)%I.
   Proof. by iExists n. Qed.
 
   Lemma PairV_sem_typed v1 v2 τ1 τ2 :
