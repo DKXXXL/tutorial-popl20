@@ -156,12 +156,16 @@ End semtyp.
 Notation "Γ ⊨ e : A" := (sem_typed Γ e A)
   (at level 74, e, A at next level).
 
-Lemma sem_type_safety `{!heapPreG Σ} e σ es σ' e' τ :
-  (∀ `{!heapG Σ}, ∅ ⊨ e : τ) →
-  rtc erased_step ([e], σ) (es, σ') → e' ∈ es →
-  is_Some (to_val e') ∨ reducible e' σ'.
+Definition safe (e : expr) :=
+  ∀ σ es' e' σ',
+    rtc erased_step ([e], σ) (es', σ') →
+    e' ∈ es' →
+    is_Some (to_val e') ∨ reducible e' σ'.
+
+Lemma sem_type_safety `{!heapPreG Σ} e τ :
+  (∀ `{!heapG Σ}, ∅ ⊨ e : τ) → safe e.
 Proof.
-  intros Hty.
+  intros Hty σ es' e' σ'.
   apply (heap_adequacy Σ NotStuck e σ (λ _, True))=> // ?.
   iDestruct (Hty $! ∅) as "#He".
   rewrite subst_map_empty. iApply (wp_wand with "(He [])").
@@ -169,14 +173,8 @@ Proof.
   auto.
 Qed.
 
-Lemma type_safety e σ es σ' e' τ :
-  (∅ ⊢ₜ e : τ) →
-  rtc erased_step ([e], σ) (es, σ') → e' ∈ es →
-  is_Some (to_val e') ∨ reducible e' σ'.
+Lemma type_safety e τ : ∅ ⊢ₜ e : τ → safe e.
 Proof.
   intros Hty. eapply (sem_type_safety (Σ:=heapΣ))=> ?.
   by apply fundamental.
 Qed.
-
-(*  LocalWords:  Robbert
- *)
