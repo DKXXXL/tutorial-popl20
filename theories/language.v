@@ -7,7 +7,7 @@ Definition swap : val := λ: "l1" "l2",
   "l1" <- !"l2";;
   "l2" <- "x".
 
-Lemma swap_wp `{heapG Σ} l1 l2 v1 v2 :
+Lemma wp_swap `{heapG Σ} l1 l2 v1 v2 :
   l1 ↦ v1 -∗
   l2 ↦ v2 -∗
   WP swap #l1 #l2 {{ v, ⌜ v = #() ⌝ ∗ l1 ↦ v2 ∗ l2 ↦ v1 }}.
@@ -27,7 +27,7 @@ Qed.
 Definition twice : val := λ: "f" "x",
   "f" ("f" "x").
 
-Lemma twice_wp `{heapG Σ} (Ψ : val → iProp Σ) (vf vx : val) :
+Lemma wp_twice `{heapG Σ} (Ψ : val → iProp Σ) (vf vx : val) :
   WP vf vx {{ w, WP vf w {{ Ψ }} }} -∗
   WP twice vf vx {{ Ψ }}.
 Proof.
@@ -40,24 +40,24 @@ Qed.
 Definition add_two : val := λ: "x",
   twice (λ: "y", #1 + "y") "x".
 
-Lemma add_two_wp `{heapG Σ} (x : Z) :
+Lemma wp_add_two `{heapG Σ} (x : Z) :
   WP add_two #x {{ w, ⌜ w = #(2 + x) ⌝ }}%I.
 Proof.
   rewrite /add_two. wp_pures.
-  iApply twice_wp. wp_pures.
+  iApply wp_twice. wp_pures.
   iPureIntro. auto with f_equal lia.
 Qed.
 
 Definition add_two_ref : val := λ: "l",
   twice (λ: <>, "l" <- #1 + !"l") #().
 
-Lemma add_two_ref_wp `{heapG Σ} l (x : Z) :
+Lemma wp_add_two_ref `{heapG Σ} l (x : Z) :
   l ↦ #x -∗
   WP add_two_ref #l {{ w, ⌜ w = #() ⌝ ∗ l ↦ #(2 + x) }}%I.
 Proof.
   iIntros "Hl".
   rewrite /add_two_ref. wp_pures.
-  iApply twice_wp.
+  iApply wp_twice.
   wp_load. wp_store.
   wp_load. wp_store.
   rewrite Z.add_assoc (_ : (1 + 1) = 2) //.
@@ -68,7 +68,7 @@ Qed.
 Definition twice_ref : val := λ: "lf" "lx",
   !"lf" (!"lf" !"lx").
 
-Lemma twice_ref_wp `{heapG Σ} (Ψ : val → iProp Σ) lf lx (vf vx : val) :
+Lemma wp_twice_ref `{heapG Σ} (Ψ : val → iProp Σ) lf lx (vf vx : val) :
   lf ↦ vf -∗
   lx ↦ vx -∗
   WP vf vx {{ w, WP vf w {{ Ψ }} }} -∗
@@ -84,19 +84,19 @@ Proof.
   auto.
 Qed.
 
-Definition add_two_2 : val := λ: "x",
+Definition add_two_fancy : val := λ: "x",
   let: "lx" := ref "x" in
   let: "lf" := ref (λ: "y", #1 + "y") in
   twice_ref "lf" "lx".
 
-Lemma add_two_2_wp `{heapG Σ} (x : Z) :
-  WP add_two_2 #x {{ w, ⌜ w = #(2 + x) ⌝ }}%I.
+Lemma wp_add_two_fancy `{heapG Σ} (x : Z) :
+  WP add_two_fancy #x {{ w, ⌜ w = #(2 + x) ⌝ }}%I.
 Proof.
-  rewrite /add_two_2. wp_pures.
+  rewrite /add_two_fancy. wp_pures.
   wp_alloc lx as "Hlx".
   wp_alloc lf as "Hfx".
   wp_pures.
-  iApply (twice_ref_wp with "Hfx Hlx").
+  iApply (wp_twice_ref with "Hfx Hlx").
   wp_pures.
   iPureIntro. auto with f_equal lia.
 Qed.
@@ -105,7 +105,7 @@ Qed.
 Definition unsafe_pure : val := λ: <>,
   if: #true then #13 else #13 #37.
 
-Lemma unsafe_pure_wp `{heapG Σ} :
+Lemma wp_unsafe_pure `{heapG Σ} :
   WP unsafe_pure #() {{ v, ⌜ v = #13 ⌝ }}%I.
 Proof.
   rewrite /unsafe_pure.
@@ -116,7 +116,7 @@ Qed.
 Definition unsafe_ref : val := λ: <>,
   let: "l" := ref #0 in "l" <- #true;; !"l".
 
-Lemma unsafe_ref_wp `{heapG Σ} :
+Lemma wp_unsafe_ref `{heapG Σ} :
   WP unsafe_ref #() {{ v, ⌜ v = #true ⌝ }}%I.
 Proof.
   rewrite /unsafe_ref. wp_pures.
@@ -138,7 +138,7 @@ Definition swap_poly : val := Λ: λ: "l1" "l2",
   "l1" <- !"l2";;
   "l2" <- "x".
 
-Lemma swap_poly_wp `{heapG Σ} l1 l2 v1 v2 :
+Lemma wp_swap_poly `{heapG Σ} l1 l2 v1 v2 :
   l1 ↦ v1 -∗
   l2 ↦ v2 -∗
   WP swap_poly <_> #l1 #l2 {{ v, ⌜ v = #() ⌝ ∗ l1 ↦ v2 ∗ l2 ↦ v1 }}.
