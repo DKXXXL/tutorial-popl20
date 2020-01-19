@@ -1,5 +1,61 @@
 From tutorial_popl20 Require Import language.
 
+Inductive ty :=
+  | TVar : nat → ty
+  | TUnit : ty
+  | TBool : ty
+  | TInt : ty
+  | TProd : ty → ty → ty
+  | TArr : ty → ty → ty
+  | TRef : ty → ty.
+
+Reserved Notation "Γ ⊢ₜ e : τ" (at level 74, e, τ at next level).
+
+Inductive typed : gmap string ty → expr → ty → Prop :=
+  (** Variables *)
+  | Var_typed Γ x τ :
+     Γ !! x = Some τ →
+     Γ ⊢ₜ Var x : τ
+  (** Base values *)
+  | UnitV_typed Γ :
+     Γ ⊢ₜ #() : TUnit
+  | BoolV_typed Γ (b : bool) :
+     Γ ⊢ₜ #b : TBool
+  | IntV_val_typed Γ (i : Z) :
+     Γ ⊢ₜ #i : TInt
+  (** Products and sums *)
+  | Pair_typed Γ e1 e2 τ1 τ2 :
+     Γ ⊢ₜ e1 : τ1 → Γ ⊢ₜ e2 : τ2 →
+     Γ ⊢ₜ Pair e1 e2 : TProd τ1 τ2
+  | Fst_typed Γ e τ1 τ2 :
+     Γ ⊢ₜ e : TProd τ1 τ2 →
+     Γ ⊢ₜ Fst e : τ1
+  | Snd_typed Γ e τ1 τ2 :
+     Γ ⊢ₜ e : TProd τ1 τ2 →
+     Γ ⊢ₜ Snd e : τ2
+  (** Functions *)
+  | Rec_typed Γ f x e τ1 τ2 :
+     binder_insert f (TArr τ1 τ2) (binder_insert x τ1 Γ) ⊢ₜ e : τ2 →
+     Γ ⊢ₜ Rec f x e : TArr τ1 τ2
+  | App_typed Γ e1 e2 τ1 τ2 :
+     Γ ⊢ₜ e1 : TArr τ1 τ2 → Γ ⊢ₜ e2 : τ1 →
+     Γ ⊢ₜ App e1 e2 : τ2
+  (** Heap operations *)
+  | Alloc_typed Γ e τ :
+     Γ ⊢ₜ e : τ →
+     Γ ⊢ₜ Alloc e : TRef τ
+  | Load_typed Γ e τ :
+     Γ ⊢ₜ e : TRef τ →
+     Γ ⊢ₜ Load e : τ
+  | Store_typed Γ e1 e2 τ :
+     Γ ⊢ₜ e1 : TRef τ → Γ ⊢ₜ e2 : τ →
+     Γ ⊢ₜ Store e1 e2 : TUnit
+  (** If *)
+  | If_typed Γ e0 e1 e2 τ :
+     Γ ⊢ₜ e0 : TBool → Γ ⊢ₜ e1 : τ → Γ ⊢ₜ e2 : τ →
+     Γ ⊢ₜ If e0 e1 e2 : τ
+where "Γ ⊢ₜ e : τ" := (typed Γ e τ).
+
 (**
 
   We have already seen syntactic typing (introduced by Robbert):
@@ -29,6 +85,7 @@ step 2: Lift value interpretation to expressions (semantic typing judgment):
 
 *)
 
+Module version1.
 Section semtyp.
   Context `{!heapG Σ}.
 
@@ -86,6 +143,13 @@ Section semtyp.
     wp_pures; eauto.
   Qed.
 
+  Theorem fundamental Γ e τ : Γ ⊢ₜ e : τ → Γ ⊨ e : τ.
+  Proof.
+    intros Htyped. iInduction Htyped as [] "IH".
+    5:{ iApply Pair_sem_typed; auto. }
+  Admitted.
+End semtyp.
+End version1.
 
 (*  LocalWords:  Robbert
  *)
