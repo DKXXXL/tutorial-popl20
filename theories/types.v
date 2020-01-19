@@ -1,4 +1,4 @@
-From tutorial_popl20 Require Export language.
+From tutorial_popl20 Require Export polymorphism.
 
 Inductive ty :=
   | TVar : nat → ty

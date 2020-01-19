@@ -9,6 +9,7 @@
 -arg -w -arg -ambiguous-paths
 
 theories/language.v
+theories/polymorphism.v
 theories/types.v
 theories/typed.v
 theories/sem_types.v

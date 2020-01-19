@@ -1,4 +1,4 @@
-From tutorial_popl20 Require Export language.
+From tutorial_popl20 Require Export polymorphism.
 From iris.heap_lang Require Export proofmode.
 From iris.base_logic.lib Require Export invariants.
 
