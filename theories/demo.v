@@ -2,6 +2,31 @@ From tutorial_popl20 Require Import language.
 From iris.base_logic.lib Require Import invariants.
 From iris.heap_lang Require Import adequacy.
 
+(** Plan:
+
+1. HeapLang is a untyped language. We first define a syntactic types and a
+   syntactic typing judgment.
+
+      Γ ⊢ₜ e : τ
+
+2. Following Derek's talk, we define semantic typing in Iris:
+
+      Γ ⊨ e : τ
+
+3. We then prove the fundamental theorem:
+
+      Γ ⊢ₜ e : τ  →  Γ ⊨ e : τ
+
+   Every term that is syntactically typed, is also semantically typed
+
+4. We prove safety of semantic typing:
+
+     Γ ⊨ e : τ  →  e is safe, i.e. cannot crash
+
+5. We prove that we get more by showing that certain "unsafe" programs are also
+   semantically typed
+*)
+
 Inductive ty :=
   | TUnit : ty
   | TBool : ty
@@ -56,35 +81,6 @@ Inductive typed : gmap string ty → expr → ty → Prop :=
      Γ ⊢ₜ e0 : TBool → Γ ⊢ₜ e1 : τ → Γ ⊢ₜ e2 : τ →
      Γ ⊢ₜ If e0 e1 e2 : τ
 where "Γ ⊢ₜ e : τ" := (typed Γ e τ).
-
-(**
-
-  We have already seen syntactic typing (introduced by Robbert):
-
-    Γ ⊢ e : T
-
-  Goal: define semantic typing (introduced by Derek):
-
-    Γ ⊨ e : T
-
-Plan:
-
-step 1:
-  Define value interpretation for types (for closed values):
-
-  〚T〛: val → iProp
-
-step 2: Lift value interpretation to expressions (semantic typing judgment):
-
-- We first define a simplified version for closed expressions
-
-   ∅ ⊨ e : T := WP e {{ w, 〚T〛w }}
-
-- Then, we define full version:
-
-   Γ ⊨ e : T := ∀ vs, 〚Γ〛vs → WP susbst vs e {{ w, 〚T〛w }}
-
-*)
 
 Section semtyp.
   Context `{!heapG Σ}.
@@ -150,12 +146,11 @@ Section semtyp.
     5:{ iApply Pair_sem_typed; auto. }
   Admitted.
 
-  Definition unsafe_pure : val := λ: <>,
-    if: #true then #13 else #13 #37.
   Lemma sem_typed_unsafe_pure :
-    ∅ ⊨ unsafe_pure : TArr TUnit TInt.
+    ∅ ⊨ (if: #true then #13 else #13 #37) : TInt.
   Proof.
-  Admitted.
+    iIntros "!#" (vs) "Hvs /=". wp_pures. auto.
+  Qed.
 End semtyp.
 
 Notation "Γ ⊨ e : A" := (sem_typed Γ e A)
