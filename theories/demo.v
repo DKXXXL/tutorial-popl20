@@ -1,7 +1,8 @@
 From tutorial_popl20 Require Import language.
+From iris.base_logic.lib Require Import invariants.
+From iris.heap_lang Require Import adequacy.
 
 Inductive ty :=
-  | TVar : nat → ty
   | TUnit : ty
   | TBool : ty
   | TInt : ty
@@ -85,7 +86,6 @@ step 2: Lift value interpretation to expressions (semantic typing judgment):
 
 *)
 
-Module version1.
 Section semtyp.
   Context `{!heapG Σ}.
 
@@ -104,7 +104,8 @@ Section semtyp.
     | TProd τ1 τ2 =>
       SemTy (λ w, ∃ v1 v2, ⌜w = (v1, v2)%V⌝ ∗ interp τ1 v1 ∗ interp τ2 v2)
     | TArr τ1 τ2 => SemTy (λ w, □ ∀ v, interp τ1 v -∗ WP w v {{ u, interp τ2 u}})
-    | _ => SemTy (λ _, False) (* dummy interpretation *)
+    | TRef τ => SemTy (λ w, ∃ l : loc,
+       ⌜ w = #l ⌝ ∗ inv (nroot .@ "ref" .@ l) (∃ v, l ↦ v ∗ interp τ v))
     end%I.
 
   Definition interp_env (Γ : gmap string ty) (vs : gmap string val) : iProp Σ :=
@@ -148,8 +149,39 @@ Section semtyp.
     intros Htyped. iInduction Htyped as [] "IH".
     5:{ iApply Pair_sem_typed; auto. }
   Admitted.
+
+  Definition unsafe_pure : val := λ: <>,
+    if: #true then #13 else #13 #37.
+  Lemma sem_typed_unsafe_pure :
+    ∅ ⊨ unsafe_pure : TArr TUnit TInt.
+  Proof.
+  Admitted.
 End semtyp.
-End version1.
+
+Notation "Γ ⊨ e : A" := (sem_typed Γ e A)
+  (at level 74, e, A at next level).
+
+Lemma sem_type_safety `{!heapPreG Σ} e σ es σ' e' τ :
+  (∀ `{!heapG Σ}, ∅ ⊨ e : τ) →
+  rtc erased_step ([e], σ) (es, σ') → e' ∈ es →
+  is_Some (to_val e') ∨ reducible e' σ'.
+Proof.
+  intros Hty.
+  apply (heap_adequacy Σ NotStuck e σ (λ _, True))=> // ?.
+  iDestruct (Hty $! ∅) as "#He".
+  rewrite subst_map_empty. iApply (wp_wand with "(He [])").
+  { rewrite /interp_env. auto. }
+  auto.
+Qed.
+
+Lemma type_safety e σ es σ' e' τ :
+  (∅ ⊢ₜ e : τ) →
+  rtc erased_step ([e], σ) (es, σ') → e' ∈ es →
+  is_Some (to_val e') ∨ reducible e' σ'.
+Proof.
+  intros Hty. eapply (sem_type_safety (Σ:=heapΣ))=> ?.
+  by apply fundamental.
+Qed.
 
 (*  LocalWords:  Robbert
  *)
