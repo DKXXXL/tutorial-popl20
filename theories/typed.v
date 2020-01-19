@@ -189,14 +189,9 @@ Proof.
   - apply Val_typed, UnitV_typed.
 Qed.
 
-Definition swap : val := λ: "l1" "l2",
-  let: "x" := !"l1" in
-  "l1" <- !"l2";;
-  "l2" <- "x".
-
 Lemma swap_typed τ : ⊢ᵥ swap : (ref τ → ref τ → ()).
 Proof.
-  unfold swap.
+  rewrite /swap.
   apply LamV_typed.
   apply Lam_typed.
   apply Let_typed with τ.
@@ -208,4 +203,40 @@ Proof.
   apply Store_typed with τ.
   - by apply Var_typed.
   - by apply Var_typed.
+Qed.
+
+Lemma swap_poly_typed : ⊢ᵥ swap_poly : (∀: ref #0 → ref #0 → ()).
+Proof.
+  rewrite /swap_poly.
+  apply TLamV_typed.
+  do 2 apply Lam_typed.
+  apply Let_typed with (#0)%ty.
+  { apply Load_typed. by apply Var_typed. }
+  apply Seq_typed with ()%ty.
+  { apply Store_typed with (#0)%ty.
+    - by apply Var_typed.
+    - apply Load_typed. by apply Var_typed. }
+  apply Store_typed with (#0)%ty.
+  - by apply Var_typed.
+  - by apply Var_typed.
+Qed.
+
+Lemma unsafe_pure_not_typed Γ τ : ¬ (Γ ⊢ₜ unsafe_pure : τ).
+Proof.
+  intros Htyped.
+  repeat
+    match goal with
+    | H : _ ⊢ₜ _ : _ |- _ => inversion H; simplify_eq/=; clear H
+    | H : ⊢ᵥ _ : _ |- _ => inversion H; simplify_eq/=; clear H
+    end.
+Qed.
+
+Lemma unsafe_ref_not_typed Γ τ : ¬ (Γ ⊢ₜ unsafe_ref : τ).
+Proof.
+  intros Htyped.
+  repeat
+    match goal with
+    | H : _ ⊢ₜ _ : _ |- _ => inversion H; simplify_eq/=; clear H
+    | H : ⊢ᵥ _ : _ |- _ => inversion H; simplify_eq/=; clear H
+    end.
 Qed.
