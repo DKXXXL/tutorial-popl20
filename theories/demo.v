@@ -21,7 +21,7 @@ From iris.heap_lang Require Import adequacy.
 
 4. We prove safety of semantic typing:
 
-     Γ ⊨ e : τ  →  e is safe, i.e. cannot crash
+     ∅ ⊨ e : τ  →  e is safe, i.e. cannot crash
 
 5. We prove that we get more by showing that certain "unsafe" programs are also
    semantically typed
@@ -105,7 +105,7 @@ Section semtyp.
     end%I.
 
   Definition interp_env (Γ : gmap string ty) (vs : gmap string val) : iProp Σ :=
-    [∗ map] x ↦ τ;v ∈ Γ;vs, interp τ v.
+    [∗ map] τ;v ∈ Γ;vs, interp τ v.
 
   Definition sem_typed (Γ : gmap string ty) (e : expr) (τ : ty) : iProp Σ :=
     □ ∀ vs, interp_env Γ vs -∗ WP subst_map vs e {{ w, interp τ w }}.
