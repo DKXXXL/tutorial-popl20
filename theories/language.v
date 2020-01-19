@@ -155,14 +155,18 @@ Proof.
   auto.
 Qed.
 
-(** We wrap unpack into an explicitly function so that we can have a nice
-notation for it. *)
+(** We wrap [pack] and [unpack] into an explicitly function so that we can have
+a nice notation for it. *)
+Definition exist_pack : val := λ: "x", "x".
 Definition exist_unpack : val := λ: "x" "y", "x" "y".
 
-Notation "'unpack:' x := e1 'in' e2" := (exist_unpack (Lam x%binder e2%E) e1%E)
-  (at level 200, x at level 1, e1, e2 at level 200, only parsing,
-   format "'[' 'unpack:'  x  :=  '[' e1 ']'  'in'  '/' e2 ']'") : expr_scope.
+Notation "'pack:' e" := (exist_pack e%E)
+  (at level 200, e at level 200,
+   format "'[' 'pack:'  e ']'") : expr_scope.
 
+Notation "'unpack:' x := e1 'in' e2" := (exist_unpack (Lam x%binder e2%E) e1%E)
+  (at level 200, x at level 1, e1, e2 at level 200,
+   format "'[' 'unpack:'  x  :=  '[' e1 ']'  'in'  '/' e2 ']'") : expr_scope.
 Notation "'unpack:' x := e1 'in' e2" := (exist_unpack (LamV x%binder e2%E) e1%E)
-  (at level 200, x at level 1, e1, e2 at level 200, only parsing,
+  (at level 200, x at level 1, e1, e2 at level 200,
    format "'[' 'unpack:'  x  :=  '[' e1 ']'  'in'  '/' e2 ']'") : val_scope.

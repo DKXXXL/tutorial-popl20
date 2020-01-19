@@ -128,7 +128,7 @@ Section unsafe.
   Definition symbol_adt_inc : val := λ: "x" <>, FAA "x" #1.
   Definition symbol_adt_check : val := λ: "x" "y", assert: "y" < !"x".
   Definition symbol_adt : val := λ: <>,
-    let: "x" := Alloc #0 in (symbol_adt_inc "x", symbol_adt_check "x").
+    let: "x" := Alloc #0 in pack: (symbol_adt_inc "x", symbol_adt_check "x").
 
   Definition symbol_adt_ty `{heapG Σ} : sem_ty Σ :=
     (() → ∃ A, (() → A) * (A → ())).
@@ -151,7 +151,7 @@ Section unsafe.
       iMod (counter_alloc 0) as (γ) "Hc".
       iMod (inv_alloc symbol_adtN _ (symbol_inv γ l) with "[Hl Hc]") as "#?".
       { iExists 0%nat. by iFrame. }
-      do 2 (wp_lam; wp_pures).
+      do 2 (wp_lam; wp_pures). wp_lam.
       iExists (sem_ty_symbol γ), _, _; repeat iSplit=> //.
       - repeat rewrite /sem_ty_car /=. iIntros "!#" (? ->). wp_pures.
         iInv symbol_adtN as (n) ">[Hl Hc]". wp_faa.

@@ -75,7 +75,7 @@ Inductive typed : gmap string ty → expr → ty → Prop :=
      Γ ⊢ₜ e <_> : ty_subst 0 τ' τ
   | Pack_typed Γ e τ τ' :
      Γ ⊢ₜ e : ty_subst 0 τ' τ →
-     Γ ⊢ₜ e : TExist τ
+     Γ ⊢ₜ (pack: e) : TExist τ
   | Unpack_typed Γ e1 x e2 τ τ2 :
      Γ ⊢ₜ e1 : TExist τ →
      binder_insert x τ (ty_lift 0 <$> Γ) ⊢ₜ e2 : ty_lift 0 τ2 →

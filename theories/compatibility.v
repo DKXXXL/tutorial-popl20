@@ -115,10 +115,11 @@ Section compatibility.
     wp_apply (wp_wand with "(H [//])"); iIntros (w) "#HB". by iApply ("HB" $! A).
   Qed.
 
-  Lemma Pack_sem_typed Γ e C A : Γ ⊨ e : C A -∗ Γ ⊨ e : ∃ A, C A.
+  Lemma Pack_sem_typed Γ e C A : Γ ⊨ e : C A -∗ Γ ⊨ (pack: e) : ∃ A, C A.
   Proof.
     iIntros "#H" (vs) "!# #HΓ /=".
-    wp_apply (wp_wand with "(H [//])"); iIntros (w) "#HB". by iExists A.
+    wp_apply (wp_wand with "(H [//])"); iIntros (w) "#HB".
+    wp_lam. by iExists A.
   Qed.
   Lemma Unpack_sem_typed Γ x e1 e2 C B :
     (Γ ⊨ e1 : ∃ A, C A) -∗ (∀ A, binder_insert x (C A) Γ ⊨ e2 : B) -∗
