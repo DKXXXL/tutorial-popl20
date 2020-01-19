@@ -241,4 +241,11 @@ Section compatibility.
     iApply (env_sem_typed_insert with "IH").
     iApply (env_sem_typed_insert with "[$]"). iApply env_sem_typed_empty.
   Qed.
+
+  Lemma TLamV_sem_typed e C : (∀ A, ∅ ⊨ e : C A) -∗ ⊨ᵥ (Λ: e) : ∀ A, C A.
+  Proof.
+    iIntros "#H !#" (A) "/=". wp_pures.
+    rewrite -{2}(subst_map_empty e). iApply ("H" $! A).
+    by iApply env_sem_typed_empty.
+  Qed.
 End compatibility.

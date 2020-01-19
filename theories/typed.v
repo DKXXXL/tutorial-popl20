@@ -135,6 +135,9 @@ with val_typed : val → ty → Prop :=
   | RecV_typed f x e τ1 τ2 :
      binder_insert f (TArr τ1 τ2) (binder_insert x τ1 ∅) ⊢ₜ e : τ2 →
      ⊢ᵥ RecV f x e : TArr τ1 τ2
+  | TLamV_typed e τ :
+     ∅ ⊢ₜ e : τ →
+     ⊢ᵥ (Λ: e) : TForall τ
 where "Γ ⊢ₜ e : τ" := (typed Γ e τ)
 and "⊢ᵥ v : τ" := (val_typed v τ).
 

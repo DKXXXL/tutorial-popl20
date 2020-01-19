@@ -92,5 +92,7 @@ Section fundamental.
         change (⟦ ?τ1 ⟧ _ → ⟦ ?τ2 ⟧ _)%sem_ty with (⟦ τ1 → τ2 ⟧ ρ).
         rewrite -(interp_env_empty ρ) -!interp_env_binder_insert.
         by iApply fundamental.
+      + iApply TLamV_sem_typed; iIntros (A).
+        rewrite -(interp_env_empty (A :: ρ)). by iApply fundamental.
    Qed.
 End fundamental.
