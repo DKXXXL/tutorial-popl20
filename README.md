@@ -96,7 +96,6 @@ If you would like to know more about Iris, we recommend to take a look at:
   Lecture Notes on Iris: Higher-Order Concurrent Separation Logic
   Lars Birkedal and Aleš Bizjak
   Used for an MSc course on concurrent separation logic at Aarhus University
-
 - https://www.mpi-sws.org/~dreyer/papers/iris-ground-up/paper.pdf
   Iris from the Ground Up: A Modular Foundation for Higher-Order Concurrent
   Separation Logic
