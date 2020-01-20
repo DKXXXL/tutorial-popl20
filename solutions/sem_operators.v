@@ -1,4 +1,4 @@
-From tutorial_popl20 Require Export sem_typed.
+From solutions Require Export sem_typed.
 
 (** Semantic operator typing *)
 Class SemTyUnboxed `{!heapG Σ} (A : sem_ty Σ) :=

@@ -1,4 +1,4 @@
-From tutorial_popl20 Require Export sem_typed sem_type_formers types.
+From solutions Require Export sem_typed sem_type_formers types.
 
 (** * Interpretation of syntactic types *)
 (** We use semantic type formers to define the interpretation [⟦ τ ⟧ : sem_ty]

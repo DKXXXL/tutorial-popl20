@@ -1,4 +1,4 @@
-From tutorial_popl20 Require Export typed compatibility interp.
+From solutions Require Export typed compatibility interp.
 
 (** * The fundamental theorem of logical relations *)
 (** The fundamental theorem of logical relations says that any syntactically

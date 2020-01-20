@@ -1,4 +1,4 @@
-From tutorial_popl20 Require Export safety.
+From solutions Require Export safety.
 
 (** * Parametricity *)
 Section parametricity.

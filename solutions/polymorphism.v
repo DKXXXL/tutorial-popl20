@@ -1,4 +1,4 @@
-From tutorial_popl20 Require Export language.
+From solutions Require Export language.
 
 (** * Polymorphism and existential types in HeapLang *)
 (** In order to define a type system for HeapLang (in the file [typed.v]), we
