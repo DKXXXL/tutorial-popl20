@@ -58,10 +58,10 @@ Semantic typing:
 - [sem_operators.v](solutions/sem_operators.v): The judgment for semantic
   operator typing and proofs of the corresponding semantic rules.
 - [compatibility.v](solutions/compatibility.v): The semantic typing rules, i.e.,
-  the compatibility lemmas.
+  the *compatibility lemmas*.
 - [interp.v](solutions/interp.v): The interpretation of syntactic types in terms
   of semantic types.
-- [fundamental.v](solutions/fundamental.v): The *fundamental theorem**, which
+- [fundamental.v](solutions/fundamental.v): The *fundamental theorem*, which
   states that any syntactically typed program is semantically typed..
 - [safety.v](solutions/safety.v): Proofs of semantic and syntactic type safety.
 - [unsafe.v](solutions/unsafe.v): Proofs of "unsafe" programs, i.e. programs
