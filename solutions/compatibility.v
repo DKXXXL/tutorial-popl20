@@ -1,6 +1,6 @@
 From tutorial_popl20 Require Export sem_typed sem_operators.
 
-(** * Compatibility of logical relations with typing rules *)
+(** * Compatibility lemmas *)
 (** We prove that the logical relations, i.e., the semantic typing judgment,
 that we have defined is compatible with typing rules. That is, the logical
 relations is a congruence with respect to the typing rules.
@@ -27,6 +27,8 @@ Section compatibility.
   Implicit Types A B : sem_ty Σ.
   Implicit Types C : sem_ty Σ → sem_ty Σ.
 
+  (** * Compatibility rules for expression typing *)
+  (** * Variables *)
   Lemma Var_sem_typed Γ (x : string) A : Γ !! x = Some A → (Γ ⊨ x : A)%I.
   Proof.
     iIntros (HΓx vs) "!# #HΓ /=".
@@ -40,6 +42,7 @@ Section compatibility.
     iApply wp_value. iApply "Hv".
   Qed.
 
+  (** * Products and sums *)
   Lemma Pair_sem_typed Γ e1 e2 A1 A2 :
     Γ ⊨ e1 : A1 -∗ Γ ⊨ e2 : A2 -∗ Γ ⊨ (e1,e2) : A1 * A2.
   Proof.
@@ -54,7 +57,7 @@ Section compatibility.
     wp_apply (wp_wand with "(H [//])"); iIntros (w).
     iDestruct 1 as (w1 w2 ->) "[??]". by wp_pures.
   Qed.
-  Lemma Snd_sem_typed Γ e A1 A2 : Γ ⊨ e : A1 * A2 -∗ Γ ⊨ Snd e : A2.
+  (* REMOVE *) Lemma Snd_sem_typed Γ e A1 A2 : Γ ⊨ e : A1 * A2 -∗ Γ ⊨ Snd e : A2.
   Proof.
     iIntros "#H" (vs) "!# #HΓ /=".
     wp_apply (wp_wand with "(H [//])"); iIntros (w).
@@ -62,12 +65,12 @@ Section compatibility.
   Qed.
 
   Lemma InjL_sem_typed Γ e A1 A2 : Γ ⊨ e : A1 -∗ Γ ⊨ InjL e : A1 + A2.
-  Proof.
+  (* REMOVE *) Proof.
     iIntros "#H" (vs) "!# #HΓ /=".
     wp_apply (wp_wand with "(H [//])"); iIntros (w) "#HA".
     wp_pures. iLeft. iExists w. auto.
   Qed.
-  Lemma InjR_sem_typed Γ e A1 A2 : Γ ⊨ e : A2 -∗ Γ ⊨ InjR e : A1 + A2.
+  (* REMOVE *) Lemma InjR_sem_typed Γ e A1 A2 : Γ ⊨ e : A2 -∗ Γ ⊨ InjR e : A1 + A2.
   Proof.
     iIntros "#H" (vs) "!# #HΓ /=".
     wp_apply (wp_wand with "(H [//])"); iIntros (w) "#HA".
@@ -76,7 +79,7 @@ Section compatibility.
   Lemma Case_sem_typed Γ e e1 e2 A1 A2 B :
     Γ ⊨ e : A1 + A2 -∗ Γ ⊨ e1 : (A1 → B) -∗ Γ ⊨ e2 : (A2 → B) -∗
     Γ ⊨ Case e e1 e2 : B.
-  Proof.
+  (* REMOVE *) Proof.
     iIntros "#H #H1 #H2" (vs) "!# #HΓ /=".
     wp_apply (wp_wand with "(H [//])"); iIntros (w) "#[HA|HA]".
     - iDestruct "HA" as (w1 ->) "HA". wp_pures.
@@ -85,6 +88,7 @@ Section compatibility.
       wp_apply (wp_wand with "(H2 [//])"); iIntros (v) "#HAB". by iApply "HAB".
   Qed.
 
+  (** * Functions *)
   Lemma Rec_sem_typed Γ f x e A1 A2 :
     binder_insert f (A1 → A2)%sem_ty (binder_insert x A1 Γ) ⊨ e : A2 -∗
     Γ ⊨ (rec: f x := e) : (A1 → A2).
@@ -103,6 +107,7 @@ Section compatibility.
     wp_apply (wp_wand with "(H1 [//])"); iIntros (v) "#HA". by iApply "HA".
   Qed.
 
+  (** * Polymorphic functions and existentials *)
   Lemma TLam_sem_typed Γ e C : (∀ A, Γ ⊨ e : C A) -∗ Γ ⊨ (Λ: e) : ∀ A, C A.
   Proof.
     iIntros "#H" (vs) "!# #HΓ /=". wp_pures.
@@ -115,7 +120,7 @@ Section compatibility.
   Qed.
 
   Lemma Pack_sem_typed Γ e C A : Γ ⊨ e : C A -∗ Γ ⊨ (pack: e) : ∃ A, C A.
-  Proof.
+  (* REMOVE *) Proof.
     iIntros "#H" (vs) "!# #HΓ /=".
     wp_apply (wp_wand with "(H [//])"); iIntros (w) "#HB".
     wp_lam. by iExists A.
@@ -123,7 +128,7 @@ Section compatibility.
   Lemma Unpack_sem_typed Γ x e1 e2 C B :
     (Γ ⊨ e1 : ∃ A, C A) -∗ (∀ A, binder_insert x (C A) Γ ⊨ e2 : B) -∗
     Γ ⊨ (unpack: x := e1 in e2) : B.
-  Proof.
+  (* REMOVE *) Proof.
     iIntros "#H1 #H2" (vs) "!# #HΓ /=".
     wp_apply (wp_wand with "(H1 [//])"); iIntros (v); iDestruct 1 as (A) "#HC".
     rewrite /exist_unpack; wp_pures. rewrite -subst_map_binder_insert.
@@ -132,6 +137,7 @@ Section compatibility.
     auto.
   Qed.
 
+  (** ** Heap operations *)
   Lemma Alloc_sem_typed Γ e A : Γ ⊨ e : A -∗ Γ ⊨ ref e : ref A.
   Proof.
     iIntros "#H" (vs) "!# #HΓ /=".
@@ -150,7 +156,7 @@ Section compatibility.
   Qed.
   Lemma Store_sem_typed Γ e1 e2 A :
     Γ ⊨ e1 : ref A -∗ Γ ⊨ e2 : A -∗ Γ ⊨ (e1 <- e2) : ().
-  Proof.
+  (* REMOVE *) Proof.
     iIntros "#H1 #H2" (vs) "!# #HΓ /=".
     wp_apply (wp_wand with "(H2 [//])"); iIntros (w2) "#HA".
     wp_apply (wp_wand with "(H1 [//])"); iIntros (w1); iDestruct 1 as (l ->) "#?".
@@ -158,7 +164,7 @@ Section compatibility.
   Qed.
   Lemma FAA_sem_typed Γ e1 e2 :
     Γ ⊨ e1 : ref sem_ty_int -∗ Γ ⊨ e2 : sem_ty_int -∗ Γ ⊨ FAA e1 e2 : sem_ty_int.
-  Proof.
+  (* REMOVE *) Proof.
     iIntros "#H1 #H2" (vs) "!# #HΓ /=".
     wp_apply (wp_wand with "(H2 [//])"); iIntros (w2); iDestruct 1 as (n) "->".
     wp_apply (wp_wand with "(H1 [//])"); iIntros (w1); iDestruct 1 as (l ->) "#?".
@@ -169,7 +175,7 @@ Section compatibility.
     SemTyUnboxed A →
     Γ ⊨ e1 : ref A -∗ Γ ⊨ e2 : A -∗ Γ ⊨ e3 : A -∗
     Γ ⊨ CmpXchg e1 e2 e3 : A * sem_ty_bool.
-  Proof.
+  (* REMOVE *) Proof.
     intros. iIntros "#H1 #H2 #H3" (vs) "!# #HΓ /=".
     wp_apply (wp_wand with "(H3 [//])"); iIntros (w3) "HA3".
     wp_apply (wp_wand with "(H2 [//])"); iIntros (w2) "HA2".
@@ -179,6 +185,7 @@ Section compatibility.
       (iSplitL; [by eauto 12 with iFrame | iExists _, _; eauto]).
   Qed.
 
+  (** ** Operators *)
   Lemma UnOp_sem_typed Γ e op A B :
     SemTyUnOp op A B → Γ ⊨ e : A -∗ Γ ⊨ UnOp op e : B.
   Proof.
@@ -188,7 +195,7 @@ Section compatibility.
   Qed.
   Lemma BinOp_sem_typed Γ e1 e2 op A1 A2 B :
     SemTyBinOp op A1 A2 B → Γ ⊨ e1 : A1 -∗ Γ ⊨ e2 : A2 -∗ Γ ⊨ BinOp op e1 e2 : B.
-  Proof.
+  (* REMOVE *) Proof.
     intros. iIntros "#H1 #H2" (vs) "!# #HΓ /=".
     wp_apply (wp_wand with "(H2 [//])"); iIntros (v2) "#HA2".
     wp_apply (wp_wand with "(H1 [//])"); iIntros (v1) "#HA1".
@@ -198,25 +205,29 @@ Section compatibility.
   Lemma If_sem_typed Γ e e1 e2 B :
     Γ ⊨ e : sem_ty_bool -∗ Γ ⊨ e1 : B -∗ Γ ⊨ e2 : B -∗
     Γ ⊨ (if: e then e1 else e2) : B.
-  Proof.
+  (* REMOVE *) Proof.
     iIntros "#H #H1 #H2" (vs) "!# #HΓ /=".
     iSpecialize ("H1" with "HΓ"). iSpecialize ("H2" with "HΓ").
     wp_apply (wp_wand with "(H [//])"); iIntros (w). iDestruct 1 as ([]) "->"; by wp_if.
   Qed.
 
+  (** ** Fork *)
   Lemma Fork_sem_typed Γ e : Γ ⊨ e : () -∗ Γ ⊨ Fork e : ().
-  Proof.
+  (* REMOVE *) Proof.
     iIntros "#H" (vs) "!# #HΓ /=".
     wp_apply wp_fork; last done. by iApply (wp_wand with "(H [//])").
   Qed.
 
+  (** * Compatibility rules for value typing *)
+  (** ** Base types *)
   Lemma UnitV_sem_typed : (⊨ᵥ #() : ())%I.
   Proof. by iPureIntro. Qed.
   Lemma BoolV_sem_typed (b : bool) : (⊨ᵥ #b : sem_ty_bool)%I.
   Proof. by iExists b. Qed.
   Lemma IntV_sem_typed (n : Z) : (⊨ᵥ #n : sem_ty_int)%I.
-  Proof. by iExists n. Qed.
+  (* REMOVE *) Proof. by iExists n. Qed.
 
+  (** ** Products and sums *)
   Lemma PairV_sem_typed v1 v2 τ1 τ2 :
     ⊨ᵥ v1 : τ1 -∗ ⊨ᵥ v2 : τ2 -∗
     ⊨ᵥ PairV v1 v2 : (τ1 * τ2).
@@ -230,6 +241,7 @@ Section compatibility.
     ⊨ᵥ InjRV v : (τ1 + τ2).
   Proof. iIntros "H". iRight. auto. Qed.
 
+  (** ** Functions *)
   Lemma RecV_sem_typed f x e A B :
     binder_insert f (A → B)%sem_ty (binder_insert x A ∅) ⊨ e : B -∗
     ⊨ᵥ RecV f x e : (A → B).
