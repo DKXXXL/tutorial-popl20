@@ -1,4 +1,4 @@
-From solutions Require Export sem_type_formers.
+From exercises Require Export sem_type_formers.
 
 (** * The semantic typing judgment *)
 

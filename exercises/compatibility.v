@@ -1,4 +1,4 @@
-From solutions Require Export sem_typed sem_operators.
+From exercises Require Export sem_typed sem_operators.
 
 (** * Compatibility lemmas *)
 (** We prove that the logical relations, i.e., the semantic typing judgment,

@@ -1,5 +1,5 @@
-From solutions Require Export sem_typed.
-From solutions Require Import symbol_ghost two_state_ghost.
+From exercises Require Export sem_typed.
+From exercises Require Import symbol_ghost two_state_ghost.
 
 Section unsafe.
   Context `{!heapG Σ}.
