@@ -1,4 +1,5 @@
 -Q solutions solutions
+-Q exercises exercises
 # non-canonical projections (https://github.com/coq/coq/pull/10076) do not exist yet in 8.9.
 -arg -w -arg -redundant-canonical-projection
 # change_no_check does not exist yet in 8.9.
@@ -24,3 +25,19 @@ solutions/symbol_ghost.v
 solutions/unsafe.v
 solutions/parametricity.v
 solutions/interp.v
+exercises/language.v
+exercises/polymorphism.v
+exercises/types.v
+exercises/typed.v
+exercises/sem_types.v
+exercises/sem_type_formers.v
+exercises/sem_typed.v
+exercises/sem_operators.v
+exercises/compatibility.v
+exercises/fundamental.v
+exercises/safety.v
+exercises/two_state_ghost.v
+exercises/symbol_ghost.v
+exercises/unsafe.v
+exercises/parametricity.v
+exercises/interp.v
