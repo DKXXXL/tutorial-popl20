@@ -431,7 +431,7 @@ Lemma wp_add_two_fancy `{!heapG Σ} (x : Z) :
   auto with f_equal lia.
 Qed.
 
-(** * Reasoning about "unsafe" functions *)
+(** * Reasoning about "unsafe" programs *)
 (** Since HeapLang is an untyped language, we can write down arbitrary
 programs, i.e. programs that are not typeable by conventional type systems, and
 prove logical specifications of them. We will show this on two small examples

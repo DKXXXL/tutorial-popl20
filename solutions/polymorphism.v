@@ -1,7 +1,7 @@
 From tutorial_popl20 Require Export language.
 
 (** * Polymorphism and existential types in HeapLang *)
-(** In order to define a type system for HeapLang (in the file [typed.v]) we
+(** In order to define a type system for HeapLang (in the file [typed.v]), we
 need to extend HeapLang with constructs for polymorphic functions (i.e.
 type-level lambdas and application), and for existential types (i.e. pack and
 unpack). Since HeapLang is an untyped language, it does natively have these
