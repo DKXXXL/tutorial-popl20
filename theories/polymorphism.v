@@ -1,13 +1,15 @@
 From tutorial_popl20 Require Export language.
 
 (** * Polymorphism and existential types in HeapLang *)
-(** Since HeapLang is an untyped language, it does not have constructs for
-polymorphic functions (i.e. type-level lambdas and application), and for
-existential types (i.e. pack and unpack). *)
+(** In order to define a type system for HeapLang (in the file [typed.v]) we
+need to extend HeapLang with constructs for polymorphic functions (i.e.
+type-level lambdas and application), and for existential types (i.e. pack and
+unpack). Since HeapLang is an untyped language, it does natively have these
+constructs. *)
 
 (** We retrofit type-level lambdas and application on HeapLang by defining them
 as mere thunks, and ordinary application, respectively. This ensures that
-polymorphic programs satisfy a **value condition**, which is needed to obtain
+polymorphic programs satisfy a **value restriction**, which is needed to obtain
 type safety in the presence of mutable state. *)
 Notation "Λ: e" := (λ: <>, e)%E (at level 200, only parsing) : expr_scope.
 Notation "Λ: e" := (λ: <>, e)%V (at level 200, only parsing) : val_scope.

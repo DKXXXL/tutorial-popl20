@@ -1,19 +1,55 @@
-From tutorial_popl20 Require Export types.
+From tutorial_popl20 Require Export types polymorphism.
 
+(** * Syntactic typing for HeapLang *)
+(** In this file, we define a syntactic type system for HeapLang. We do this
+in the conventional way by defining the typing judgment [Γ ⊢ₜ e : τ] using an
+inductive relation. *)
+
+(** * Operator typing *)
+(** In order to define the typing judgment, we first need some helpers for
+operator typing. *)
+
+(** The first helper we define is [ty_unboxed τ], which expresses that values
+of [τ] are unboxed, i.e. they fit into one machine word. This helper is needed
+to state the typing rules for equality and compare-and-exchange ([CmpXchg]),
+which can only be used on unboxed values. *)
 Inductive ty_unboxed : ty → Prop :=
   | TUnit_unboxed : ty_unboxed TUnit
   | TBool_unboxed : ty_unboxed TBool
   | TInt_unboxed : ty_unboxed TInt
   | TRef_unboxed τ : ty_unboxed (TRef τ).
+
+(** In order to let Coq automatically prove that types are unboxed, we turn
+[ty_unboxed] into a type class, and turn the constructors into type class
+instances. This is done using the following commands. *)
 Existing Class ty_unboxed.
 Existing Instances TUnit_unboxed TBool_unboxed TInt_unboxed TRef_unboxed.
 
+(** We can now use Coq's type class inference mechanism to automatically
+establish that given types are unboxed. This is done by invoking the [apply _]
+tactic. *)
+Lemma TRef_TRef_TInt_unboxed : ty_unboxed (TRef (TRef TInt)).
+Proof. apply _. Qed.
+
+(** The true power of turning [ty_unboxed] into a type class is that whenever a
+lemma or definition has a [ty_unboxed] argument, type class inference is called
+automatically. *)
+
+(** The relation [ty_un_op op τ σ] expresses that a unary operator [op] with an
+argument of type [τ] has result type [σ]. We also turn [ty_un_op] into a type
+class. *)
 Inductive ty_un_op : un_op → ty → ty → Prop :=
   | Ty_un_op_int op : ty_un_op op TInt TInt
   | Ty_un_op_bool : ty_un_op NegOp TBool TBool.
 Existing Class ty_un_op.
 Existing Instances Ty_un_op_int Ty_un_op_bool.
 
+(** The relation [ty_bin_op op τ1 τ2 σ] expresses that a binary operator [op]
+with arguments of type [τ1] and [τ2] has result type [σ]. In order to avoid
+an abundance of rules, we factorize the operators into 4 categories: equality,
+arithmetic, comparison, and Boolean operators. For the last 3 categories, we make
+use of [TCElemOf x xs], where [x : A] and [xs : list A], which is a type class
+version of [x ∈ xs]. *)
 Inductive ty_bin_op : bin_op → ty → ty → ty → Prop :=
   | Ty_bin_op_eq τ :
      ty_unboxed τ → ty_bin_op EqOp τ τ TBool
@@ -28,6 +64,78 @@ Inductive ty_bin_op : bin_op → ty → ty → ty → Prop :=
 Existing Class ty_bin_op.
 Existing Instances Ty_bin_op_eq Ty_bin_op_arith Ty_bin_op_compare Ty_bin_op_bool.
 
+(** * The typing judgment *)
+(** With the above helpers at hand, we can define the syntactic typing judgment
+[Γ ⊢ₜ e : τ]. While most of the typing rules are standard, the definition
+involves a number of interesting aspects.
+
+- Since term-level variables in HeapLang are modeled using strings, we represent
+  typing contexts [Γ : gmap string ty] as mappings from strings to types. Here,
+  [gmap] is the type of generic maps from the std++ library.
+- In addition to named binders, HeapLang also features the anonymous binder
+  [<>]. This allows one to define [λ: x, e] as [rec: <> x := e]. Binders in
+  HeapLang are of type [binder], whose definition is as follows:
+
+  <<
+  Inductive binder := BAnon : binder | BNamed : string → binder.
+  >>
+
+  As a result, in the typing rules of all constructs that involve binders (i.e.,
+  the typing rules [Rec_typed] and [Unpack_typed]) we have to consider two
+  cases [BAnon] and [BNamed]. To factorize these typing rules, we make use of
+  [binder_insert], which lifts the insert operator [<[_:=_> _] on [gmap] to
+  binders.
+- The type of values [val] and expressions [expr] of HeapLang are defined in
+  a mutually inductive fashion:
+
+  <<
+  Inductive expr :=
+    (* Values *)
+    | Val (v : val)
+    (* Base lambda calculus *)
+    | Var (x : string)
+    | Rec (f x : binder) (e : expr)
+    | App (e1 e2 : expr)
+    (* Products *)
+    | Pair (e1 e2 : expr)
+    | Fst (e : expr)
+    | Snd (e : expr)
+    (* Sums *)
+    | InjL (e : expr)
+    | InjR (e : expr)
+    | Case (e0 : expr) (e1 : expr) (e2 : expr)
+    (* Etc. *)
+  with val :=
+    | LitV (l : base_lit)
+    | RecV (f x : binder) (e : expr)
+    | PairV (v1 v2 : val)
+    | InjLV (v : val)
+    | InjRV (v : val).
+  >>
+
+  For technical reasons, the only terms that are considered values are those
+  that begin with the [Val] expression former. This means that, for example,
+  [Pair (Val v1) (Val v2)] is not a value---it reduces to [Val (PairV v1 v2)],
+  which is. This leads to some administrative redexes, and to a distinction
+  between "value pairs", "value sums", "value closures" and their "expression"
+  counterparts.
+
+  However, this also makes values syntactically uniform, which we exploit in the
+  definition of substitution ([subst]), which just skips over [Val] terms,
+  because values should be closed, and hence not affected by substitution. As a
+  consequence, we can entirely avoid talking about "closed terms" in the
+  definition of HeapLang.
+
+  As a result of the mutual inductive definition, and the distinction between
+  "value pairs", "value sums", "value closures" and their "expression"
+  counterparts, we need to define the typing judgment in a mutual inductive
+  fashion too. Hence, apart from the judgment [Γ ⊢ₜ e : τ], we have the judgment
+  [⊢ᵥ v : τ]. Note that since values are supposed to be closed, the latter
+  judgment does not have a context [Γ].
+*)
+
+(** We use [Reserved Notation] so we can use the notation already in the
+definition of the typing judgment. *)
 Reserved Notation "Γ ⊢ₜ e : τ" (at level 74, e, τ at next level).
 Reserved Notation "⊢ᵥ v : τ" (at level 20, v, τ at next level).
 
@@ -141,10 +249,25 @@ with val_typed : val → ty → Prop :=
 where "Γ ⊢ₜ e : τ" := (typed Γ e τ)
 and "⊢ᵥ v : τ" := (val_typed v τ).
 
+(** * Exercise (suger_typed, easy) *)
+(** To make it possible to write programs in a compact way, HeapLang features
+the following syntactic sugar:
+
+<<
+(λ: x, e)              := (rec: <> x := e)
+(let: x := e1 in e2)   := (λ x, e2) e1
+(e1 ;; e2)             := (let: <> := e1 in e2)
+Skip                   := (λ: <>, #()) #()
+>>
+
+Prove the following derived typing rules for the syntactic sugar. Note that
+due to the distinction between expressions and values, you have to prove some
+of them for both the expression construct and their value counterpart. *)
+
 Lemma Lam_typed Γ x e τ1 τ2 :
   binder_insert x τ1 Γ ⊢ₜ e : τ2 →
   Γ ⊢ₜ (λ: x, e) : TArr τ1 τ2.
-Proof.
+(* REMOVE *) Proof.
   intros He.
   apply Rec_typed.
   simpl.
@@ -154,7 +277,7 @@ Qed.
 Lemma LamV_typed x e τ1 τ2 :
   binder_insert x τ1 ∅ ⊢ₜ e : τ2 →
   ⊢ᵥ (λ: x, e) : TArr τ1 τ2.
-Proof.
+(* REMOVE *) Proof.
   intros He.
   apply RecV_typed.
   simpl.
@@ -165,7 +288,7 @@ Lemma Let_typed Γ x e1 e2 τ1 τ2 :
   Γ ⊢ₜ e1 : τ1 →
   binder_insert x τ1 Γ ⊢ₜ e2 : τ2 →
   Γ ⊢ₜ (let: x := e1 in e2) : τ2.
-Proof.
+(* REMOVE *) Proof.
   intros He1 He2.
   apply App_typed with τ1.
   - by apply Lam_typed.
@@ -176,21 +299,25 @@ Lemma Seq_typed Γ e1 e2 τ1 τ2 :
   Γ ⊢ₜ e1 : τ1 →
   Γ ⊢ₜ e2 : τ2 →
   Γ ⊢ₜ (e1;; e2) : τ2.
-Proof.
+(* REMOVE *) Proof.
   intros He1 He2.
   by apply Let_typed with τ1.
 Qed.
 
 Lemma Skip_typed Γ :
   Γ ⊢ₜ Skip : ().
-Proof.
+(* REMOVE *) Proof.
   apply App_typed with ()%ty.
   - apply Val_typed, RecV_typed. apply Val_typed, UnitV_typed.
   - apply Val_typed, UnitV_typed.
 Qed.
 
+(** * Typing of concrete programs *)
+(** ** Exercise (swap_typed, easy) *)
+(** Prove that the non-polymorphic swap function [swap] can be given the type
+[ref τ → ref τ → ()] for any [τ]. *)
 Lemma swap_typed τ : ⊢ᵥ swap : (ref τ → ref τ → ()).
-Proof.
+(* REMOVE *) Proof.
   rewrite /swap.
   apply LamV_typed.
   apply Lam_typed.
@@ -205,8 +332,11 @@ Proof.
   - by apply Var_typed.
 Qed.
 
+(** ** Exercise (swap_poly_typed, easy) *)
+(** Prove that [swap_poly] can be typed using the polymorphic type
+[∀ X, ref X → ref X → ())], i.e. [∀: ref #0 → ref #0 → ())] in De Bruijn style. *)
 Lemma swap_poly_typed : ⊢ᵥ swap_poly : (∀: ref #0 → ref #0 → ()).
-Proof.
+(* REMOVE *) Proof.
   rewrite /swap_poly.
   apply TLamV_typed.
   do 2 apply Lam_typed.
@@ -221,8 +351,11 @@ Proof.
   - by apply Var_typed.
 Qed.
 
-Lemma unsafe_pure_not_typed Γ τ : ¬ (Γ ⊢ₜ unsafe_pure : τ).
-Proof.
+(** ** Exercise (not_typed, easy) *)
+(** Prove that the programs [unsafe_pure] and [unsafe_ref] from [language.v]
+cannot be typed using the syntactic type system. *)
+Lemma unsafe_pure_not_typed Γ τ : ¬ (Γ ⊢ᵥ unsafe_pure : τ).
+(* REMOVE *) Proof.
   intros Htyped.
   repeat
     match goal with
@@ -231,8 +364,8 @@ Proof.
     end.
 Qed.
 
-Lemma unsafe_ref_not_typed Γ τ : ¬ (Γ ⊢ₜ unsafe_ref : τ).
-Proof.
+Lemma unsafe_ref_not_typed Γ τ : ¬ (Γ ⊢ᵥ unsafe_ref : τ).
+(* REMOVE *) Proof.
   intros Htyped.
   repeat
     match goal with

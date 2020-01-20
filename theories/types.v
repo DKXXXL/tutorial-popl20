@@ -1,5 +1,8 @@
-From tutorial_popl20 Require Export polymorphism.
+From tutorial_popl20 Require Export language.
 
+(** * Syntactic types for HeapLang *)
+(** The inductive type [ty] defines the syntactic types for HeapLang. We make
+use of De Bruijn indices to support type-level binding. *)
 Inductive ty :=
   | TVar : nat → ty
   | TUnit : ty
@@ -12,8 +15,14 @@ Inductive ty :=
   | TExist : ty → ty
   | TRef : ty → ty.
 
-Delimit Scope ty_scope with ty.
+(** To obtain nice notations when writing types for concrete programs, we define
+some Coq notations for types. These notations are put in the notation scope
+[ty_scope]. We use the [Bind Scope] command to instruct Coq to parse terms of
+type [ty] using the notations in [type_scope]. When the type is not clear from
+the context, one can write [τ%ty] to force Coq to parse [τ] using the notations
+in [type_scope]. This is set up using the [Delimit Scope] command. *)
 Bind Scope ty_scope with ty.
+Delimit Scope ty_scope with ty.
 Notation "# x" := (TVar x) : ty_scope.
 Notation "()" := TUnit : ty_scope.
 Infix "*" := TProd : ty_scope.
@@ -23,7 +32,10 @@ Notation "∀: τ" := (TForall τ) (at level 100, τ at level 200) : ty_scope.
 Notation "∃: τ" := (TExist τ) (at level 100, τ at level 200) : ty_scope.
 Notation "'ref' τ" := (TRef τ) (at level 10, τ at next level, right associativity): ty_scope.
 
-(** De Bruijn substitution *)
+(** * Type-level substitution *)
+(** Below we define the function [ty_subst x σ τ], which replaces the De Bruijn
+index [x] in the type [τ] by the type [σ]. The definition is standard, and makes
+use of the lifting function [ty_lift]. *)
 Fixpoint ty_lift (n : nat) (τ : ty) : ty :=
   match τ with
   | TVar y => TVar (if decide (y < n) then y else S y)%nat
