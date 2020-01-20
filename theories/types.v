@@ -2,7 +2,7 @@ From tutorial_popl20 Require Export language.
 
 (** * Syntactic types for HeapLang *)
 (** The inductive type [ty] defines the syntactic types for HeapLang. We make
-use of De Bruijn indices to support type-level binding. *)
+use of De Bruijn indices to model type-level binding. *)
 Inductive ty :=
   | TVar : nat → ty
   | TUnit : ty

@@ -23,7 +23,7 @@ Section types.
 
   (** The value interpretation for product type is as one would expect: *)
   Definition sem_ty_prod (A1 A2 : sem_ty Σ) : sem_ty Σ := SemTy (λ w,
-    ∃ w1 w2, ⌜w = PairV w1 w2⌝ ∧ A1 w1 ∧ A2 w2)%I.
+    ∃ w1 w2, ⌜w = (w1, w2)%V⌝ ∧ A1 w1 ∧ A2 w2)%I.
   (** Values of the product type over [A1] and [A2] should be tuples [(w1, w2)],
   where [w1] and [w2] should be in the interpretation of [A1] and [A2],
   respectively. *)
