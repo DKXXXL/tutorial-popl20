@@ -267,47 +267,47 @@ of them for both the expression construct and their value counterpart. *)
 Lemma Lam_typed Γ x e τ1 τ2 :
   binder_insert x τ1 Γ ⊢ₜ e : τ2 →
   Γ ⊢ₜ (λ: x, e) : TArr τ1 τ2.
-Proof. (* FILL IN YOUR PROOF *) Qed.
+Proof. (* FILL IN YOUR PROOF *) Admitted.
 
 Lemma LamV_typed x e τ1 τ2 :
   binder_insert x τ1 ∅ ⊢ₜ e : τ2 →
   ⊢ᵥ (λ: x, e) : TArr τ1 τ2.
-Proof. (* FILL IN YOUR PROOF *) Qed.
+Proof. (* FILL IN YOUR PROOF *) Admitted.
 
 Lemma Let_typed Γ x e1 e2 τ1 τ2 :
   Γ ⊢ₜ e1 : τ1 →
   binder_insert x τ1 Γ ⊢ₜ e2 : τ2 →
   Γ ⊢ₜ (let: x := e1 in e2) : τ2.
-Proof. (* FILL IN YOUR PROOF *) Qed.
+Proof. (* FILL IN YOUR PROOF *) Admitted.
 
 Lemma Seq_typed Γ e1 e2 τ1 τ2 :
   Γ ⊢ₜ e1 : τ1 →
   Γ ⊢ₜ e2 : τ2 →
   Γ ⊢ₜ (e1;; e2) : τ2.
-Proof. (* FILL IN YOUR PROOF *) Qed.
+Proof. (* FILL IN YOUR PROOF *) Admitted.
 
 Lemma Skip_typed Γ :
   Γ ⊢ₜ Skip : ().
-Proof. (* FILL IN YOUR PROOF *) Qed.
+Proof. (* FILL IN YOUR PROOF *) Admitted.
 
 (** * Typing of concrete programs *)
 (** ** Exercise (swap_typed, easy) *)
 (** Prove that the non-polymorphic swap function [swap] can be given the type
 [ref τ → ref τ → ()] for any [τ]. *)
 Lemma swap_typed τ : ⊢ᵥ swap : (ref τ → ref τ → ()).
-Proof. (* FILL IN YOUR PROOF *) Qed.
+Proof. (* FILL IN YOUR PROOF *) Admitted.
 
 (** ** Exercise (swap_poly_typed, easy) *)
 (** Prove that [swap_poly] can be typed using the polymorphic type
 [∀ X, ref X → ref X → ())], i.e. [∀: ref #0 → ref #0 → ())] in De Bruijn style. *)
 Lemma swap_poly_typed : ⊢ᵥ swap_poly : (∀: ref #0 → ref #0 → ()).
-Proof. (* FILL IN YOUR PROOF *) Qed.
+Proof. (* FILL IN YOUR PROOF *) Admitted.
 
 (** ** Exercise (not_typed, easy) *)
 (** Prove that the programs [unsafe_pure] and [unsafe_ref] from [language.v]
 cannot be typed using the syntactic type system. *)
 Lemma unsafe_pure_not_typed τ : ¬ (⊢ᵥ unsafe_pure : τ).
-Proof. (* FILL IN YOUR PROOF *) Qed.
+Proof. (* FILL IN YOUR PROOF *) Admitted.
 
 Lemma unsafe_ref_not_typed τ : ¬ (⊢ᵥ unsafe_ref : τ).
-Proof. (* FILL IN YOUR PROOF *) Qed.
+Proof. (* FILL IN YOUR PROOF *) Admitted.

@@ -57,8 +57,8 @@ Section compatibility.
     wp_apply (wp_wand with "(H [//])"); iIntros (w).
     iDestruct 1 as (w1 w2 ->) "[??]". by wp_pures.
   Qed.
-  (* REMOVE *) Lemma Snd_sem_typed Γ e A1 A2 : Γ ⊨ e : A1 * A2 -∗ Γ ⊨ Snd e : A2.
-  Proof.
+  Lemma Snd_sem_typed Γ e A1 A2 : Γ ⊨ e : A1 * A2 -∗ Γ ⊨ Snd e : A2.
+  (* REMOVE *) Proof.
     iIntros "#H" (vs) "!# #HΓ /=".
     wp_apply (wp_wand with "(H [//])"); iIntros (w).
     iDestruct 1 as (w1 w2 ->) "[??]". by wp_pures.
@@ -70,8 +70,8 @@ Section compatibility.
     wp_apply (wp_wand with "(H [//])"); iIntros (w) "#HA".
     wp_pures. iLeft. iExists w. auto.
   Qed.
-  (* REMOVE *) Lemma InjR_sem_typed Γ e A1 A2 : Γ ⊨ e : A2 -∗ Γ ⊨ InjR e : A1 + A2.
-  Proof.
+  Lemma InjR_sem_typed Γ e A1 A2 : Γ ⊨ e : A2 -∗ Γ ⊨ InjR e : A1 + A2.
+  (* REMOVE *) Proof.
     iIntros "#H" (vs) "!# #HΓ /=".
     wp_apply (wp_wand with "(H [//])"); iIntros (w) "#HA".
     wp_pures. iRight. iExists w. auto.
