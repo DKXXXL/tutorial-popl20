@@ -1,27 +1,14 @@
-EXTRA_DIR:=coqdocjs/extra
-COQDOCFLAGS:= \
-  --toc --toc-depth 2 --html --interpolate \
-  --index indexpage --no-lib-name --parse-comments \
-  --with-header $(EXTRA_DIR)/header.html --with-footer $(EXTRA_DIR)/footer.html
-export COQDOCFLAGS
-
 # Forward most targets to Coq makefile (with some trick to make this phony)
 %: Makefile.coq phony
 	+@make -f Makefile.coq $@
 
 all: Makefile.coq
 	+@make -f Makefile.coq all
-
-html: Makefile.coq phony
-	rm -fr html
-	@$(MAKE) -f Makefile.coq html
-	cp $(EXTRA_DIR)/resources/* html
-
-.PHONY: all html
+.PHONY: all
 
 clean: Makefile.coq
 	+@make -f Makefile.coq clean
-	find theories tests \( -name "*.d" -o -name "*.vo" -o -name "*.aux" -o -name "*.cache" -o -name "*.glob" -o -name "*.vio" \) -print -delete || true
+	find solutions tests \( -name "*.d" -o -name "*.vo" -o -name "*.aux" -o -name "*.cache" -o -name "*.glob" -o -name "*.vio" \) -print -delete || true
 	rm -f Makefile.coq .lia.cache
 .PHONY: clean
 
@@ -42,14 +29,8 @@ build-dep: build-dep/opam phony
 	@# that are incompatible with our build requirements.
 	@# To achieve this, we create a fake opam package that has our build-dependencies as
 	@# dependencies, but does not actually install anything itself.
-	@echo "# Pinning build-dep package." && \
-	  if opam --version | grep "^1\." -q; then \
-	    BUILD_DEP_PACKAGE="$$(egrep "^name:" build-dep/opam | sed 's/^name: *"\(.*\)" */\1/')" && \
-	    opam pin add -k path $(OPAMFLAGS) "$$BUILD_DEP_PACKAGE".dev build-dep && \
-	    opam reinstall $(OPAMFLAGS) "$$BUILD_DEP_PACKAGE"; \
-	  else \
-	    opam install $(OPAMFLAGS) build-dep/; \
-	  fi
+	@echo "# Installing build-dep package."
+	@opam install $(OPAMFLAGS) build-dep/
 
 # Some files that do *not* need to be forwarded to Makefile.coq
 Makefile: ;

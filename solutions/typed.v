@@ -354,7 +354,7 @@ Qed.
 (** ** Exercise (not_typed, easy) *)
 (** Prove that the programs [unsafe_pure] and [unsafe_ref] from [language.v]
 cannot be typed using the syntactic type system. *)
-Lemma unsafe_pure_not_typed Γ τ : ¬ (Γ ⊢ᵥ unsafe_pure : τ).
+Lemma unsafe_pure_not_typed τ : ¬ (⊢ᵥ unsafe_pure : τ).
 (* REMOVE *) Proof.
   intros Htyped.
   repeat
@@ -364,7 +364,7 @@ Lemma unsafe_pure_not_typed Γ τ : ¬ (Γ ⊢ᵥ unsafe_pure : τ).
     end.
 Qed.
 
-Lemma unsafe_ref_not_typed Γ τ : ¬ (Γ ⊢ᵥ unsafe_ref : τ).
+Lemma unsafe_ref_not_typed τ : ¬ (⊢ᵥ unsafe_ref : τ).
 (* REMOVE *) Proof.
   intros Htyped.
   repeat
