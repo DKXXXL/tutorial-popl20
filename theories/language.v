@@ -427,7 +427,8 @@ Qed.
 (** Since HeapLang is an untyped language, we can write down arbitrary
 programs, i.e. that are not typeable by any reasonable type system, and prove
 logical specifications of them. We will show this on two small examples that
-will use at other places in this tutorial. *)
+will use at other places in this tutorial to demonstrate the advances of
+semantic typing. *)
 
 (** The program below containts the expression [#13 #37] in the else-branch
 of the conditional. The expression [#13 #37], which will get stuck in the

@@ -2,7 +2,14 @@ From tutorial_popl20 Require Import language.
 From iris.base_logic.lib Require Import invariants.
 From iris.heap_lang Require Import adequacy.
 
-(** Plan:
+(** This file contains a simplified version of the development that we used
+throughout the lectures. This simplified version contains a subset of the
+features in the full version. Notably, it does not support unary and binary
+operators, sums, polymorphic functions, and existential types. Moreover, in
+this version, we define the interpretation of types [interp] in a direct style,
+instead of using semantic type formers as combinators on [sem_ty].
+
+Overview of the lecture:
 
 1. HeapLang is a untyped language. We first define a syntactic types and a
    syntactic typing judgment.
@@ -49,7 +56,7 @@ Inductive typed : gmap string ty → expr → ty → Prop :=
      Γ ⊢ₜ #b : TBool
   | IntV_val_typed Γ (i : Z) :
      Γ ⊢ₜ #i : TInt
-  (** Products and sums *)
+  (** Products *)
   | Pair_typed Γ e1 e2 τ1 τ2 :
      Γ ⊢ₜ e1 : τ1 → Γ ⊢ₜ e2 : τ2 →
      Γ ⊢ₜ Pair e1 e2 : TProd τ1 τ2
@@ -144,6 +151,7 @@ Section semtyp.
   Proof.
     intros Htyped. iInduction Htyped as [] "IH".
     5:{ iApply Pair_sem_typed; auto. }
+    (** Other cases left as an exercise to the reader *)
   Admitted.
 
   Lemma sem_typed_unsafe_pure :
