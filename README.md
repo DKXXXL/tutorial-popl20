@@ -35,50 +35,50 @@ Run `make` to compile the exercises.
 
 Introduction to Iris and the HeapLang language:
 
-- [language.v](solutions/language.v): An introduction to Iris's HeapLang
+- [language.v](exercises/language.v): An introduction to Iris's HeapLang
   language, program specifications using weakest preconditions, and proofs of
   these specifications using Iris's tactics for separation logic.
-- [polymorphism.v](solutions/polymorphism.v): The encoding of polymorphic
+- [polymorphism.v](exercises/polymorphism.v): The encoding of polymorphic
   functions and existential packages in HeapLang.
 
 Syntactic typing:
 
-- [types.v](solutions/types.v): The definition of syntactic types and the
+- [types.v](exercises/types.v): The definition of syntactic types and the
   type-level substitution function.
-- [typed.v](solutions/typed.v): The syntactic typing judgment.
+- [typed.v](exercises/typed.v): The syntactic typing judgment.
 
 Semantic typing:
 
-- [sem_types.v](solutions/sem_types.v): The model of semantic types in Iris.
-- [sem_typed.v](solutions/sem_typed.v): The definition of the semantic typing
+- [sem_types.v](exercises/sem_types.v): The model of semantic types in Iris.
+- [sem_typed.v](exercises/sem_typed.v): The definition of the semantic typing
   judgment in Iris.
-- [sem_type_formers.v](solutions/sem_type_formers.v): The definition of the
+- [sem_type_formers.v](exercises/sem_type_formers.v): The definition of the
   semantic counterparts of the type formers (like products, sums, functions,
   references, etc.).
-- [sem_operators.v](solutions/sem_operators.v): The judgment for semantic
+- [sem_operators.v](exercises/sem_operators.v): The judgment for semantic
   operator typing and proofs of the corresponding semantic rules.
-- [compatibility.v](solutions/compatibility.v): The semantic typing rules, i.e.,
+- [compatibility.v](exercises/compatibility.v): The semantic typing rules, i.e.,
   the *compatibility lemmas*.
-- [interp.v](solutions/interp.v): The interpretation of syntactic types in terms
+- [interp.v](exercises/interp.v): The interpretation of syntactic types in terms
   of semantic types.
-- [fundamental.v](solutions/fundamental.v): The *fundamental theorem*, which
+- [fundamental.v](exercises/fundamental.v): The *fundamental theorem*, which
   states that any syntactically typed program is semantically typed..
-- [safety.v](solutions/safety.v): Proofs of semantic and syntactic type safety.
-- [unsafe.v](solutions/unsafe.v): Proofs of "unsafe" programs, i.e. programs
+- [safety.v](exercises/safety.v): Proofs of semantic and syntactic type safety.
+- [unsafe.v](exercises/unsafe.v): Proofs of "unsafe" programs, i.e. programs
   that are not syntactically typed, but can be proved to be semantically safe.
-- [parametricity.v](solutions/parametricity.v): The use of the semantic typing
+- [parametricity.v](exercises/parametricity.v): The use of the semantic typing
   for proving parametricity results.
 
 Ghost theory for semantic safety of "unsafe" programs:
 
-- [two_state_ghost.v](solutions/two_state_ghost.v): The ghost theory for a
+- [two_state_ghost.v](exercises/two_state_ghost.v): The ghost theory for a
   transition system with two states.
-- [symbol_ghost.v](solutions/symbol_ghost.v): The ghost theory for the symbol
+- [symbol_ghost.v](exercises/symbol_ghost.v): The ghost theory for the symbol
   ADT example.
 
 Other:
 
-- [demo.v](solutions/demo.v): A simplified version of the development to the
+- [demo.v](exercises/demo.v): A simplified version of the development to the
   simplified case, as shown during the lecture at the POPL'20 tutorial.
   
 ## Documentation
