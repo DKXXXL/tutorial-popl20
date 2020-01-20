@@ -1,0 +1,17 @@
+opam-version: "2.0"
+name: "coq-iris-tutorial-popl20"
+maintainer: "The Iris Organization"
+authors: "The Iris Organization"
+homepage: "https://gitlab.mpi-sws.org/iris/tutorial-popl20"
+bug-reports: "https://gitlab.mpi-sws.org/iris/tutorial-popl20/issues"
+dev-repo: "git+https://gitlab.mpi-sws.org/iris/tutorial-popl20.git"
+
+synopsis: "The Iris tutorial at POPL 2020"
+
+depends: [
+  "coq-iris" { (= "dev.2020-01-18.0.446bc644") | (= "dev") }
+]
+
+build: [make "-j%{jobs}%"]
+install: [] # This repo does not install
+
