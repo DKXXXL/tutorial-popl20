@@ -1,10 +1,12 @@
-From tutorial_popl20 Require Export sem_typed sem_type_formers types.
+From solutions Require Export sem_typed sem_type_formers types.
 
 (** * Interpretation of syntactic types *)
 (** We use semantic type formers to define the interpretation [⟦ τ ⟧ : sem_ty]
 of syntactic types [τ : ty]. The interpretation is defined recursively on the
-structure of syntactic types. *)
-
+structure of syntactic types. To account for type variables (that appear freely
+in [τ]), we need to keep track of their corresponding semantic types. We
+represent these semantic types as a list, since de use De Bruijn indices for
+type variables. *)
 Reserved Notation "⟦ τ ⟧".
 Fixpoint interp `{!heapG Σ} (τ : ty) (ρ : list (sem_ty Σ)) : sem_ty Σ :=
   match τ return _ with
@@ -20,16 +22,10 @@ Fixpoint interp `{!heapG Σ} (τ : ty) (ρ : list (sem_ty Σ)) : sem_ty Σ :=
   | TRef τ => ref (⟦ τ ⟧ ρ)
   end%sem_ty
 where "⟦ τ ⟧" := (interp τ).
-
 Instance: Params (@interp) 2 := {}.
 
-(** Given a syntactic typing context [Γ : gmap string ty] (a mapping from
-variables [string] to syntactic types [ty]) together with a mapping
-[ρ : list (sem_ty Σ)] from type variables (that appear freely in [Γ]) to
-their corresponding semantic types (represented as a list, since de use De
-Bruijn indices for type variables), we define a semantic typing context
-[interp_env Γ ρ : gmap string (sem_ty Σ)], i.e., a mapping from variables
-(strings) to semantic types. *)
+(** We now lift the interpretation of types to typing contexts. This is done in
+a pointwise fashion using the [<$> : (A → B) → gmap K A → gmap K B] operator. *)
 Definition interp_env `{!heapG Σ} (Γ : gmap string ty)
   (ρ : list (sem_ty Σ)) : gmap string (sem_ty Σ) := flip interp ρ <$> Γ.
 Instance: Params (@interp_env) 3 := {}.

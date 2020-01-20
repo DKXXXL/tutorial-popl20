@@ -1,4 +1,4 @@
-From tutorial_popl20 Require Export sem_types.
+From solutions Require Export sem_types.
 
 (** * Semantic type formers *)
 (** For all of the type formers in the syntactic type system, we now define
@@ -89,7 +89,7 @@ Section types.
   Definition sem_ty_ref (A : sem_ty Σ) : sem_ty Σ := SemTy (λ w,
     ∃ l : loc, ⌜w = #l⌝ ∧ inv (tyN .@ l) (∃ v, l ↦ v ∗ A v))%I.
   (** Intuitively, values of the reference type [sem_ty_ref A] should
-  be locations l that hold a value [w] in the semantic type [A] at
+  be locations [l] that hold a value [w] in the semantic type [A] at
   all times. In order to express this intuition in a formal way, we
   make use of two features of Iris:
 

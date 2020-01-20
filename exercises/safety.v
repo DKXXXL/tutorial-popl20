@@ -1,5 +1,5 @@
 From iris.heap_lang Require Export adequacy.
-From tutorial_popl20 Require Export fundamental.
+From solutions Require Export fundamental.
 
 (** * Semantic and syntactic type safety *)
 (** We prove *semantic type safety*, which says that any _closed_ expression

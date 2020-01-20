@@ -1,4 +1,4 @@
-From tutorial_popl20 Require Export types polymorphism.
+From solutions Require Export types polymorphism.
 
 (** * Syntactic typing for HeapLang *)
 (** In this file, we define a syntactic type system for HeapLang. We do this

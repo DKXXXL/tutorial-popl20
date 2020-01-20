@@ -1,5 +1,5 @@
-From tutorial_popl20 Require Export sem_typed.
-From tutorial_popl20 Require Import symbol_ghost two_state_ghost.
+From solutions Require Export sem_typed.
+From solutions Require Import symbol_ghost two_state_ghost.
 
 Section unsafe.
   Context `{!heapG Σ}.

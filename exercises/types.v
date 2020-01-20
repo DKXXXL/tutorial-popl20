@@ -1,4 +1,4 @@
-From tutorial_popl20 Require Export language.
+From solutions Require Export language.
 
 (** * Syntactic types for HeapLang *)
 (** The inductive type [ty] defines the syntactic types for HeapLang. We make
