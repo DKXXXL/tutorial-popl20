@@ -2,8 +2,8 @@
 
 This tutorial comes in two versions:
 
-- The folder `exercises`: skeletons of the exercises with solutions left out.
-- The folder `solutions`: the exercises together with their solutions.
+- The folder [exercises](exercises): skeletons of the exercises with solutions left out.
+- The folder [solutions](solutions): the exercises together with their solutions.
 
 ## Dependencies
 
@@ -83,12 +83,12 @@ Other:
   
 ## Documentation
 
-The files [`proof_mode.md`] and [`heap_lang.md`] in the Iris repository contain a
+The files [proof_mode.md] and [heap_lang.md] in the Iris repository contain a
 list of the Iris Proof Mode tactics as well as the specialized tactics for
 reasoning about HeapLang programs.
 
-[`proof_mode.md`]: https://gitlab.mpi-sws.org/iris/iris/blob/master/docs/proof_mode.md
-[`heap_lang.md`]: https://gitlab.mpi-sws.org/iris/iris/blob/master/docs/heap_lang.md
+[proof_mode.md]: https://gitlab.mpi-sws.org/iris/iris/blob/master/docs/proof_mode.md
+[heap_lang.md]: https://gitlab.mpi-sws.org/iris/iris/blob/master/docs/heap_lang.md
 
 If you would like to know more about Iris, we recommend to take a look at:
 
