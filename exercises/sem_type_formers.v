@@ -1,4 +1,4 @@
-From solutions Require Export sem_types.
+From exercises Require Export sem_types.
 
 (** * Semantic type formers *)
 (** For all of the type formers in the syntactic type system, we now define

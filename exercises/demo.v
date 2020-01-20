@@ -1,4 +1,4 @@
-From solutions Require Import language.
+From exercises Require Import language.
 From iris.base_logic.lib Require Import invariants.
 From iris.heap_lang Require Import adequacy.
 

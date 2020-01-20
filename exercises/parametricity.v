@@ -1,4 +1,4 @@
-From solutions Require Export safety.
+From exercises Require Export safety.
 
 (** * Parametricity *)
 Section parametricity.

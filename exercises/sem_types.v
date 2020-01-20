@@ -1,4 +1,4 @@
-From solutions Require Export polymorphism.
+From exercises Require Export polymorphism.
 From iris.heap_lang Require Export proofmode.
 From iris.base_logic.lib Require Export invariants.
 
