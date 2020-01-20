@@ -64,7 +64,8 @@ Section interp_properties.
     n ≤ length ρ →
     ⟦ ty_lift n τ ⟧ ρ ≡ ⟦ τ ⟧ (delete n ρ).
   Proof.
-    (* We use [elim:] instead of [induction] so we can properly name hyps *)
+    (** We use [elim:] instead of [induction] so we can properly name the
+    generated variables and hypotheses. *)
     revert n ρ. elim: τ; simpl; try (intros; done || f_equiv/=; by auto).
     - intros x n ρ ?. repeat case_decide; simplify_eq/=; try lia.
       + by rewrite lookup_delete_lt.
@@ -90,7 +91,8 @@ Section interp_properties.
     i ≤ length ρ →
     ⟦ ty_subst i τ' τ ⟧ ρ ≡ ⟦ τ ⟧ (take i ρ ++ ⟦ τ' ⟧ ρ :: drop i ρ).
   Proof.
-    (* We use [elim:] instead of [induction] so we can properly name hyps *)
+    (** We use [elim:] instead of [induction] so we can properly name the
+    generated variables and hypotheses. *)
     revert i τ' ρ. elim: τ; simpl; try (intros; done || f_equiv/=; by auto).
     - intros x i τ' ρ ?. repeat case_decide; simplify_eq/=; try lia.
       + rewrite lookup_app_l; last (rewrite take_length; lia).
