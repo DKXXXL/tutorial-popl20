@@ -1,27 +1,26 @@
 From tutorial_popl20 Require Export sem_typed sem_operators.
 
-(** * Compatibility of logical relations with typing rules.
+(** * Compatibility of logical relations with typing rules *)
+(** We prove that the logical relations, i.e., the semantic typing judgment,
+that we have defined is compatible with typing rules. That is, the logical
+relations is a congruence with respect to the typing rules.
 
-    Here we prove that the logical relations, i.e., the semantic
-    typing judgment, that we have defined is compatible with typing
-    rules. That is, the logical relations is a congruence with respect
-    to the typing rules.
-
-    These compatibility lemmas are what one gets when the syntactic
-    typing judgment is replaced semantic typing judgment in syntactic
-    typing rules. For instance ([sem_typed_pair]):
+These compatibility lemmas are what one gets when the syntactic typing judgment
+is replaced semantic typing judgment in syntactic typing rules. For instance
+([sem_typed_pair]):
 
 <<
-       Γ ⊢ e1 : T1        Γ ⊢ e2 : T2
-      --------------------------------
-           Γ ⊢ (e1, e2) : T1 × T2
+   Γ ⊢ e1 : τ1        Γ ⊢ e2 : τ2
+  --------------------------------
+       Γ ⊢ (e1, e2) : τ1 × τ2
 >>
-    becomes
+
+becomes:
 
 <<
-      (Γ ⊨ e1 : T1) -∗ (Γ ⊨ e2 : T2) -∗ Γ ⊢ (e1, e2) : T1 × T2
+  (Γ ⊨ e1 : A1) -∗ (Γ ⊨ e2 : A2) -∗ Γ ⊢ (e1, e2) : A1 * A2
 >>
- *)
+*)
 
 Section compatibility.
   Context `{!heapG Σ}.

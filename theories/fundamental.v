@@ -1,17 +1,15 @@
 From tutorial_popl20 Require Export typed compatibility interp.
 
-(** * The fundamental theorem of logical relations
+(** * The fundamental theorem of logical relations *)
+(** The fundamental theorem of logical relations says that any syntactically
+typed term is also semantically typed:
 
-    The fundamental theorem of logical relations says that any
-    syntactically typed term is also semantically typed:
+  if [Γ ⊢ e : τ] then [interp Γ ρ ⊨ e : 〚τ〛 ρ]
 
-    if [Γ ⊢ e : τ] then [interp Γ ρ ⊨ e : 〚τ〛 ρ]
+Here, [ρ] is any mapping free type variables in [Γ] and [τ] to semantic types.
 
-    where [ρ] is any mapping free type variables in [Γ] and [τ] to
-    semantic types.
-
-    This theorem essentially follows from the compatibility lemmas by
-    a straightforward induction on the typing derivation.  *)
+This theorem essentially follows from the compatibility lemmas and an induction
+on the typing derivation. *)
 
 Section fundamental.
   Context `{!heapG Σ}.

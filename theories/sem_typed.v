@@ -1,23 +1,18 @@
 From tutorial_popl20 Require Export sem_type_formers.
 
-(** * Here we define the semantic typing judgment. *)
+(** * The semantic typing judgment *)
 
-(** We define the judgment [Γ ⊨ e : A] for semantic typing of the
-    expression [e] at semantic type [A], assuming that free variables
-    in [e] belong to the semantic types described by [Γ]. This notion
-    is defined as follows:
+(** We define the judgment [Γ ⊨ e : A] for semantic typing of the expression [e]
+at semantic type [A], assuming that free variables in [e] belong to the semantic
+types described by [Γ]. This notion is defined as follows:
 
-    - We define the semantic typing relation [env_sem_typed] for
-      typing contexts: An environments (mappings from free variables
-      to values) [vs] is in the semantic type for a typing context
-      [Γ], [env_sem_typed Γ vs], if for any free variable [x], [vs(x)]
-      is in the semantic type [Γ(x)].
-
-    - The semantic typing judgment [Γ ⊨ e : A] holds if for any
-      environment [vs] such that [env_sem_typed Γ vs] we have that
-      [subst_map vs e] is an expression in the semantics of type [A],
-      i.e., [WP subst_map vs e {{ A }}] holds. *)
-
+- We define the semantic typing relation [env_sem_typed] for typing contexts:
+  An environments (mappings from free variables to values) [vs] is in the
+  semantic type for a typing context [Γ], [env_sem_typed Γ vs], if for any free
+  variable [x], [vs(x)] is in the semantic type [Γ(x)].
+- The semantic typing judgment [Γ ⊨ e : A] holds if for any environment [vs]
+  such that [env_sem_typed Γ vs] we have that [subst_map vs e] is an expression
+  in the semantics of type [A], i.e., [WP subst_map vs e {{ A }}] holds. *)
 
 (** The semantic type for the typing context (environment). *)
 Definition env_sem_typed `{!heapG Σ} (Γ : gmap string (sem_ty Σ))

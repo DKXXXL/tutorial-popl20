@@ -18,7 +18,7 @@ Section unsafe.
     by iExists 13.
   Qed.
 
-  (** * Exercise (easy) *)
+  (** * Exercise (unsafe_ref, easy) *)
   (** Recall the following function we defined in the file [language.v]:
   <<
   Definition unsafe_ref : val := λ: <>,
@@ -34,7 +34,7 @@ Section unsafe.
     by iExists true.
   Qed.
 
-  (** * Exercise (moderate) *)
+  (** * Exercise (unsafe_ref_ne_0, moderate) *)
   Definition unsafe_ref_ne_0 : val := λ: <>,
     let: "l" := ref #1 in
     ((λ: "x", if: "x" ≠ #0 then "l" <- "x" else #()),
@@ -82,7 +82,7 @@ Section unsafe.
       by wp_op.
   Qed.
 
-  (** * Exercise (hard) *)
+  (** * Exercise (unsafe_ref_reuse, hard) *)
   Definition unsafe_ref_reuse : val :=
     λ: <>, let: "l" := ref #0 in λ: <>, "l" <- #true;; !"l".
 
@@ -115,7 +115,7 @@ Section unsafe.
     rewrite /sem_ty_car /=. by iExists _.
   Qed.
 
-  (** * Exercise (hard) *)
+  (** * Exercise (unsafe_symbol_adt, hard) *)
   (** Semantic typing of a symbol ADT (taken from Dreyer's POPL'18 talk) *)
   Definition symbol_adt_inc : val := λ: "x" <>, FAA "x" #1.
   Definition symbol_adt_check : val := λ: "x" "y", assert: "y" < !"x".

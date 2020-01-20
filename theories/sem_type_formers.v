@@ -115,7 +115,7 @@ Notation "∃ A1 .. An , C" :=
   (sem_ty_exist (λ A1, .. (sem_ty_exist (λ An, C%sem_ty)) ..)) : sem_ty_scope.
 Notation "'ref' A" := (sem_ty_ref A) : sem_ty_scope.
 
-(** A [Params t n] instance tells Coq's setoid rewriting mechanism _not_ to
+(** A [Params t n] instance tells Coq's setoid rewriting mechanism *not* to
 rewrite in the first [n] arguments of [t]. These instances tend to make the
 setoid rewriting mechanism a lot faster. This code is mostly boilerplate. *)
 Instance: Params (@sem_ty_arr) 1 := {}.

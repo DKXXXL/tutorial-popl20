@@ -1,8 +1,9 @@
 From tutorial_popl20 Require Export sem_typed sem_type_formers types.
 
-(** * Here we use semantic type formers to define semantics of syntactic types.
-
-    This is done by a straightforward induction on the syntactic type.  *)
+(** * Interpretation of syntactic types *)
+(** We use semantic type formers to define the interpretation [⟦ τ ⟧ : sem_ty]
+of syntactic types [τ : ty]. The interpretation is defined recursively on the
+structure of syntactic types. *)
 
 Reserved Notation "⟦ τ ⟧".
 Fixpoint interp `{!heapG Σ} (τ : ty) (ρ : list (sem_ty Σ)) : sem_ty Σ :=
@@ -22,20 +23,21 @@ where "⟦ τ ⟧" := (interp τ).
 
 Instance: Params (@interp) 2 := {}.
 
-(** Given a syntactic typing context [Γ] (a mapping from variables
-(string) to types) together with a mapping (represented as a list)
-from type variables (that appear freely in [Γ]) to their corresponding
-semantic types, we define a semantic typing context, i.e., a mapping
-from  variables (strings) to semantic types. *)
+(** Given a syntactic typing context [Γ : gmap string ty] (a mapping from
+variables [string] to syntactic types [ty]) together with a mapping
+[ρ : list (sem_ty Σ)] from type variables (that appear freely in [Γ]) to
+their corresponding semantic types (represented as a list, since de use De
+Bruijn indices for type variables), we define a semantic typing context
+[interp_env Γ ρ : gmap string (sem_ty Σ)], i.e., a mapping from variables
+(strings) to semantic types. *)
 Definition interp_env `{!heapG Σ} (Γ : gmap string ty)
   (ρ : list (sem_ty Σ)) : gmap string (sem_ty Σ) := flip interp ρ <$> Γ.
 Instance: Params (@interp_env) 3 := {}.
 
-(** Below we prove several useful lemmas about [interp] and
-    [interp_env] including important lemmas about the effect that
-    lifting (de Bruij indices) and substitution in type level
-    variables have on the interpretation of syntactic types and typing
-    contexts. *)
+(** Below we prove several useful lemmas about [interp] and [interp_env],
+including important lemmas about the effect that lifting (de Bruijn indices)
+and substitution in type level variables have on the interpretation of syntactic
+types and typing contexts. *)
 Section interp_properties.
   Context `{!heapG Σ}.
   Implicit Types Γ : gmap string ty.
@@ -62,7 +64,7 @@ Section interp_properties.
     n ≤ length ρ →
     ⟦ ty_lift n τ ⟧ ρ ≡ ⟦ τ ⟧ (delete n ρ).
   Proof.
-    (* Use [elim:] instead of [induction] so we can properly name hyps *)
+    (* We use [elim:] instead of [induction] so we can properly name hyps *)
     revert n ρ. elim: τ; simpl; try (intros; done || f_equiv/=; by auto).
     - intros x n ρ ?. repeat case_decide; simplify_eq/=; try lia.
       + by rewrite lookup_delete_lt.
@@ -88,7 +90,7 @@ Section interp_properties.
     i ≤ length ρ →
     ⟦ ty_subst i τ' τ ⟧ ρ ≡ ⟦ τ ⟧ (take i ρ ++ ⟦ τ' ⟧ ρ :: drop i ρ).
   Proof.
-    (* Use [elim:] instead of [induction] so we can properly name hyps *)
+    (* We use [elim:] instead of [induction] so we can properly name hyps *)
     revert i τ' ρ. elim: τ; simpl; try (intros; done || f_equiv/=; by auto).
     - intros x i τ' ρ ?. repeat case_decide; simplify_eq/=; try lia.
       + rewrite lookup_app_l; last (rewrite take_length; lia).

@@ -2,7 +2,18 @@ From iris.algebra Require Import auth.
 From iris.base_logic Require Import lib.own.
 From iris.proofmode Require Export tactics.
 
-(* The required ghost theory *)
+(** * Ghost theory for the [unsafe_ref_reuse] exercise *)
+(** This file defines the ghost resources [two_state_auth] and [two_state_final]
+using Iris's generic mechanism for ghost state. These resources satisfy the
+following laws:
+
+<<
+  two_state_init:   |==> ∃ γ, two_state_auth γ false
+  two_state_update: two_state_auth γ b ==∗ two_state_auth γ true ∗ two_state_final γ.
+  two_state_agree:  two_state_auth γ b -∗ two_state_final γ -∗ ⌜b = true⌝.
+>>
+*)
+
 Class two_stateG Σ := { two_state_inG :> inG Σ (authR (optionUR unitR)) }.
 Definition two_stateΣ : gFunctors := #[GFunctor (authR (optionUR unitR))].
 

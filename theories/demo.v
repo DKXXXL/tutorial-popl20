@@ -16,7 +16,7 @@ Overview of the lecture:
 
       Γ ⊢ₜ e : τ
 
-2. Following Derek's talk, we define semantic typing in Iris:
+2. Following Dreyer's talk, we define semantic typing in Iris:
 
       Γ ⊨ e : τ
 
@@ -164,11 +164,10 @@ End semtyp.
 Notation "Γ ⊨ e : A" := (sem_typed Γ e A)
   (at level 74, e, A at next level).
 
-Definition safe (e : expr) :=
-  ∀ σ es' e' σ',
-    rtc erased_step ([e], σ) (es', σ') →
-    e' ∈ es' →
-    is_Some (to_val e') ∨ reducible e' σ'.
+Definition safe (e : expr) := ∀ σ es' e' σ',
+  rtc erased_step ([e], σ) (es', σ') →
+  e' ∈ es' →
+  is_Some (to_val e') ∨ reducible e' σ'.
 
 Lemma sem_type_safety `{!heapPreG Σ} e τ :
   (∀ `{!heapG Σ}, ∅ ⊨ e : τ) → safe e.

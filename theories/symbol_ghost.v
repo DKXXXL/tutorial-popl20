@@ -2,7 +2,18 @@ From iris.algebra Require Import auth.
 From iris.base_logic Require Import lib.own.
 From iris.proofmode Require Export tactics.
 
-(* The required ghost theory *)
+(** * Ghost theory for the [unsafe_symbol_adt] exercise *)
+(** This file defines the ghost resources [counter] and [symbol] using Iris's
+generic mechanism for ghost state. These resources satisfy the following laws:
+
+<<
+  counter_alloc:      |==> ∃ γ, counter γ n
+  counter_exclusive:  counter γ n1 -∗ counter γ n2 -∗ False
+  counter_inc:        counter γ n ==∗ counter γ (S n) ∗ symbol γ n
+  symbol_obs:         counter γ n -∗ symbol γ s -∗ ⌜(s < n)%nat⌝
+>>
+*)
+
 Class symbolG Σ := { symbol_inG :> inG Σ (authR mnatUR) }.
 Definition symbolΣ : gFunctors := #[GFunctor (authR mnatUR)].
 
@@ -20,10 +31,6 @@ Section symbol_ghost.
   Global Instance symbol_timeless γ n : Timeless (symbol γ n).
   Proof. apply _. Qed.
 
-  Lemma counter_exclusive γ n1 n2 : counter γ n1 -∗ counter γ n2 -∗ False.
-  Proof.
-    apply bi.wand_intro_r. rewrite -own_op own_valid /=. by iDestruct 1 as %[].
-  Qed.
   Global Instance symbol_persistent γ n : Persistent (symbol γ n).
   Proof. apply _. Qed.
 
@@ -32,6 +39,11 @@ Section symbol_ghost.
     iMod (own_alloc (● (n:mnat) ⋅ ◯ (n:mnat))) as (γ) "[Hγ Hγf]";
       first by apply auth_both_valid.
     iExists γ. by iFrame.
+  Qed.
+
+  Lemma counter_exclusive γ n1 n2 : counter γ n1 -∗ counter γ n2 -∗ False.
+  Proof.
+    apply bi.wand_intro_r. rewrite -own_op own_valid /=. by iDestruct 1 as %[].
   Qed.
 
   Lemma counter_inc γ n : counter γ n ==∗ counter γ (S n) ∗ symbol γ n.
