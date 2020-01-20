@@ -17,6 +17,9 @@ Section fundamental.
   Implicit Types τ : ty.
   Implicit Types ρ : list (sem_ty Σ).
 
+  (** First we need to prove soundness of operator typing. We declare these
+  lemmas as instances so they will be used automatically in the proof of the
+  fundamental theorem. *)
   Instance ty_unboxed_sound τ ρ : ty_unboxed τ → SemTyUnboxed (⟦ τ ⟧ ρ).
   Proof. destruct 1; simpl; apply _. Qed.
   Instance ty_un_op_sound op τ σ ρ :
@@ -26,7 +29,12 @@ Section fundamental.
     ty_bin_op op τ1 τ2 σ → SemTyBinOp op (⟦ τ1 ⟧ ρ) (⟦ τ2 ⟧ ρ) (⟦ σ ⟧ ρ).
   Proof. destruct 1; simpl; apply _. Qed.
 
-  Lemma fundamental Γ e τ ρ
+  (** The fundamental theorem. Since the syntactic typing judgment is defined
+  in a mutual inductive fashion, we need to prove the fundamental theorem for
+  expressions mutually with the fundamental theorem for values. Note that for
+  such mutually inductive proofs, we need to make sure ourselves that the
+  induction hypotheses is only used on smaller derivations. *)
+  Theorem fundamental Γ e τ ρ
     (Hty : Γ ⊢ₜ e : τ) : (interp_env Γ ρ ⊨ e : ⟦ τ ⟧ ρ)%I
   with fundamental_val v τ ρ
     (Hty : ⊢ᵥ v : τ) : (⊨ᵥ v : ⟦ τ ⟧ ρ)%I.
