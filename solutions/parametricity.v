@@ -1,8 +1,10 @@
-From tutorial_popl20 Require Export safety.
+From solutions Require Export safety.
 
+(** * Parametricity *)
 Section parametricity.
   Context `{!heapG Σ}.
 
+  (** * The polymorphic identity function *)
   Lemma identity_param `{!heapPreG Σ} e (v : val) σ w es σ' :
     (∀ `{!heapG Σ}, (∅ ⊨ e : ∀ A, A → A)%I) →
     rtc erased_step ([e <_> v]%E, σ) (of_val w :: es, σ') → w = v.
@@ -20,6 +22,7 @@ Section parametricity.
     wp_apply (wp_wand with "Hu"). iIntros (w') "Hw'". by iApply "Hw'".
   Qed.
 
+  (** * Exercise (empty_type_param, easy) *)
   Lemma empty_type_param `{!heapPreG Σ} e (v : val) σ w es σ' :
     (∀ `{!heapG Σ}, (∅ ⊨ e : ∀ A, A)%I) →
     rtc erased_step ([e <_>]%E, σ) (of_val w :: es, σ') →
@@ -38,6 +41,7 @@ Section parametricity.
     iApply ("Hu" $! T).
   Qed.
 
+  (** * Exercise (boolean_param, moderate) *)
   Lemma boolean_param `{!heapPreG Σ} e (v1 v2 : val) σ w es σ' :
     (∀ `{!heapG Σ}, (∅ ⊨ e : ∀ A, A → A → A)%I) →
     rtc erased_step ([e <_> v1 v2]%E, σ) (of_val w :: es, σ') → w = v1 ∨ w = v2.
@@ -59,6 +63,7 @@ Section parametricity.
     iApply ("Hw''" $! v2). by iRight.
   Qed.
 
+  (** * Exercise (nat_param, hard) *)
   Lemma nat_param `{!heapPreG Σ} e σ w es σ' :
     (∀ `{!heapG Σ}, (∅ ⊨ e : ∀ A, (A → A) → A → A)%I) →
     rtc erased_step ([e <_> (λ: "n", "n" + #1)%V #0]%E, σ)
@@ -85,6 +90,7 @@ Section parametricity.
     by iExists 0%nat.
   Qed.
 
+  (** * Exercise (strong_nat_param, hard) *)
   Lemma strong_nat_param `{!heapPreG Σ} e σ w es σ' (vf vz : val) φ :
     (∀ `{!heapG Σ}, ∃ Φ : sem_ty Σ,
       (∅ ⊨ e : ∀ A, (A → A) → A → A)%I ∧

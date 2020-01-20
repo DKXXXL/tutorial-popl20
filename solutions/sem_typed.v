@@ -1,4 +1,4 @@
-From tutorial_popl20 Require Export sem_type_formers.
+From solutions Require Export sem_type_formers.
 
 (** * The semantic typing judgment *)
 
