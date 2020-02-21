@@ -8,7 +8,7 @@ all: Makefile.coq
 
 clean: Makefile.coq
 	+@make -f Makefile.coq clean
-	find solutions tests \( -name "*.d" -o -name "*.vo" -o -name "*.aux" -o -name "*.cache" -o -name "*.glob" -o -name "*.vio" \) -print -delete || true
+	find theories tests \( -name "*.d" -o -name "*.vo" -o -name "*.aux" -o -name "*.cache" -o -name "*.glob" -o -name "*.vio" \) -print -delete || true
 	rm -f Makefile.coq .lia.cache
 .PHONY: clean
 
