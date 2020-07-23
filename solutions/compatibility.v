@@ -29,7 +29,7 @@ Section compatibility.
 
   (** * Compatibility rules for expression typing *)
   (** * Variables *)
-  Lemma Var_sem_typed Γ (x : string) A : Γ !! x = Some A → (Γ ⊨ x : A)%I.
+  Lemma Var_sem_typed Γ (x : string) A : Γ !! x = Some A → ⊢ Γ ⊨ x : A.
   Proof.
     iIntros (HΓx vs) "!# #HΓ /=".
     iDestruct (env_sem_typed_lookup with "HΓ") as (v ->) "HA"; first done.
@@ -220,11 +220,11 @@ Section compatibility.
 
   (** * Compatibility rules for value typing *)
   (** ** Base types *)
-  Lemma UnitV_sem_typed : (⊨ᵥ #() : ())%I.
+  Lemma UnitV_sem_typed : ⊢ ⊨ᵥ #() : ().
   Proof. by iPureIntro. Qed.
-  Lemma BoolV_sem_typed (b : bool) : (⊨ᵥ #b : sem_ty_bool)%I.
+  Lemma BoolV_sem_typed (b : bool) : ⊢ ⊨ᵥ #b : sem_ty_bool.
   Proof. by iExists b. Qed.
-  Lemma IntV_sem_typed (n : Z) : (⊨ᵥ #n : sem_ty_int)%I.
+  Lemma IntV_sem_typed (n : Z) : ⊢ ⊨ᵥ #n : sem_ty_int.
   (* REMOVE *) Proof. by iExists n. Qed.
 
   (** ** Products and sums *)

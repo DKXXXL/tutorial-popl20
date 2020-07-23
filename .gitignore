@@ -23,6 +23,8 @@ _*_.tex
 *.fdb_latexmk
 *.fls
 *.vo
+*.vos
+*.vok
 *.glob
 *.v.d
 *.vio

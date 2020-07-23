@@ -291,7 +291,7 @@ Definition add_two : val := λ: "x",
 (** While this function is rather convoluted, the specification is precisely
 what you would expect---it adds [2]. *)
 Lemma wp_add_two `{!heapG Σ} (x : Z) :
-  WP add_two #x {{ w, ⌜ w = #(2 + x) ⌝ }}%I.
+  ⊢ WP add_two #x {{ w, ⌜ w = #(2 + x) ⌝ }}.
 (** Note that this weakest precondition does not have a premise (i.e. the
 lemma does not involve a magic wand [-∗] at the top-level, as we have seen in
 previous examples). We thus use the scope [%I] ([I] of "Iris") to instruct Coq
@@ -406,7 +406,7 @@ Definition add_two_fancy : val := λ: "x",
   !"lx".
 
 Lemma wp_add_two_fancy `{!heapG Σ} (x : Z) :
-  WP add_two_fancy #x {{ w, ⌜ w = #(2 + x) ⌝ }}%I.
+  ⊢ WP add_two_fancy #x {{ w, ⌜ w = #(2 + x) ⌝ }}.
 Proof. (* FILL IN YOUR PROOF *) Admitted.
 
 (** * Reasoning about "unsafe" programs *)
@@ -424,7 +424,7 @@ Definition unsafe_pure : val := λ: <>,
   if: #true then #13 else #13 #37.
 
 Lemma wp_unsafe_pure `{!heapG Σ} :
-  WP unsafe_pure #() {{ v, ⌜ v = #13 ⌝ }}%I.
+  ⊢ WP unsafe_pure #() {{ v, ⌜ v = #13 ⌝ }}.
 Proof.
   rewrite /unsafe_pure.
   wp_pures.
@@ -437,5 +437,5 @@ Definition unsafe_ref : val := λ: <>,
   let: "l" := ref #0 in "l" <- #true;; !"l".
 
 Lemma wp_unsafe_ref `{!heapG Σ} :
-  WP unsafe_ref #() {{ v, ⌜ v = #true ⌝ }}%I.
+  ⊢ WP unsafe_ref #() {{ v, ⌜ v = #true ⌝ }}.
 Proof. (* FILL IN YOUR PROOF *) Admitted.

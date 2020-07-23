@@ -29,7 +29,7 @@ Section two_state_ghost.
   Definition two_state_final (γ : gname) : iProp Σ :=
     own γ (◯ (Some ())).
 
-  Lemma two_state_init : (|==> ∃ γ, two_state_auth γ false)%I.
+  Lemma two_state_init : ⊢ |==> ∃ γ, two_state_auth γ false.
   Proof. iApply own_alloc. by apply auth_auth_valid. Qed.
 
   Lemma two_state_update γ b :

@@ -10,7 +10,7 @@ Section unsafe.
     if: #true then #13 else #13 #37.
   >>
   *)
-  Lemma sem_typed_unsafe_pure : (∅ ⊨ unsafe_pure : (() → sem_ty_int))%I.
+  Lemma sem_typed_unsafe_pure : ⊢ ∅ ⊨ unsafe_pure : (() → sem_ty_int).
   Proof.
     iIntros (vs) "!# HΓ /=". iApply wp_value.
     iIntros "!#" (? ->). wp_lam. wp_if.
@@ -24,7 +24,7 @@ Section unsafe.
   Definition unsafe_ref : val := λ: <>,
     let: "l" := ref #0 in "l" <- #true;; !"l".
   >> *)
-  Lemma sem_typed_unsafe_ref : (∅ ⊨ unsafe_ref : (() → sem_ty_bool))%I.
+  Lemma sem_typed_unsafe_ref : ⊢ ∅ ⊨ unsafe_ref : (() → sem_ty_bool).
   Proof.
     iIntros (vs) "!# HΓ /=". iApply wp_value.
     iIntros "!#" (? ->). wp_lam.
@@ -41,7 +41,7 @@ Section unsafe.
      (λ: <>, assert: !"l" ≠ #0)).
 
   Lemma sem_typed_unsafe_ref_ne_0 :
-    (∅ ⊨ unsafe_ref_ne_0 : (() → (sem_ty_int → ()) * (() → ())))%I.
+    ⊢ ∅ ⊨ unsafe_ref_ne_0 : (() → (sem_ty_int → ()) * (() → ())).
   Proof.
     iIntros (vs) "!# HΓ /=". iApply wp_value.
     iIntros "!#" (? ->).
@@ -87,7 +87,7 @@ Section unsafe.
     λ: <>, let: "l" := ref #0 in λ: <>, "l" <- #true;; !"l".
 
   Lemma sem_typed_unsafe_ref_reuse `{!two_stateG Σ}:
-    (∅ ⊨ unsafe_ref_reuse : (() → (() → sem_ty_bool)))%I.
+    ⊢ ∅ ⊨ unsafe_ref_reuse : (() → (() → sem_ty_bool)).
   Proof.
     iIntros (vs) "!# HΓ /=". iApply wp_value.
     iIntros "!#" (? ->). wp_lam.
@@ -137,7 +137,7 @@ Section unsafe.
     Definition sem_ty_symbol (γ : gname) : sem_ty Σ := SemTy (λ w,
       ∃ n : nat, ⌜w = #n⌝ ∧ symbol γ n)%I.
 
-    Lemma sem_typed_symbol_adt Γ : (Γ ⊨ symbol_adt : symbol_adt_ty)%I.
+    Lemma sem_typed_symbol_adt Γ : ⊢ Γ ⊨ symbol_adt : symbol_adt_ty.
     Proof.
       iIntros (vs) "!# _ /=". iApply wp_value.
       iIntros "!#" (v ->). wp_lam. wp_alloc l as "Hl"; wp_pures.
