@@ -9,7 +9,7 @@ This tutorial comes in two versions:
 
 For the tutorial material you need to have the following dependencies installed:
 
-- Coq 8.9.1 / 8.10.2 / 8.11.2
+- Coq 8.11.2
 - [Iris 3.3.0](https://gitlab.mpi-sws.org/iris/iris)
 
 *Note:* the tutorial material will not work with earlier versions of Iris, it
