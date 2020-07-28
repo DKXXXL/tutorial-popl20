@@ -9,8 +9,8 @@ This tutorial comes in two versions:
 
 For the tutorial material you need to have the following dependencies installed:
 
-- Coq 8.8.2 / 8.9.1 / 8.10.1
-- A development version of [Iris](https://gitlab.mpi-sws.org/iris/iris)
+- Coq 8.11.2
+- [Iris 3.3.0](https://gitlab.mpi-sws.org/iris/iris)
 
 *Note:* the tutorial material will not work with earlier versions of Iris, it
 is important to install the exact versions as given above.
@@ -19,11 +19,9 @@ is important to install the exact versions as given above.
 
 The easiest, and recommend, way of installing Iris and its dependencies is via
 the OCaml package manager opam (2.0.0 or newer). You first have to add the Coq
-opam repository and the Iris development repository (if you have not already
-done so earlier):
+opam repository (if you have not already done so earlier):
 
     opam repo add coq-released https://coq.inria.fr/opam/released
-    opam repo add iris-dev https://gitlab.mpi-sws.org/iris/opam.git
 
 Then you can do `make build-dep` to install exactly the right version of Iris.
 

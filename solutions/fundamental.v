@@ -35,9 +35,9 @@ Section fundamental.
   such mutually inductive proofs, we need to make sure ourselves that the
   induction hypotheses is only used on smaller derivations. *)
   Theorem fundamental Γ e τ ρ
-    (Hty : Γ ⊢ₜ e : τ) : (interp_env Γ ρ ⊨ e : ⟦ τ ⟧ ρ)%I
+    (Hty : Γ ⊢ₜ e : τ) : ⊢ interp_env Γ ρ ⊨ e : ⟦ τ ⟧ ρ
   with fundamental_val v τ ρ
-    (Hty : ⊢ᵥ v : τ) : (⊨ᵥ v : ⟦ τ ⟧ ρ)%I.
+    (Hty : ⊢ᵥ v : τ) : ⊢ ⊨ᵥ v : ⟦ τ ⟧ ρ.
   Proof.
     - destruct Hty; simpl.
       + iApply Var_sem_typed. by apply lookup_interp_env.

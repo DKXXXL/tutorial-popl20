@@ -20,21 +20,21 @@ The proposition [adequate NotStuck e σ (λ v σ, φ v)] (which is defined in th
 Iris library) means that [e], starting in heap [σ] does not get stuck, and if
 [e] reduces to a value [v], we have [φ v]. *)
 Lemma sem_gen_type_safety `{!heapPreG Σ} e σ φ :
-  (∀ `{!heapG Σ}, ∃ A : sem_ty Σ, (∀ v, A v -∗ ⌜φ v⌝) ∧ (∅ ⊨ e : A)%I) →
+  (∀ `{!heapG Σ}, ∃ A : sem_ty Σ, (∀ v, A v -∗ ⌜φ v⌝) ∧ ⊢ ∅ ⊨ e : A) →
   adequate NotStuck e σ (λ v σ, φ v).
 Proof.
   intros Hty. apply (heap_adequacy Σ NotStuck e σ)=> // ?.
   specialize (Hty _) as (A & HA & Hty).
   iStartProof. iDestruct (Hty $! ∅) as "#He".
   iSpecialize ("He" with "[]"); first by rewrite /env_sem_typed.
-  rewrite subst_map_empty. iApply (wp_wand with "He"); auto.
+  rewrite subst_map_empty. iIntros "?". iApply (wp_wand with "He"); auto.
   by iIntros; iApply HA.
 Qed.
 
 (** The actual theorem for semantic type safety lemma states that semantically
 typed closed programs do not get stuck. It is a simple consequence of the lemma [sem_gen_type_safety] above. *)
 Theorem sem_type_safety `{!heapPreG Σ} e σ es σ' e' :
-  (∀ `{!heapG Σ}, ∃ A, (∅ ⊨ e : A)%I) →
+  (∀ `{!heapG Σ}, ∃ A, ⊢ ∅ ⊨ e : A) →
   rtc erased_step ([e], σ) (es, σ') → e' ∈ es →
   is_Some (to_val e') ∨ reducible e' σ'.
 Proof.
