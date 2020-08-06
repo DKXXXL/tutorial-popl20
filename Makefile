@@ -1,3 +1,6 @@
+# Permit local customization
+-include Makefile.local
+
 # Forward most targets to Coq makefile (with some trick to make this phony)
 %: Makefile.coq phony
 	+@make -f Makefile.coq $@
@@ -14,7 +17,7 @@ clean: Makefile.coq
 
 # Create Coq Makefile.
 Makefile.coq: _CoqProject Makefile
-	"$(COQBIN)coq_makefile" -f _CoqProject -o Makefile.coq
+	"$(COQBIN)coq_makefile" -f _CoqProject -o Makefile.coq $(EXTRA_COQFILES)
 
 # Install build-dependencies
 build-dep/opam: opam Makefile
@@ -36,6 +39,7 @@ build-dep: build-dep/opam phony
 Makefile: ;
 _CoqProject: ;
 opam: ;
+Makefile.local: ;
 
 # Phony wildcard targets
 phony: ;

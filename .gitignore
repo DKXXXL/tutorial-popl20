@@ -29,6 +29,7 @@ _*_.tex
 *.v.d
 *.vio
 Makefile.coq*
+.Makefile.coq.d
 *.crashcoqide
 .coqdeps.d
 build-dep
