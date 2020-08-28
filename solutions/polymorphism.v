@@ -44,10 +44,12 @@ Lemma wp_swap_poly `{!heapG Σ} l1 l2 v1 v2 :
   l1 ↦ v1 -∗
   l2 ↦ v2 -∗
   WP swap_poly <_> #l1 #l2 {{ v, ⌜ v = #() ⌝ ∗ l1 ↦ v2 ∗ l2 ↦ v1 }}.
-(* REMOVE *) Proof.
+Proof.
+(* BEGIN SOLUTION *)
   iIntros "Hl1 Hl2".
   rewrite /swap_poly.
   do 2 wp_load.
   do 2 wp_store.
   by iFrame.
 Qed.
+(* END SOLUTION *)

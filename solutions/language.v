@@ -233,9 +233,11 @@ You should prove this lemma.
 
 Hint: [wp_pures] also executes the [+] operator. Carefully check how it affects
 the embedded [#] and convince yourself why that makes sense. *)
-(* REMOVE *) Proof.
+Proof.
+(* BEGIN SOLUTION *)
   iIntros. rewrite /swap_and_add. do 2 wp_load. do 2 wp_store. by iFrame.
 Qed.
+(* END SOLUTION *)
 
 (** ** Reasoning about higher-order functions *)
 (** For the next example, let us consider the higher-order function [twice].
@@ -338,7 +340,8 @@ Lemma wp_add_two_ref `{!heapG Σ} l (x : Z) :
 about addition on [Z] (or the [replace] or [rewrite (_ : x = y)] tactic with
 [lia]) to turn [2 + x] into [1 + (1 + x)]. Tactics like [replace] and [rewrite]
 work operate both on the MoSeL proof goal and the MoSeL proof context. *)
-(* REMOVE *) Proof.
+Proof.
+(* BEGIN SOLUTION *)
   iIntros "Hl".
   rewrite /add_two_ref. wp_pures.
   iApply wp_twice.
@@ -348,6 +351,7 @@ work operate both on the MoSeL proof goal and the MoSeL proof context. *)
   iFrame.
   auto.
 Qed.
+(* END SOLUTION *)
 
 (** ** Reasoning about higher-order state *)
 (** To see how Iris can be used to reason about higher-order state---that is,
@@ -418,7 +422,8 @@ Definition add_two_fancy : val := λ: "x",
 
 Lemma wp_add_two_fancy `{!heapG Σ} (x : Z) :
   ⊢ WP add_two_fancy #x {{ w, ⌜ w = #(2 + x) ⌝ }}.
-(* REMOVE *) Proof.
+Proof.
+(* BEGIN SOLUTION *)
   rewrite /add_two_fancy. wp_pures.
   wp_alloc lf as "Hlf".
   wp_alloc lx as "Hlx".
@@ -430,6 +435,7 @@ Lemma wp_add_two_fancy `{!heapG Σ} (x : Z) :
   wp_load.
   auto with f_equal lia.
 Qed.
+(* END SOLUTION *)
 
 (** * Reasoning about "unsafe" programs *)
 (** Since HeapLang is an untyped language, we can write down arbitrary
@@ -460,10 +466,12 @@ Definition unsafe_ref : val := λ: <>,
 
 Lemma wp_unsafe_ref `{!heapG Σ} :
   ⊢ WP unsafe_ref #() {{ v, ⌜ v = #true ⌝ }}.
-(* REMOVE *) Proof.
+Proof.
+(* BEGIN SOLUTION *)
   rewrite /unsafe_ref. wp_pures.
   wp_alloc l.
   wp_store.
   wp_load.
   auto.
 Qed.
+(* END SOLUTION *)

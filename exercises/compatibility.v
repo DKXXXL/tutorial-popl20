@@ -58,16 +58,24 @@ Section compatibility.
     iDestruct 1 as (w1 w2 ->) "[??]". by wp_pures.
   Qed.
   Lemma Snd_sem_typed Γ e A1 A2 : Γ ⊨ e : A1 * A2 -∗ Γ ⊨ Snd e : A2.
-  Proof. (* FILL IN YOUR PROOF *) Admitted.
+  Proof.
+    (* exercise *)
+  Admitted.
 
   Lemma InjL_sem_typed Γ e A1 A2 : Γ ⊨ e : A1 -∗ Γ ⊨ InjL e : A1 + A2.
-  Proof. (* FILL IN YOUR PROOF *) Admitted.
+  Proof.
+    (* exercise *)
+  Admitted.
   Lemma InjR_sem_typed Γ e A1 A2 : Γ ⊨ e : A2 -∗ Γ ⊨ InjR e : A1 + A2.
-  Proof. (* FILL IN YOUR PROOF *) Admitted.
+  Proof.
+    (* exercise *)
+  Admitted.
   Lemma Case_sem_typed Γ e e1 e2 A1 A2 B :
     Γ ⊨ e : A1 + A2 -∗ Γ ⊨ e1 : (A1 → B) -∗ Γ ⊨ e2 : (A2 → B) -∗
     Γ ⊨ Case e e1 e2 : B.
-  Proof. (* FILL IN YOUR PROOF *) Admitted.
+  Proof.
+    (* exercise *)
+  Admitted.
 
   (** * Functions *)
   Lemma Rec_sem_typed Γ f x e A1 A2 :
@@ -101,11 +109,15 @@ Section compatibility.
   Qed.
 
   Lemma Pack_sem_typed Γ e C A : Γ ⊨ e : C A -∗ Γ ⊨ (pack: e) : ∃ A, C A.
-  Proof. (* FILL IN YOUR PROOF *) Admitted.
+  Proof.
+    (* exercise *)
+  Admitted.
   Lemma Unpack_sem_typed Γ x e1 e2 C B :
     (Γ ⊨ e1 : ∃ A, C A) -∗ (∀ A, binder_insert x (C A) Γ ⊨ e2 : B) -∗
     Γ ⊨ (unpack: x := e1 in e2) : B.
-  Proof. (* FILL IN YOUR PROOF *) Admitted.
+  Proof.
+    (* exercise *)
+  Admitted.
 
   (** ** Heap operations *)
   Lemma Alloc_sem_typed Γ e A : Γ ⊨ e : A -∗ Γ ⊨ ref e : ref A.
@@ -126,15 +138,21 @@ Section compatibility.
   Qed.
   Lemma Store_sem_typed Γ e1 e2 A :
     Γ ⊨ e1 : ref A -∗ Γ ⊨ e2 : A -∗ Γ ⊨ (e1 <- e2) : ().
-  Proof. (* FILL IN YOUR PROOF *) Admitted.
+  Proof.
+    (* exercise *)
+  Admitted.
   Lemma FAA_sem_typed Γ e1 e2 :
     Γ ⊨ e1 : ref sem_ty_int -∗ Γ ⊨ e2 : sem_ty_int -∗ Γ ⊨ FAA e1 e2 : sem_ty_int.
-  Proof. (* FILL IN YOUR PROOF *) Admitted.
+  Proof.
+    (* exercise *)
+  Admitted.
   Lemma CmpXchg_sem_typed Γ A e1 e2 e3 :
     SemTyUnboxed A →
     Γ ⊨ e1 : ref A -∗ Γ ⊨ e2 : A -∗ Γ ⊨ e3 : A -∗
     Γ ⊨ CmpXchg e1 e2 e3 : A * sem_ty_bool.
-  Proof. (* FILL IN YOUR PROOF *) Admitted.
+  Proof.
+    (* exercise *)
+  Admitted.
 
   (** ** Operators *)
   Lemma UnOp_sem_typed Γ e op A B :
@@ -146,16 +164,22 @@ Section compatibility.
   Qed.
   Lemma BinOp_sem_typed Γ e1 e2 op A1 A2 B :
     SemTyBinOp op A1 A2 B → Γ ⊨ e1 : A1 -∗ Γ ⊨ e2 : A2 -∗ Γ ⊨ BinOp op e1 e2 : B.
-  Proof. (* FILL IN YOUR PROOF *) Admitted.
+  Proof.
+    (* exercise *)
+  Admitted.
 
   Lemma If_sem_typed Γ e e1 e2 B :
     Γ ⊨ e : sem_ty_bool -∗ Γ ⊨ e1 : B -∗ Γ ⊨ e2 : B -∗
     Γ ⊨ (if: e then e1 else e2) : B.
-  Proof. (* FILL IN YOUR PROOF *) Admitted.
+  Proof.
+    (* exercise *)
+  Admitted.
 
   (** ** Fork *)
   Lemma Fork_sem_typed Γ e : Γ ⊨ e : () -∗ Γ ⊨ Fork e : ().
-  Proof. (* FILL IN YOUR PROOF *) Admitted.
+  Proof.
+    (* exercise *)
+  Admitted.
 
   (** * Compatibility rules for value typing *)
   (** ** Base types *)
@@ -164,7 +188,9 @@ Section compatibility.
   Lemma BoolV_sem_typed (b : bool) : ⊢ ⊨ᵥ #b : sem_ty_bool.
   Proof. by iExists b. Qed.
   Lemma IntV_sem_typed (n : Z) : ⊢ ⊨ᵥ #n : sem_ty_int.
-  Proof. (* FILL IN YOUR PROOF *) Admitted.
+  Proof.
+    (* exercise *)
+  Admitted.
 
   (** ** Products and sums *)
   Lemma PairV_sem_typed v1 v2 τ1 τ2 :

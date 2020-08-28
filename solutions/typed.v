@@ -267,57 +267,68 @@ of them for both the expression construct and their value counterpart. *)
 Lemma Lam_typed Γ x e τ1 τ2 :
   binder_insert x τ1 Γ ⊢ₜ e : τ2 →
   Γ ⊢ₜ (λ: x, e) : TArr τ1 τ2.
-(* REMOVE *) Proof.
+Proof.
+(* BEGIN SOLUTION *)
   intros He.
   apply Rec_typed.
   simpl.
   done.
 Qed.
+(* END SOLUTION *)
 
 Lemma LamV_typed x e τ1 τ2 :
   binder_insert x τ1 ∅ ⊢ₜ e : τ2 →
   ⊢ᵥ (λ: x, e) : TArr τ1 τ2.
-(* REMOVE *) Proof.
+Proof.
+(* BEGIN SOLUTION *)
   intros He.
   apply RecV_typed.
   simpl.
   done.
 Qed.
+(* END SOLUTION *)
 
 Lemma Let_typed Γ x e1 e2 τ1 τ2 :
   Γ ⊢ₜ e1 : τ1 →
   binder_insert x τ1 Γ ⊢ₜ e2 : τ2 →
   Γ ⊢ₜ (let: x := e1 in e2) : τ2.
-(* REMOVE *) Proof.
+Proof.
+(* BEGIN SOLUTION *)
   intros He1 He2.
   apply App_typed with τ1.
   - by apply Lam_typed.
   - done.
 Qed.
+(* END SOLUTION *)
 
 Lemma Seq_typed Γ e1 e2 τ1 τ2 :
   Γ ⊢ₜ e1 : τ1 →
   Γ ⊢ₜ e2 : τ2 →
   Γ ⊢ₜ (e1;; e2) : τ2.
-(* REMOVE *) Proof.
+Proof.
+(* BEGIN SOLUTION *)
   intros He1 He2.
   by apply Let_typed with τ1.
 Qed.
+(* END SOLUTION *)
 
 Lemma Skip_typed Γ :
   Γ ⊢ₜ Skip : ().
-(* REMOVE *) Proof.
+Proof.
+(* BEGIN SOLUTION *)
   apply App_typed with ()%ty.
   - apply Val_typed, RecV_typed. apply Val_typed, UnitV_typed.
   - apply Val_typed, UnitV_typed.
 Qed.
+(* END SOLUTION *)
 
 (** * Typing of concrete programs *)
 (** ** Exercise (swap_typed, easy) *)
 (** Prove that the non-polymorphic swap function [swap] can be given the type
 [ref τ → ref τ → ()] for any [τ]. *)
 Lemma swap_typed τ : ⊢ᵥ swap : (ref τ → ref τ → ()).
-(* REMOVE *) Proof.
+Proof.
+(* BEGIN SOLUTION *)
   rewrite /swap.
   apply LamV_typed.
   apply Lam_typed.
@@ -331,12 +342,14 @@ Lemma swap_typed τ : ⊢ᵥ swap : (ref τ → ref τ → ()).
   - by apply Var_typed.
   - by apply Var_typed.
 Qed.
+(* END SOLUTION *)
 
 (** ** Exercise (swap_poly_typed, easy) *)
 (** Prove that [swap_poly] can be typed using the polymorphic type
 [∀ X, ref X → ref X → ())], i.e. [∀: ref #0 → ref #0 → ())] in De Bruijn style. *)
 Lemma swap_poly_typed : ⊢ᵥ swap_poly : (∀: ref #0 → ref #0 → ()).
-(* REMOVE *) Proof.
+Proof.
+(* BEGIN SOLUTION *)
   rewrite /swap_poly.
   apply TLamV_typed.
   do 2 apply Lam_typed.
@@ -350,12 +363,14 @@ Lemma swap_poly_typed : ⊢ᵥ swap_poly : (∀: ref #0 → ref #0 → ()).
   - by apply Var_typed.
   - by apply Var_typed.
 Qed.
+(* END SOLUTION *)
 
 (** ** Exercise (not_typed, easy) *)
 (** Prove that the programs [unsafe_pure] and [unsafe_ref] from [language.v]
 cannot be typed using the syntactic type system. *)
 Lemma unsafe_pure_not_typed τ : ¬ (⊢ᵥ unsafe_pure : τ).
-(* REMOVE *) Proof.
+Proof.
+(* BEGIN SOLUTION *)
   intros Htyped.
   repeat
     match goal with
@@ -363,9 +378,11 @@ Lemma unsafe_pure_not_typed τ : ¬ (⊢ᵥ unsafe_pure : τ).
     | H : ⊢ᵥ _ : _ |- _ => inversion H; simplify_eq/=; clear H
     end.
 Qed.
+(* END SOLUTION *)
 
 Lemma unsafe_ref_not_typed τ : ¬ (⊢ᵥ unsafe_ref : τ).
-(* REMOVE *) Proof.
+Proof.
+(* BEGIN SOLUTION *)
   intros Htyped.
   repeat
     match goal with
@@ -373,3 +390,4 @@ Lemma unsafe_ref_not_typed τ : ¬ (⊢ᵥ unsafe_ref : τ).
     | H : ⊢ᵥ _ : _ |- _ => inversion H; simplify_eq/=; clear H
     end.
 Qed.
+(* END SOLUTION *)

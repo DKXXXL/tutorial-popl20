@@ -28,10 +28,12 @@ _*_.tex
 *.glob
 *.v.d
 *.vio
-Makefile.coq*
+Makefile.coq
+Makefile.coq.conf
 .Makefile.coq.d
 *.crashcoqide
 .coqdeps.d
+.lia.cache
 build-dep
 _opam
 .lia.cache

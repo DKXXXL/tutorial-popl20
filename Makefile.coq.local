@@ -1,0 +1,15 @@
+# Generate an exercise for each solution.
+SOLUTIONS := $(wildcard solutions/*.v)
+EXERCISES := $(addprefix exercises/,$(notdir $(SOLUTIONS)))
+
+exercises: $(EXERCISES)
+.PHONY: exercises
+
+$(EXERCISES): exercises/%.v: solutions/%.v gen-exercises.awk
+	$(HIDE)echo "Generating exercise file $@ from $<"
+	$(HIDE)gawk -f gen-exercises.awk < $< > $@
+
+# CI make target
+ci: all
+	+@make -B exercises # force make (in case exercise files have been edited directly)
+	if [ -n "$$(git status --porcelain)" ]; then echo 'ERROR: Exercise files are not up-to-date with solutions. `git diff` after re-making them:'; git diff; exit 1; fi
