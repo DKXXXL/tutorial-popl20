@@ -74,11 +74,6 @@ Ghost theory for semantic safety of "unsafe" programs:
 - [symbol_ghost.v](exercises/symbol_ghost.v): The ghost theory for the symbol
   ADT example.
 
-Other:
-
-- [demo.v](exercises/demo.v): A simplified version of the development to the
-  simplified case, as shown during the lecture at the POPL'20 tutorial.
-  
 ## Documentation
 
 The files [proof_mode.md] and [heap_lang.md] in the Iris repository contain a
