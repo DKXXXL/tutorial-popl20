@@ -267,7 +267,7 @@ of them for both the expression construct and their value counterpart. *)
 Lemma Lam_typed Γ x e τ1 τ2 :
   binder_insert x τ1 Γ ⊢ₜ e : τ2 →
   Γ ⊢ₜ (λ: x, e) : TArr τ1 τ2.
-(* REMOVE *) Proof.
+(* SOLUTION *) Proof.
   intros He.
   apply Rec_typed.
   simpl.
@@ -277,7 +277,7 @@ Qed.
 Lemma LamV_typed x e τ1 τ2 :
   binder_insert x τ1 ∅ ⊢ₜ e : τ2 →
   ⊢ᵥ (λ: x, e) : TArr τ1 τ2.
-(* REMOVE *) Proof.
+(* SOLUTION *) Proof.
   intros He.
   apply RecV_typed.
   simpl.
@@ -288,7 +288,7 @@ Lemma Let_typed Γ x e1 e2 τ1 τ2 :
   Γ ⊢ₜ e1 : τ1 →
   binder_insert x τ1 Γ ⊢ₜ e2 : τ2 →
   Γ ⊢ₜ (let: x := e1 in e2) : τ2.
-(* REMOVE *) Proof.
+(* SOLUTION *) Proof.
   intros He1 He2.
   apply App_typed with τ1.
   - by apply Lam_typed.
@@ -299,14 +299,14 @@ Lemma Seq_typed Γ e1 e2 τ1 τ2 :
   Γ ⊢ₜ e1 : τ1 →
   Γ ⊢ₜ e2 : τ2 →
   Γ ⊢ₜ (e1;; e2) : τ2.
-(* REMOVE *) Proof.
+(* SOLUTION *) Proof.
   intros He1 He2.
   by apply Let_typed with τ1.
 Qed.
 
 Lemma Skip_typed Γ :
   Γ ⊢ₜ Skip : ().
-(* REMOVE *) Proof.
+(* SOLUTION *) Proof.
   apply App_typed with ()%ty.
   - apply Val_typed, RecV_typed. apply Val_typed, UnitV_typed.
   - apply Val_typed, UnitV_typed.
@@ -317,7 +317,7 @@ Qed.
 (** Prove that the non-polymorphic swap function [swap] can be given the type
 [ref τ → ref τ → ()] for any [τ]. *)
 Lemma swap_typed τ : ⊢ᵥ swap : (ref τ → ref τ → ()).
-(* REMOVE *) Proof.
+(* SOLUTION *) Proof.
   rewrite /swap.
   apply LamV_typed.
   apply Lam_typed.
@@ -336,7 +336,7 @@ Qed.
 (** Prove that [swap_poly] can be typed using the polymorphic type
 [∀ X, ref X → ref X → ())], i.e. [∀: ref #0 → ref #0 → ())] in De Bruijn style. *)
 Lemma swap_poly_typed : ⊢ᵥ swap_poly : (∀: ref #0 → ref #0 → ()).
-(* REMOVE *) Proof.
+(* SOLUTION *) Proof.
   rewrite /swap_poly.
   apply TLamV_typed.
   do 2 apply Lam_typed.
@@ -355,7 +355,7 @@ Qed.
 (** Prove that the programs [unsafe_pure] and [unsafe_ref] from [language.v]
 cannot be typed using the syntactic type system. *)
 Lemma unsafe_pure_not_typed τ : ¬ (⊢ᵥ unsafe_pure : τ).
-(* REMOVE *) Proof.
+(* SOLUTION *) Proof.
   intros Htyped.
   repeat
     match goal with
@@ -365,7 +365,7 @@ Lemma unsafe_pure_not_typed τ : ¬ (⊢ᵥ unsafe_pure : τ).
 Qed.
 
 Lemma unsafe_ref_not_typed τ : ¬ (⊢ᵥ unsafe_ref : τ).
-(* REMOVE *) Proof.
+(* SOLUTION *) Proof.
   intros Htyped.
   repeat
     match goal with

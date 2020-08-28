@@ -5,6 +5,7 @@ stages:
 
 variables:
   CPU_CORES: "10"
+  MAKE_TARGET: "ci"
 
 .template: &template
   stage: build

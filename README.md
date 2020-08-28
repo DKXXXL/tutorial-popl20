@@ -74,11 +74,6 @@ Ghost theory for semantic safety of "unsafe" programs:
 - [symbol_ghost.v](exercises/symbol_ghost.v): The ghost theory for the symbol
   ADT example.
 
-Other:
-
-- [demo.v](exercises/demo.v): A simplified version of the development to the
-  simplified case, as shown during the lecture at the POPL'20 tutorial.
-  
 ## Documentation
 
 The files [proof_mode.md] and [heap_lang.md] in the Iris repository contain a
@@ -100,3 +95,36 @@ If you would like to know more about Iris, we recommend to take a look at:
   Ralf Jung, Robbert Krebbers, Jacques-Henri Jourdan, Aleš Bizjak, Lars
   Birkedal, Derek Dreyer.
   A detailed description of the Iris logic and its model
+
+## Generating the exercises
+
+If you want to contribute to the tutorial, note that the files in `exercises/`
+are generated from the corresponding files in `solutions/`. Run `make exercises`
+to re-generate those files. This requires `gawk` to be installed (which should
+usually be available on Linux but might have to be installed separately on
+macOS).
+
+The syntax for the solution files is as follows:
+```
+(* SOLUTION *) Proof.
+  solution here.
+Qed.
+```
+is replaced by
+```
+Proof.
+  (* exercise *)
+Admitted.
+```
+and the more powerful
+```
+(* BEGIN SOLUTION *)
+  solution here.
+(* END SOLUTION BEGIN TEMPLATE
+  exercise template here.
+END TEMPLATE *)
+```
+is replaced by
+```
+  exercise template here.
+```

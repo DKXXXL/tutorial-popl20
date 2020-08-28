@@ -27,7 +27,7 @@ Section parametricity.
     (∀ `{!heapG Σ}, ⊢ ∅ ⊨ e : ∀ A, A) →
     rtc erased_step ([e <_>]%E, σ) (of_val w :: es, σ') →
     False.
-  (* REMOVE *) Proof.
+  (* SOLUTION *) Proof.
     intros He.
     change False with ((λ _, False) w).
     apply sem_gen_type_safety with (φ := λ _, False)=> ?.
@@ -45,7 +45,7 @@ Section parametricity.
   Lemma boolean_param `{!heapPreG Σ} e (v1 v2 : val) σ w es σ' :
     (∀ `{!heapG Σ}, ⊢ ∅ ⊨ e : ∀ A, A → A → A) →
     rtc erased_step ([e <_> v1 v2]%E, σ) (of_val w :: es, σ') → w = v1 ∨ w = v2.
-  (* REMOVE *) Proof.
+  (* SOLUTION *) Proof.
     intros He.
     apply sem_gen_type_safety with (φ := λ w, w = v1 ∨ w = v2)=> ?.
     pose (T := SemTy (λ w, ⌜w = v1 ∨ w = v2⌝)%I : sem_ty Σ).
@@ -68,7 +68,7 @@ Section parametricity.
     (∀ `{!heapG Σ}, ⊢ ∅ ⊨ e : ∀ A, (A → A) → A → A) →
     rtc erased_step ([e <_> (λ: "n", "n" + #1)%V #0]%E, σ)
       (of_val w :: es, σ') → ∃ n : nat, w = #n.
-  (* REMOVE *) Proof.
+  (* SOLUTION *) Proof.
     intros He.
     apply sem_gen_type_safety with (φ := λ w, ∃ n : nat, w = #n)=> ?.
     set (T := SemTy (λ w, ∃ n : nat, ⌜w = #n⌝)%I : sem_ty Σ).
@@ -98,7 +98,7 @@ Section parametricity.
       (⊢ Φ vz) ∧
       (∀ w, Φ w -∗ ⌜φ w⌝)) →
     rtc erased_step ([e <_> vf vz]%E, σ) (of_val w :: es, σ') → φ w.
-  (* REMOVE *) Proof.
+  (* SOLUTION *) Proof.
     intros He.
     apply sem_gen_type_safety with (φ0 := φ)=> ?.
     set (T := SemTy (λ w, ⌜ φ w ⌝)%I : sem_ty Σ).

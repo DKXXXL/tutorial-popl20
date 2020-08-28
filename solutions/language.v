@@ -233,7 +233,7 @@ You should prove this lemma.
 
 Hint: [wp_pures] also executes the [+] operator. Carefully check how it affects
 the embedded [#] and convince yourself why that makes sense. *)
-(* REMOVE *) Proof.
+(* SOLUTION *) Proof.
   iIntros. rewrite /swap_and_add. do 2 wp_load. do 2 wp_store. by iFrame.
 Qed.
 
@@ -338,7 +338,7 @@ Lemma wp_add_two_ref `{!heapG Σ} l (x : Z) :
 about addition on [Z] (or the [replace] or [rewrite (_ : x = y)] tactic with
 [lia]) to turn [2 + x] into [1 + (1 + x)]. Tactics like [replace] and [rewrite]
 work operate both on the MoSeL proof goal and the MoSeL proof context. *)
-(* REMOVE *) Proof.
+(* SOLUTION *) Proof.
   iIntros "Hl".
   rewrite /add_two_ref. wp_pures.
   iApply wp_twice.
@@ -418,7 +418,7 @@ Definition add_two_fancy : val := λ: "x",
 
 Lemma wp_add_two_fancy `{!heapG Σ} (x : Z) :
   ⊢ WP add_two_fancy #x {{ w, ⌜ w = #(2 + x) ⌝ }}.
-(* REMOVE *) Proof.
+(* SOLUTION *) Proof.
   rewrite /add_two_fancy. wp_pures.
   wp_alloc lf as "Hlf".
   wp_alloc lx as "Hlx".
@@ -460,7 +460,7 @@ Definition unsafe_ref : val := λ: <>,
 
 Lemma wp_unsafe_ref `{!heapG Σ} :
   ⊢ WP unsafe_ref #() {{ v, ⌜ v = #true ⌝ }}.
-(* REMOVE *) Proof.
+(* SOLUTION *) Proof.
   rewrite /unsafe_ref. wp_pures.
   wp_alloc l.
   wp_store.
