@@ -27,8 +27,7 @@ Section parametricity.
     (∀ `{!heapG Σ}, ⊢ ∅ ⊨ e : ∀ A, A) →
     rtc erased_step ([e <_>]%E, σ) (of_val w :: es, σ') →
     False.
-  Proof.
-  (* BEGIN SOLUTION *)
+  (* SOLUTION *) Proof.
     intros He.
     change False with ((λ _, False) w).
     apply sem_gen_type_safety with (φ := λ _, False)=> ?.
@@ -41,14 +40,12 @@ Section parametricity.
     iIntros (u) "#Hu".
     iApply ("Hu" $! T).
   Qed.
-  (* END SOLUTION *)
 
   (** * Exercise (boolean_param, moderate) *)
   Lemma boolean_param `{!heapPreG Σ} e (v1 v2 : val) σ w es σ' :
     (∀ `{!heapG Σ}, ⊢ ∅ ⊨ e : ∀ A, A → A → A) →
     rtc erased_step ([e <_> v1 v2]%E, σ) (of_val w :: es, σ') → w = v1 ∨ w = v2.
-  Proof.
-  (* BEGIN SOLUTION *)
+  (* SOLUTION *) Proof.
     intros He.
     apply sem_gen_type_safety with (φ := λ w, w = v1 ∨ w = v2)=> ?.
     pose (T := SemTy (λ w, ⌜w = v1 ∨ w = v2⌝)%I : sem_ty Σ).
@@ -65,15 +62,13 @@ Section parametricity.
     iIntros (w'') "#Hw''".
     iApply ("Hw''" $! v2). by iRight.
   Qed.
-  (* END SOLUTION *)
 
   (** * Exercise (nat_param, hard) *)
   Lemma nat_param `{!heapPreG Σ} e σ w es σ' :
     (∀ `{!heapG Σ}, ⊢ ∅ ⊨ e : ∀ A, (A → A) → A → A) →
     rtc erased_step ([e <_> (λ: "n", "n" + #1)%V #0]%E, σ)
       (of_val w :: es, σ') → ∃ n : nat, w = #n.
-  Proof.
-  (* BEGIN SOLUTION *)
+  (* SOLUTION *) Proof.
     intros He.
     apply sem_gen_type_safety with (φ := λ w, ∃ n : nat, w = #n)=> ?.
     set (T := SemTy (λ w, ∃ n : nat, ⌜w = #n⌝)%I : sem_ty Σ).
@@ -94,7 +89,6 @@ Section parametricity.
     iApply ("Hw''" $! #0).
     by iExists 0%nat.
   Qed.
-  (* END SOLUTION *)
 
   (** * Exercise (strong_nat_param, hard) *)
   Lemma strong_nat_param `{!heapPreG Σ} e σ w es σ' (vf vz : val) φ :
@@ -104,8 +98,7 @@ Section parametricity.
       (⊢ Φ vz) ∧
       (∀ w, Φ w -∗ ⌜φ w⌝)) →
     rtc erased_step ([e <_> vf vz]%E, σ) (of_val w :: es, σ') → φ w.
-  Proof.
-  (* BEGIN SOLUTION *)
+  (* SOLUTION *) Proof.
     intros He.
     apply sem_gen_type_safety with (φ0 := φ)=> ?.
     set (T := SemTy (λ w, ⌜ φ w ⌝)%I : sem_ty Σ).
@@ -126,5 +119,4 @@ Section parametricity.
     { iApply "Hw''". iApply Hvz. }
     iIntros (v). by iApply Hφ.
   Qed.
-  (* END SOLUTION *)
 End parametricity.

@@ -111,12 +111,13 @@ macOS).
 
 The syntax for the solution files is as follows:
 ```
-(* BEGIN SOLUTION *)
+(* SOLUTION *) Proof.
   solution here.
-(* END SOLUTION *)
+Qed.
 ```
 is replaced by
 ```
+Proof.
   (* exercise *)
 Admitted.
 ```
