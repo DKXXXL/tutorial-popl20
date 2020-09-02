@@ -21,6 +21,7 @@ some Coq notations for types. These notations are put in the notation scope
 type [ty] using the notations in [type_scope]. When the type is not clear from
 the context, one can write [τ%ty] to force Coq to parse [τ] using the notations
 in [type_scope]. This is set up using the [Delimit Scope] command. *)
+Declare Scope ty_scope.
 Bind Scope ty_scope with ty.
 Delimit Scope ty_scope with ty.
 Notation "# x" := (TVar x) : ty_scope.

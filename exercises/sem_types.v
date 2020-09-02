@@ -52,6 +52,7 @@ Existing Instance sem_ty_persistent.
 (** To obtain nice notations for the semantic types (as we will see in the file
 [sem_type_formers.v]), we create a notation scope [sem_ty_scope] for semantic
 types, which we bind to the type [sem_ty]. *)
+Declare Scope sem_ty_scope.
 Bind Scope sem_ty_scope with sem_ty.
 Delimit Scope sem_ty_scope with sem_ty.
 
