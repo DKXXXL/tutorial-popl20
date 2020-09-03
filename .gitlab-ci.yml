@@ -32,6 +32,7 @@ build-coq.8.11.2:
   <<: *template
   variables:
     OPAM_PINS: "coq version 8.11.2"
+    DENY_WARNINGS: "1"
 
 build-iris.dev:
   <<: *template
