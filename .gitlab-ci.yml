@@ -28,6 +28,12 @@ variables:
 
 ## Build jobs
 
+build-coq.8.12.0:
+  <<: *template
+  variables:
+    OPAM_PINS: "coq version 8.12.0"
+    DENY_WARNINGS: "1"
+
 build-coq.8.11.2:
   <<: *template
   variables:
