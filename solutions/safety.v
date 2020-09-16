@@ -4,7 +4,8 @@ From solutions Require Export fundamental.
 (** * Semantic and syntactic type safety *)
 (** We prove *semantic type safety*, which says that any _closed_ expression
 that is semantically typed is safe, i.e., it does not crash. Based on this
-theorem we then prove *syntactic type safety* as a corollary, i.e., any _closed_ syntactically well-typed program is safe. Semantic type safety is a consequence
+theorem we then prove *syntactic type safety* as a corollary, i.e., any _closed_
+syntactically well-typed program is safe. Semantic type safety is a consequence
 of Iris's adequacy theorem, and syntactic type safety is a consequence of the
 fundamental theorem together and semantic type safety. *)
 
@@ -32,7 +33,8 @@ Proof.
 Qed.
 
 (** The actual theorem for semantic type safety lemma states that semantically
-typed closed programs do not get stuck. It is a simple consequence of the lemma [sem_gen_type_safety] above. *)
+typed closed programs do not get stuck. It is a simple consequence of the lemma
+[sem_gen_type_safety] above. *)
 Theorem sem_type_safety `{!heapPreG Σ} e σ es σ' e' :
   (∀ `{!heapG Σ}, ∃ A, ⊢ ∅ ⊨ e : A) →
   rtc erased_step ([e], σ) (es, σ') → e' ∈ es →
