@@ -18,7 +18,7 @@ is replaced semantic typing judgment in syntactic typing rules. For instance
 becomes:
 
 <<
-  (Γ ⊨ e1 : A1) -∗ (Γ ⊨ e2 : A2) -∗ Γ ⊢ (e1, e2) : A1 * A2
+  (Γ ⊨ e1 : A1) -∗ (Γ ⊨ e2 : A2) -∗ Γ ⊨ (e1, e2) : A1 * A2
 >>
 *)
 
