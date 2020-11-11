@@ -34,7 +34,7 @@ Makefile.coq.conf
 *.crashcoqide
 .coqdeps.d
 .lia.cache
-build-dep
+builddep
 _opam
 .lia.cache
 /html

@@ -1,5 +1,4 @@
 opam-version: "2.0"
-name: "coq-iris-tutorial-popl20"
 maintainer: "The Iris Organization"
 authors: "The Iris Organization"
 homepage: "https://gitlab.mpi-sws.org/iris/tutorial-popl20"
