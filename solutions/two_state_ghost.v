@@ -54,7 +54,7 @@ Section two_state_ghost.
     two_state_auth γ b -∗ two_state_final γ -∗ ⌜b = true⌝.
   Proof.
     iIntros "H1 H2".
-    iDestruct (own_valid_2 with "H1 H2") as %[Hinc _]%auth_both_valid.
+    iDestruct (own_valid_2 with "H1 H2") as %[Hinc _]%auth_both_valid_discrete.
     apply option_included in Hinc as [|([]&[]&_&?&_)];
       destruct b; naive_solver.
   Qed.

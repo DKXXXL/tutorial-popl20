@@ -56,7 +56,7 @@ Section symbol_ghost.
   Lemma symbol_obs γ s n : counter γ n -∗ symbol γ s -∗ ⌜(s < n)%nat⌝.
   Proof.
     iIntros "Hc Hs".
-    iDestruct (own_valid_2 with "Hc Hs") as %[?%max_nat_included _]%auth_both_valid.
+    iDestruct (own_valid_2 with "Hc Hs") as %[?%max_nat_included _]%auth_both_valid_discrete.
     iPureIntro. simpl in *. lia.
   Qed.
 End symbol_ghost.
