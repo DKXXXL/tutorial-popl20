@@ -426,7 +426,7 @@ Lemma wp_add_two_fancy `{!heapG Σ} (x : Z) :
   wp_bind (twice_ref _ _).
   iApply (wp_twice_ref with "Hlf Hlx").
   wp_pures.
-  iIntros "Hlx Hfx".
+  iIntros "!> Hlx Hfx".
   wp_load.
   auto with f_equal lia.
 Qed.

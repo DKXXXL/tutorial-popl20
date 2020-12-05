@@ -49,7 +49,7 @@ Section unsafe.
     pose (I := (∃ n : Z, ⌜#n ≠ #0⌝ ∗ l ↦ #n)%I).
     iMod (inv_alloc (nroot .@ "inv") _ I with "[Hl]")%I as "#Hinv".
     { by iNext; iExists 1; iFrame. }
-    wp_pures.
+    wp_pures. iModIntro.
     iExists _, _. iSplit; first done.
     iSplit.
     - iIntros "!#" (? [n ->]).
@@ -97,7 +97,7 @@ Section unsafe.
     iMod (inv_alloc (nroot .@ "inv") _ I with "[Hl Ho]") as "#Hinv".
     { iNext. iExists false. iFrame. }
     wp_pures.
-    iIntros "!#" (? ->).
+    iIntros "!> !>" (? ->).
     wp_lam.
     (* Need because of atomic expression *)
     wp_bind (_ <- _)%E.
@@ -144,7 +144,7 @@ Section unsafe.
       iMod (counter_alloc 0) as (γ) "Hc".
       iMod (inv_alloc symbol_adtN _ (symbol_inv γ l) with "[Hl Hc]") as "#?".
       { iExists 0%nat. by iFrame. }
-      do 2 (wp_lam; wp_pures). wp_lam.
+      do 2 (wp_lam; wp_pures). wp_lam. iModIntro.
       iExists (sem_ty_symbol γ), _, _; repeat iSplit=> //.
       - repeat rewrite /sem_ty_car /=. iIntros "!#" (? ->). wp_pures.
         iInv symbol_adtN as (n) ">[Hl Hc]". wp_faa.
