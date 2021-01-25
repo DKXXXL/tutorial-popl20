@@ -68,7 +68,7 @@ Section sem_ty_cofe.
   Instance sem_ty_dist : Dist (sem_ty Σ) := λ n A B, ∀ w, A w ≡{n}≡ B w.
   Lemma sem_ty_ofe_mixin : OfeMixin (sem_ty Σ).
   Proof. by apply (iso_ofe_mixin (sem_ty_car : _ → val -d> _)). Qed.
-  Canonical Structure sem_tyO := OfeT (sem_ty Σ) sem_ty_ofe_mixin.
+  Canonical Structure sem_tyO := Ofe (sem_ty Σ) sem_ty_ofe_mixin.
   Global Instance sem_ty_cofe : Cofe sem_tyO.
   Proof.
     apply (iso_cofe_subtype' (λ A : val -d> iPropO Σ, ∀ w, Persistent (A w))
