@@ -20,6 +20,7 @@ Fixpoint interp `{!heapG Σ} (τ : ty) (ρ : list (sem_ty Σ)) : sem_ty Σ :=
   | TForall τ => ∀ X, ⟦ τ ⟧ (X :: ρ)
   | TExist τ => ∃ X, ⟦ τ ⟧ (X :: ρ)
   | TRef τ => ref (⟦ τ ⟧ ρ)
+  | TRec τ => μ X, ⟦ τ ⟧ (X :: ρ)
   end%sem_ty
 where "⟦ τ ⟧" := (interp τ).
 Instance: Params (@interp) 2 := {}.
@@ -68,6 +69,7 @@ Section interp_properties.
       + by rewrite lookup_delete_ge; last lia.
     - intros τ IH n ρ ?. f_equiv=> A /=. naive_solver auto with lia.
     - intros τ IH n ρ ?. f_equiv=> A /=. naive_solver auto with lia.
+    - intros τ IH n ρ ?. f_equiv=> A /=. naive_solver auto with lia.
   Qed.
   Lemma interp_ty_lift_0 τ A ρ : ⟦ ty_lift 0 τ ⟧ (A :: ρ) ≡ ⟦ τ ⟧ ρ.
   Proof. apply interp_ty_lift; simpl; lia. Qed.
@@ -97,6 +99,8 @@ Section interp_properties.
       + rewrite lookup_app_r; last (rewrite take_length; lia).
         rewrite take_length lookup_cons_ne_0; last lia.
         rewrite lookup_drop. do 2 f_equiv; lia.
+    - intros τ IH i τ' ρ ?. f_equiv=> A /=. rewrite IH /=; last lia.
+      by rewrite interp_ty_lift; last lia.
     - intros τ IH i τ' ρ ?. f_equiv=> A /=. rewrite IH /=; last lia.
       by rewrite interp_ty_lift; last lia.
     - intros τ IH i τ' ρ ?. f_equiv=> A /=. rewrite IH /=; last lia.

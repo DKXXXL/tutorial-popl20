@@ -82,6 +82,13 @@ Section fundamental.
         * by iApply (fundamental _ _ (ref _)%ty).
         * by iApply fundamental.
         * by iApply fundamental.
+      + iApply Fold_sem_typed; [solve_proper|].
+        change (μ A, ⟦ ?τ ⟧ (A :: ?ρ))%sem_ty with (⟦ TRec τ ⟧ ρ)%sem_ty.
+        rewrite -interp_ty_subst_0. by iApply fundamental.
+      + rewrite interp_ty_subst_0 /=.
+        unshelve iApply (Unfold_sem_typed _ _ (λ A, ⟦ _ ⟧ (A :: _))); [solve_proper|].
+        change (μ A, ⟦ ?τ ⟧ (A :: ?ρ))%sem_ty with (⟦ TRec τ ⟧ ρ)%sem_ty.
+        by iApply fundamental.
       + iApply UnOp_sem_typed. by iApply fundamental.
       + iApply BinOp_sem_typed; by iApply fundamental.
       + iApply If_sem_typed.

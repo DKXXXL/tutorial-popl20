@@ -154,6 +154,19 @@ Section compatibility.
     (* exercise *)
   Admitted.
 
+  (** ** Recursive types *)
+  (** Hint: A crucial ingredient for these proofs is the lemma [sem_ty_unfold]. *)
+  Lemma Fold_sem_typed Γ e C `{!NonExpansive C} :
+    Γ ⊨ e : C (μ A, C A)%sem_ty -∗ Γ ⊨ (fold: e) : μ A, C A.
+  Proof.
+    (* exercise *)
+  Admitted.
+  Lemma Unfold_sem_typed Γ e C `{!NonExpansive C} :
+    Γ ⊨ e : (μ A, C A) -∗ Γ ⊨ (unfold: e) : C (μ A, C A)%sem_ty.
+  Proof.
+    (* exercise *)
+  Admitted.
+
   (** ** Operators *)
   Lemma UnOp_sem_typed Γ e op A B :
     SemTyUnOp op A B → Γ ⊨ e : A -∗ Γ ⊨ UnOp op e : B.

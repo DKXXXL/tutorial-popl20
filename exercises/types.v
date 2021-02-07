@@ -13,7 +13,8 @@ Inductive ty :=
   | TArr : ty → ty → ty
   | TForall : ty → ty
   | TExist : ty → ty
-  | TRef : ty → ty.
+  | TRef : ty → ty
+  | TRec : ty → ty.
 
 (** To obtain nice notations when writing types for concrete programs, we define
 some Coq notations for types. These notations are put in the notation scope
@@ -32,6 +33,7 @@ Infix "→" := TArr : ty_scope.
 Notation "∀: τ" := (TForall τ) (at level 100, τ at level 200) : ty_scope.
 Notation "∃: τ" := (TExist τ) (at level 100, τ at level 200) : ty_scope.
 Notation "'ref' τ" := (TRef τ) (at level 10, τ at next level, right associativity): ty_scope.
+Notation "μ: τ" := (TExist τ) (at level 100, τ at level 200) : ty_scope.
 
 (** * Type-level substitution *)
 (** Below we define the function [ty_subst x σ τ], which replaces the De Bruijn
@@ -49,6 +51,7 @@ Fixpoint ty_lift (n : nat) (τ : ty) : ty :=
   | TForall τ => TForall (ty_lift (S n) τ)
   | TExist τ => TExist (ty_lift (S n) τ)
   | TRef τ => TRef (ty_lift n τ)
+  | TRec τ => TRec (ty_lift (S n) τ)
   end.
 
 Fixpoint ty_subst (x : nat) (σ : ty) (τ : ty) : ty :=
@@ -64,4 +67,5 @@ Fixpoint ty_subst (x : nat) (σ : ty) (τ : ty) : ty :=
   | TForall τ => TForall (ty_subst (S x) (ty_lift 0 σ) τ)
   | TExist τ => TExist (ty_subst (S x) (ty_lift 0 σ) τ)
   | TRef τ => TRef (ty_subst x σ τ)
+  | TRec τ => TRec (ty_subst (S x) (ty_lift 0 σ) τ)
   end.

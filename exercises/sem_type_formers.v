@@ -98,12 +98,71 @@ express this intuition in a formal way, we make use of two features of Iris:
   assertion is persistent.
 *)
 
-(** Remark: Iris is also capable giving semantics to recursive types. However,
-for the sake of simplicity we did not consider recursive types for this
-tutorial. In particular, to give the semantics of recursive types one needs to
-use Iris's guarded fixpoints, which require some additional bookkeeping related
-to contractiveness. *)
+(** * Recursive types *)
+Definition sem_ty_rec_pre {Σ} (C : sem_ty Σ → sem_ty Σ)
+  (rec : sem_ty Σ) : sem_ty Σ := SemTy (λ v, ▷ ∃ rec', rec ≡ rec' ∧ C rec' v)%I.
+Instance sem_ty_rec_pre_contractive {Σ} (C : sem_ty Σ → sem_ty Σ) :
+  Contractive (sem_ty_rec_pre C).
+Proof. solve_contractive. Qed.
+Definition sem_ty_rec {Σ} (C : sem_ty Σ → sem_ty Σ) : sem_ty Σ :=
+  fixpoint (sem_ty_rec_pre C).
 
+Lemma sem_ty_unfold {Σ} (C : sem_ty Σ → sem_ty Σ) `{!NonExpansive C} v :
+  (sem_ty_rec C)%sem_ty v ⊣⊢ ▷ C (sem_ty_rec C)%sem_ty v.
+Proof.
+  rewrite {1}/sem_ty_rec (fixpoint_unfold (sem_ty_rec_pre C)) {1}/sem_ty_car /=.
+  f_equiv. iSplit; [|by auto].
+  iDestruct 1 as (rec') "[Hrec HC]". by iRewrite -"Hrec" in "HC".
+Qed.
+(** The recursive type [μ A, C A] is used to construct iso-recursive types. For
+example, lists with elements of type [B] are defined as [μ A. ref (1 + (B ∗ A))],
+where the left hand-side of the sum indicates the list is "nil" and the right
+hand-side indicates the list is a "cons".
+
+In the formal version in Coq, the recursive type is defined by [sem_ty_rec C]
+where [C] is a function that describes the recursive structure. For lists with
+elements of type [B], the function [C] is [λ A, ref (1 + (B ∗ A))].
+
+We want to define [μ A, C A] in such a way that is a fixpoint of [C], i.e.,
+[μ A, C A] should be isomorphic to [C (μ A, C A)]. Since [C] can be an arbitrary
+function (there are no restrictions on the variance of the argument [A], or in
+other words, it is not required to be functorial), such a fixpoint does not
+exist.
+
+To remedy that problem, we make use of Iris's ability to construct "guarded
+fixpoints". Iris's guarded fixpoint operator [fixpoint (λ x, t)] can be used
+to define recursive predicates without a restriction on the variance of the
+recursive occurrences of [x] in [t]. In return for this flexibility, all
+recursive occurrences of [x] must be guarded, meaning that they must appear
+below a later modality ([▷])--i.e., within a term of the form [▷ P]. Subject to
+this restriction, we obtain [fixpoint f = f (fixpoint f)].
+
+Using Iris's guarded fixpoint operator, we define the type [sem_ty_rec C] as
+[fixpoint (λ rec v, ▷ C (rec v))], which gives us that [sem_ty_rec] satisfies
+the fixpoint equation [sem_ty_rec C ≡ ▷ C (sem_ty_rec C)].
+
+The actual definition [sem_ty_rec] involves several auxiliary definitions to
+convince Coq that [sem_ty_rec] is well defined. Concretely, [fixpoint f] is
+well-defined only if [f] is [Contractive] (this is captured by the implicit
+argument [Contractive f] of [fixpoint f]), which for the definition of
+[sem_ty_rec C] means that [C] should non-expansive.
+
+Since it is inconvenient to add an implicit argument to [sem_ty_rec] to require
+that [C] is non-expansiveness, we make use of a trick. We define [sem_ty_rec C]
+as [fixpoint f] with [f := λ rec v, ▷ ∃ rec', rec ≡ rec' ∧ C (rec' v)]. This
+makes sure that [f] is contractive by construction, regardless of [C].
+
+The unfolding lemma [sem_ty_unfold] establishes that [sem_ty_rec C] satisfies
+the fixpoint equation, but requires [C] to be non-expansive. This means that
+when defining types, we do not have to worry about non-expansiveness of [C],
+but when carrying out proofs, we do not to prove non-expansiveness of [C]. Such
+proofs can typically be automated using the tactic [solve_proper].
+
+Important: When carrying out proofs about recursive types in Coq, one should
+never unfold the definition of [sem_ty_rec], but use the unfolding lemma
+[sem_ty_unfold] instead. *)
+
+(** * Notations *)
 (** We introduce nicely looking notations for our semantic types. This allows
 us to write lemmas, for example, the compatibility lemmas, in a readable way. *)
 Notation "()" := sem_ty_unit : sem_ty_scope.
@@ -115,6 +174,7 @@ Notation "∀ A1 .. An , C" :=
 Notation "∃ A1 .. An , C" :=
   (sem_ty_exist (λ A1, .. (sem_ty_exist (λ An, C%sem_ty)) ..)) : sem_ty_scope.
 Notation "'ref' A" := (sem_ty_ref A) : sem_ty_scope.
+Notation "'μ' A , C" := (sem_ty_rec (λ A, C)) (at level 200) : sem_ty_scope.
 
 (** A [Params t n] instance tells Coq's setoid rewriting mechanism *not* to
 rewrite in the first [n] arguments of [t]. These instances tend to make the
@@ -125,6 +185,7 @@ Instance: Params (@sem_ty_arr) 1 := {}.
 Instance: Params (@sem_ty_forall) 2 := {}.
 Instance: Params (@sem_ty_exist) 1 := {}.
 Instance: Params (@sem_ty_ref) 2 := {}.
+Instance: Params (@sem_ty_rec) 1 := {}.
 
 (** We prove that all type formers are non-expansive and respect setoid
 equality. This code is mostly boilerplate. *)
@@ -145,6 +206,12 @@ Section types_properties.
   Proof. solve_proper. Qed.
   Global Instance sem_ty_ref_ne : NonExpansive2 (@sem_ty_ref Σ _).
   Proof. solve_proper. Qed.
+  Global Instance sem_ty_rec_ne n :
+    Proper (pointwise_relation _ (dist n) ==> dist n) (@sem_ty_rec Σ).
+  Proof.
+    intros C1 C2 HA.
+    apply (fixpoint_ne (sem_ty_rec_pre C1) (sem_ty_rec_pre C2)); solve_proper.
+  Qed.
 
   Global Instance sem_ty_prod_proper : Proper ((≡) ==> (≡) ==> (≡)) (@sem_ty_prod Σ).
   Proof. solve_proper. Qed.
@@ -152,10 +219,18 @@ Section types_properties.
   Proof. solve_proper. Qed.
   Global Instance sem_ty_arr_proper : Proper ((≡) ==> (≡) ==> (≡)) (@sem_ty_arr Σ _).
   Proof. solve_proper. Qed.
-  Global Instance sem_ty_forall_proper : Proper (pointwise_relation _ (≡) ==> (≡)) (@sem_ty_forall Σ _).
+  Global Instance sem_ty_forall_proper :
+    Proper (pointwise_relation _ (≡) ==> (≡)) (@sem_ty_forall Σ _).
   Proof. solve_proper. Qed.
-  Global Instance sem_ty_exist_proper : Proper (pointwise_relation _ (≡) ==>(≡)) (@sem_ty_exist Σ).
+  Global Instance sem_ty_exist_proper :
+    Proper (pointwise_relation _ (≡) ==>(≡)) (@sem_ty_exist Σ).
   Proof. solve_proper. Qed.
   Global Instance sem_ty_ref_proper : Proper ((≡) ==> (≡)) (@sem_ty_ref Σ _).
   Proof. solve_proper. Qed.
+  Global Instance sem_ty_rec_proper :
+    Proper (pointwise_relation _ (≡) ==>(≡)) (@sem_ty_rec Σ).
+  Proof.
+    intros C1 C2 HA. apply equiv_dist=> n.
+    apply sem_ty_rec_ne=> A. by apply equiv_dist.
+  Qed.
 End types_properties.

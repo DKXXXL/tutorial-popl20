@@ -205,6 +205,13 @@ Inductive typed : gmap string ty → expr → ty → Prop :=
      ty_unboxed τ →
      Γ ⊢ₜ e1 : TRef τ → Γ ⊢ₜ e2 : τ → Γ ⊢ₜ e3 : τ →
      Γ ⊢ₜ CmpXchg e1 e2 e3 : TProd τ TBool
+  (** Recursive types *)
+  | Fold_typed Γ e τ :
+     Γ ⊢ₜ e : ty_subst 0 (TRec τ) τ →
+     Γ ⊢ₜ (fold: e) : TRec τ
+  | Unfold_typed Γ e τ :
+     Γ ⊢ₜ e : TRec τ →
+     Γ ⊢ₜ (unfold: e) : ty_subst 0 (TRec τ) τ
   (** Operators *)
   | UnOp_typed Γ op e τ σ :
      Γ ⊢ₜ e : τ →
@@ -371,5 +378,5 @@ Lemma unsafe_ref_not_typed τ : ¬ (⊢ᵥ unsafe_ref : τ).
     match goal with
     | H : _ ⊢ₜ _ : _ |- _ => inversion H; simplify_eq/=; clear H
     | H : ⊢ᵥ _ : _ |- _ => inversion H; simplify_eq/=; clear H
-    end.
+    end; simplify_map_eq; congruence.
 Qed.

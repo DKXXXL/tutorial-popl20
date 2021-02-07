@@ -1,11 +1,11 @@
 From solutions Require Export language.
 
-(** * Polymorphism and existential types in HeapLang *)
+(** * Polymorphic, existential and recursive types in HeapLang *)
 (** In order to define a type system for HeapLang (in the file [typed.v]), we
-need to extend HeapLang with constructs for polymorphic functions (i.e.
-type-level lambdas and application), and for existential types (i.e. pack and
-unpack). Since HeapLang is an untyped language, it does natively have these
-constructs. *)
+need to extend HeapLang with constructs for polymorphic functions (i.e.,
+type-level lambdas and application), existential types (i.e., pack and
+unpack), and iso-recursive types (i.e., fold and unfold). Since HeapLang is an
+untyped language, it does natively have these constructs. *)
 
 (** We retrofit type-level lambdas and application on HeapLang by defining them
 as mere thunks, and ordinary application, respectively. This ensures that
@@ -31,6 +31,19 @@ Notation "'unpack:' x := e1 'in' e2" := (exist_unpack (Lam x%binder e2%E) e1%E)
 Notation "'unpack:' x := e1 'in' e2" := (exist_unpack (LamV x%binder e2%E) e1%E)
   (at level 200, x at level 1, e1, e2 at level 200,
    format "'[' 'unpack:'  x  :=  '[' e1 ']'  'in'  '/' e2 ']'") : val_scope.
+
+(** And we apply the trick one more to retrofit [fold] and [unfold] on
+HeapLang. *)
+Definition rec_fold : val := λ: "x", "x".
+Definition rec_unfold : val := λ: "x", "x".
+
+Notation "'fold:' e" := (rec_fold e%E)
+  (at level 200, e at level 200,
+   format "'[' 'fold:'  e ']'") : expr_scope.
+
+Notation "'unfold:' e" := (rec_unfold e%E)
+  (at level 200, e at level 200,
+   format "'[' 'unfold:'  e ']'") : expr_scope.
 
 (** ** Exercise (swap_poly, easy) *)
 (** Below we define a polymorphic version of the [swap] function. *)
