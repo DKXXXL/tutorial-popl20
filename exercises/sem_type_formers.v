@@ -153,10 +153,11 @@ as [fixpoint f] with [f := λ rec v, ▷ ∃ rec', rec ≡ rec' ∧ C (rec' v)].
 makes sure that [f] is contractive by construction, regardless of [C].
 
 The unfolding lemma [sem_ty_unfold] establishes that [sem_ty_rec C] satisfies
-the fixpoint equation, but requires [C] to be non-expansive. This means that
+the fixpoint equation, but only when [C] is be non-expansive. This means that
 when defining types, we do not have to worry about non-expansiveness of [C],
-but when carrying out proofs, we do not to prove non-expansiveness of [C]. Such
-proofs can typically be automated using the tactic [solve_proper].
+but only when carrying out proofs, we need to prove non-expansiveness of [C].
+Such non-expansiveness proofs can typically be automated using the tactic
+[solve_proper].
 
 Important: When carrying out proofs about recursive types in Coq, one should
 never unfold the definition of [sem_ty_rec], but use the unfolding lemma
